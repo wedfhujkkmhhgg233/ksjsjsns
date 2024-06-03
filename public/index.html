@@ -104,10 +104,10 @@
     async function fetchSim() {
       const query = document.getElementById('simQuery').value;
       try {
-        const response = await fetch(`/sim?query=${query}`);
+        const response = await fetch(`/fetch?query=${query}`);
         const data = await response.json();
         const message = document.getElementById('response');
-        message.innerText = 'Response: ' + data.response;
+        message.innerText = 'Response: ' + data.respond;
         message.className = 'message success';
         message.style.display = 'block';
       } catch (error) {
