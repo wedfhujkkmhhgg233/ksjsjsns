@@ -36,7 +36,7 @@ app.get('/sim', async (req, res) => {
 app.get('/teach', async (req, res) => {
   const { ask, ans } = req.query;
   try {
-    const response = await axios.get('https://sim-api-ctqz.onrender.com/teach', {
+    const response = await axios.get('http://65.108.103.151:20437/teach', {
       params: { ask, ans }
     });
     res.json(response.data);
