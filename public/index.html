@@ -8,40 +8,151 @@
   <style>
     body {
       font-family: 'Roboto', sans-serif;
-      background: #f4f4f9;
+      background: linear-gradient(135deg, #f4f4f9, #c4c4f4);
       color: #333;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
+      overflow: hidden;
     }
     .container {
       background: #fff;
       padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       text-align: center;
+      transition: transform 0.3s ease;
+    }
+    .container:hover {
+      transform: translateY(-10px);
     }
     h1 {
       margin-bottom: 1rem;
       color: #5b9bd5;
+      font-size: 2.5rem;
+      animation: fadeIn 1s ease;
     }
     p {
       font-size: 1.2rem;
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
+      color: #666;
+    }
+    .button {
+      display: inline-block;
+      padding: 1rem 2rem;
+      margin: 1rem;
+      font-size: 1rem;
+      color: #fff;
+      background: linear-gradient(135deg, #6b5b95, #b8a9c9);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      text-decoration: none;
+    }
+    .button:hover {
+      background: linear-gradient(135deg, #b8a9c9, #6b5b95);
+    }
+    .input-field {
+      display: block;
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .message {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: #fff;
+      padding: 0.5rem;
+      border-radius: 8px;
+      display: none;
+    }
+    .success {
+      background-color: #28a745;
+    }
+    .error {
+      background-color: #dc3545;
     }
     footer {
       margin-top: 2rem;
       font-size: 0.9rem;
       color: #777;
     }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
   </style>
+  <script type="text/javascript">
+    if (typeof document.onselectstart != "undefined") {
+      document.onselectstart = new Function("return false");
+    } else {
+      document.onmousedown = new Function("return false");
+      document.onmouseup = new Function("return true");
+    }
+  </script>
+  <script>
+    async function fetchSim() {
+      const query = document.getElementById('simQuery').value;
+      try {
+        const response = await fetch(`/sim?query=${query}`);
+        const data = await response.json();
+        const message = document.getElementById('response');
+        message.innerText = 'Response: ' + data.response;
+        message.className = 'message success';
+        message.style.display = 'block';
+      } catch (error) {
+        const message = document.getElementById('response');
+        message.innerText = 'Error fetching data';
+        message.className = 'message error';
+        message.style.display = 'block';
+      }
+    }
+
+    async function teachApi() {
+      const ask = document.getElementById('ask').value;
+      const ans = document.getElementById('ans').value;
+      try {
+        const response = await fetch(`/teach?ask=${ask}&ans=${ans}`);
+        const data = await response.json();
+        const message = document.getElementById('teachResponse');
+        message.innerText = 'Successfully taught the API';
+        message.className = 'message success';
+        message.style.display = 'block';
+      } catch (error) {
+        const message = document.getElementById('teachResponse');
+        message.innerText = 'Error teaching the API';
+        message.className = 'message error';
+        message.style.display = 'block';
+      }
+    }
+  </script>
 </head>
 <body>
   <div class="container">
     <h1>Sim Api by Jerome Jamis</h1>
     <p>Welcome to the Sim API. Explore our features and enjoy our service.</p>
+    
+    <!-- Sim Feature -->
+    <input type="text" id="simQuery" class="input-field" placeholder="Enter your query">
+    <button class="button" onclick="fetchSim()">Fetch Sim Response</button>
+    <div id="response" class="message"></div>
+    
+    <!-- Teach Feature -->
+    <input type="text" id="ask" class="input-field" placeholder="Question to teach">
+    <input type="text" id="ans" class="input-field" placeholder="Answer to teach">
+    <button class="button" onclick="teachApi()">Teach API</button>
+    <div id="teachResponse" class="message"></div>
+    
     <footer>© 2024 Jerome Jamis. All rights reserved.</footer>
   </div>
 </body>
