@@ -104,17 +104,19 @@
     async function fetchSim() {
       const query = document.getElementById('simQuery').value;
       try {
-        const response = await fetch(`/sim?query=${query}`);
+        const response = await fetch(`/fetch?query=${query}`);
         const data = await response.json();
         const message = document.getElementById('response');
         message.innerText = 'Response: ' + data.respond;
         message.className = 'message success';
         message.style.display = 'block';
+        document.getElementById('simQuery').value = ''; // Clear input field
       } catch (error) {
         const message = document.getElementById('response');
         message.innerText = 'Error fetching data';
         message.className = 'message error';
         message.style.display = 'block';
+        document.getElementById('simQuery').value = ''; // Clear input field
       }
     }
 
@@ -128,11 +130,15 @@
         message.innerText = 'Successfully taught the API';
         message.className = 'message success';
         message.style.display = 'block';
+        document.getElementById('ask').value = ''; // Clear input field
+        document.getElementById('ans').value = ''; // Clear input field
       } catch (error) {
         const message = document.getElementById('teachResponse');
         message.innerText = 'Error teaching the API';
         message.className = 'message error';
         message.style.display = 'block';
+        document.getElementById('ask').value = ''; // Clear input field
+        document.getElementById('ans').value = ''; // Clear input field
       }
     }
   </script>
