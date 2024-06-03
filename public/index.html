@@ -104,7 +104,7 @@
     async function fetchSim() {
       const query = document.getElementById('simQuery').value;
       try {
-        const response = await fetch(`/fetch?query=${query}`);
+        const response = await fetch(`/sim?query=${query}`);
         const data = await response.json();
         const message = document.getElementById('response');
         message.innerText = 'Response: ' + data.respond;
