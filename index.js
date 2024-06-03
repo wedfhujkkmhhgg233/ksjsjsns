@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 // Set up rate limiting
 const limiter = rateLimit({
   windowMs: 30 * 60 * 1000, // 30 minutes
-  max: 200, // Limit each IP to 200 requests per windowMs
+  max: 1000, // Limit each IP to 200 requests per windowMs
   handler: (req, res) => {
     res.status(429).json({
       message: 'Too many requests from this IP, please try again later.',
