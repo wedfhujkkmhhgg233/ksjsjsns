@@ -21,7 +21,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Route to fetch data from /sim endpoint
-app.get('/fetch', async (req, res) => {
+app.get('/sim', async (req, res) => {
   try {
     const response = await axios.get('http://65.108.103.151:20437/sim', {
       params: { query: req.query.query }
