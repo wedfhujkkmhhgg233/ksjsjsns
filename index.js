@@ -23,7 +23,7 @@ app.use(limiter);
 // Route to fetch data from /sim endpoint
 app.get('/sim', async (req, res) => {
   try {
-    const response = await axios.get('http://65.108.103.151:20437/sim', {
+    const response = await axios.get('http://45.61.161.128:1658/sim', {
       params: { query: req.query.query }
     });
     res.json(response.data);
@@ -36,7 +36,7 @@ app.get('/sim', async (req, res) => {
 app.get('/teach', async (req, res) => {
   const { ask, ans } = req.query;
   try {
-    const response = await axios.get('http://65.108.103.151:20437/teach', {
+    const response = await axios.get('http://45.61.161.128:1658/teach', {
       params: { ask, ans }
     });
     res.json(response.data);
