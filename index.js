@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 // Set up rate limiting
 const limiter = rateLimit({
   windowMs: 30 * 60 * 1000, // 30 minutes
-  max: 1000, // Limit each IP to 200 requests per windowMs
+  max: 1000, // Limit each IP to 1000 requests per windowMs
   handler: (req, res) => {
     res.status(429).json({
       message: 'Too many requests from this IP, please try again later.',
@@ -50,12 +50,15 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Block access to other routes if rate limit is exceeded
+// Middleware to handle 404 errors
 app.use((req, res, next) => {
-  res.status(429).json({
-    message: 'Too many requests from this IP, please try again later.',
-    status: 429
-  });
+  res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).sendFile(path.join(__dirname, 'public', '404.html'));
 });
 
 app.listen(PORT, () => {
