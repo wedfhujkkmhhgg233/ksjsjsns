@@ -47,7 +47,7 @@ app.get('/sim', async (req, res) => {
       3000 // 3 seconds timeout for primary API
     );
     if (backupUsed) {
-      res.json(data.respond);
+      res.json({ message: 'The original API is down, now using the backup server', data });
     } else {
       res.json(data);
     }
@@ -67,7 +67,7 @@ app.get('/teach', async (req, res) => {
       3000 // 3 seconds timeout for primary API
     );
     if (backupUsed) {
-      res.json(data.respond);
+      res.json({ message: 'The original API is down, now using the backup server', data });
     } else {
       res.json(data);
     }
