@@ -24,33 +24,24 @@ app.use(limiter);
 const fetchWithFallback = async (primaryUrl, backupUrl, params, timeout) => {
   try {
     const response = await axios.get(primaryUrl, { params, timeout });
-    return { data: response.data, backupUsed: false };
+    return response.data;
   } catch (error) {
     console.error(`Primary API (${primaryUrl}) failed:`, error.message);
-    try {
-      const response = await axios.get(backupUrl, { params });
-      return { data: response.data, backupUsed: true };
-    } catch (backupError) {
-      console.error(`Backup API (${backupUrl}) failed:`, backupError.message);
-      throw new Error('Both primary and backup APIs failed');
-    }
+    const response = await axios.get(backupUrl, { params });
+    return response.data;
   }
 };
 
 // Route to fetch data from /sim endpoint
 app.get('/sim', async (req, res) => {
   try {
-    const { data, backupUsed } = await fetchWithFallback(
+    const data = await fetchWithFallback(
       'http://45.61.161.128:1658/sim', // Primary API
       'http://158.101.198.227:8084/sim', // Backup API
       { query: req.query.query },
       3000 // 3 seconds timeout for primary API
     );
-    if (backupUsed) {
-      res.json({ message: 'The original API is down, now using the backup server', data });
-    } else {
-      res.json(data);
-    }
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching data from /sim endpoint' });
   }
@@ -60,17 +51,13 @@ app.get('/sim', async (req, res) => {
 app.get('/teach', async (req, res) => {
   const { ask, ans } = req.query;
   try {
-    const { data, backupUsed } = await fetchWithFallback(
+    const data = await fetchWithFallback(
       'http://45.61.161.128:1658/teach', // Primary API
       'http://158.101.198.227:8084/teach', // Backup API
       { ask, ans },
       3000 // 3 seconds timeout for primary API
     );
-    if (backupUsed) {
-      res.json({ message: 'The original API is down, now using the backup server', data });
-    } else {
-      res.json(data);
-    }
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Error teaching the API' });
   }
