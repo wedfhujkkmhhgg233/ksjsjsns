@@ -21,9 +21,9 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // Function to handle API request with fallback
-const fetchWithFallback = async (primaryUrl, backupUrl, params) => {
+const fetchWithFallback = async (primaryUrl, backupUrl, params, timeout) => {
   try {
-    const response = await axios.get(primaryUrl, { params });
+    const response = await axios.get(primaryUrl, { params, timeout });
     return { data: response.data, backupUsed: false };
   } catch (error) {
     console.error(`Primary API (${primaryUrl}) failed:`, error.message);
@@ -43,7 +43,8 @@ app.get('/sim', async (req, res) => {
     const { data, backupUsed } = await fetchWithFallback(
       'http://45.61.161.128:1658/sim',
       'http://158.101.198.227:8084/sim',
-      { query: req.query.query }
+      { query: req.query.query },
+      3000 // 3 seconds timeout for primary API
     );
     if (backupUsed) {
       res.json({ message: 'The original API is down, now using the backup server', data });
@@ -62,7 +63,8 @@ app.get('/teach', async (req, res) => {
     const { data, backupUsed } = await fetchWithFallback(
       'http://45.61.161.128:1658/teach',
       'http://158.101.198.227:8084/teach',
-      { ask, ans }
+      { ask, ans },
+      3000 // 3 seconds timeout for primary API
     );
     if (backupUsed) {
       res.json({ message: 'The original API is down, now using the backup server', data });
