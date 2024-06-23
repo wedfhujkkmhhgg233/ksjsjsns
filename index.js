@@ -41,13 +41,13 @@ const fetchWithFallback = async (primaryUrl, backupUrl, params, timeout) => {
 app.get('/sim', async (req, res) => {
   try {
     const { data, backupUsed } = await fetchWithFallback(
-      'http://45.61.161.128:1658/sim',
-      'http://158.101.198.227:8084/sim',
+      'http://45.61.161.128:1658/sim', // Primary API
+      'http://158.101.198.227:8084/sim', // Backup API
       { query: req.query.query },
       3000 // 3 seconds timeout for primary API
     );
     if (backupUsed) {
-      res.json({ message: 'The original API is down, now using the backup server', data });
+      res.json(data.respond);
     } else {
       res.json(data);
     }
@@ -61,13 +61,13 @@ app.get('/teach', async (req, res) => {
   const { ask, ans } = req.query;
   try {
     const { data, backupUsed } = await fetchWithFallback(
-      'http://45.61.161.128:1658/teach',
-      'http://158.101.198.227:8084/teach',
+      'http://45.61.161.128:1658/teach', // Primary API
+      'http://158.101.198.227:8084/teach', // Backup API
       { ask, ans },
       3000 // 3 seconds timeout for primary API
     );
     if (backupUsed) {
-      res.json({ message: 'The original API is down, now using the backup server', data });
+      res.json(data.respond);
     } else {
       res.json(data);
     }
