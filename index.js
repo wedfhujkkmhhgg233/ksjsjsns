@@ -39,7 +39,7 @@ app.get('/sim', async (req, res) => {
       'http://45.61.161.128:1658/sim', // Primary API
       'http://158.101.198.227:8084/sim', // Backup API
       { query: req.query.query },
-      3000 // 3 seconds timeout for primary API
+      1000 // 1 seconds timeout for primary API
     );
     res.json(data);
   } catch (error) {
@@ -55,7 +55,7 @@ app.get('/teach', async (req, res) => {
       'http://45.61.161.128:1658/teach', // Primary API
       'http://158.101.198.227:8084/teach', // Backup API
       { ask, ans },
-      3000 // 3 seconds timeout for primary API
+      1000 // 1 seconds timeout for primary API
     );
     res.json(data);
   } catch (error) {
