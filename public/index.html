@@ -18,15 +18,33 @@
       background-color: transparent;
     }
 
-    .custom-button {
-      background: linear-gradient(135deg, #6b5b95, #b8a9c9);
+    .custom-btn {
+      position: relative;
+      display: inline-block;
+      padding: 10px 20px;
+      color: #fff;
+      font-size: 16px;
+      text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 1px;
+      background-size: 300% 100%;
+      border: none;
+      cursor: pointer;
+      z-index: 1;
+      transition: all .4s ease-in-out;
     }
 
-    .custom-button:hover {
-      background: linear-gradient(135deg, #b8a9c9, #6b5b95);
+    .btn-15 {
+      background-image: linear-gradient(to right, #24c6dc, #514a9d, #24c6dc, #514a9d);
+      box-shadow: 0 4px 15px 0 rgba(65, 132, 234, 0.75);
     }
 
-    .black-textarea {
+    .btn-15:hover {
+      background-position: 100% 0;
+      transition: all .4s ease-in-out;
+    }
+
+    .input-field {
       color: black;
     }
   </style>
@@ -39,157 +57,34 @@
     <p class="text-lg text-gray-600 mb-6">Welcome to the Sim API. Explore our features and enjoy our service.</p>
 
     <!-- Sim Feature -->
-    <input type="text" id="simQuery" class="input-field mt-2 p-2 w-full rounded-md border border-gray-300 text-gray-800" placeholder="Enter your query">
-    <button class="custom-button w-full mt-4 py-2 rounded text-white font-bold" onclick="fetchSim()">Fetch Sim Response</button>
-    
-    <!-- Teach Feature -->
-    <div class="mt-8">
-      <input type="text" id="ask" class="input-field mt-2 p-2 w-full rounded-md border border-gray-300 text-gray-800" placeholder="Question to teach">
-      <input type="text" id="ans" class="input-field mt-2 p-2 w-full rounded-md border border-gray-300 text-gray-800" placeholder="Answer to teach">
-      <button class="custom-button w-full mt-4 py-2 rounded text-white font-bold" onclick="teachApi()">Teach API</button>
-    </div>
+    <input type="text" id="simQuery" class="input-field w-full mb-4 p-2 border border-gray-300 rounded" placeholder="Enter your query">
+    <button class="custom-btn btn-15 w-full mb-4" onclick="fetchSim()">Fetch Sim Response</button>
+    <div id="response" class="message"></div>
 
-    <footer class="mt-6 text-sm text-gray-500">© 2024 Jerome Jamis. All rights reserved.</footer>
+    <!-- Teach Feature -->
+    <input type="text" id="ask" class="input-field w-full mb-4 p-2 border border-gray-300 rounded" placeholder="Question to teach">
+    <input type="text" id="ans" class="input-field w-full mb-4 p-2 border border-gray-300 rounded" placeholder="Answer to teach">
+    <button class="custom-btn btn-15 w-full" onclick="teachApi()">Teach API</button>
+    <div id="teachResponse" class="message"></div>
+
+    <footer class="text-gray-500 text-sm mt-6">© 2024 Jerome Jamis. All rights reserved.</footer>
   </div>
 
   <script>
-    particlesJS("particles-js", {
-      "particles": {
-        "number": {
-          "value": 80,
-          "density": {
-            "enable": true,
-            "value_area": 800
-          }
-        },
-        "color": {
-          "value": "#61dafb"
-        },
-        "shape": {
-          "type": "circle",
-          "stroke": {
-            "width": 0,
-            "color": "#61dafb"
-          },
-          "polygon": {
-            "nb_sides": 5
-          },
-          "image": {
-            "src": "img/github.svg",
-            "width": 100,
-            "height": 100
-          }
-        },
-        "opacity": {
-          "value": 0.5,
-          "random": false,
-          "anim": {
-            "enable": false,
-            "speed": 1,
-            "opacity_min": 0.1,
-            "sync": false
-          }
-        },
-        "size": {
-          "value": 3,
-          "random": true,
-          "anim": {
-            "enable": false,
-            "speed": 40,
-            "size_min": 0.1,
-            "sync": false
-          }
-        },
-        "line_linked": {
-          "enable": true,
-          "distance": 150,
-          "color": "#61dafb",
-          "opacity": 0.4,
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 6,
-          "direction": "none",
-          "random": false,
-          "straight": false,
-          "out_mode": "out",
-          "bounce": false,
-          "attract": {
-            "enable": false,
-            "rotateX": 600,
-            "rotateY": 1200
-          }
-        }
-      },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": {
-            "enable": true,
-            "mode": "repulse"
-          },
-          "onclick": {
-            "enable": true,
-            "mode": "push"
-          },
-          "resize": true
-        },
-        "modes": {
-          "grab": {
-            "distance": 400,
-            "line_linked": {
-              "opacity": 1
-            }
-          },
-          "bubble": {
-            "distance": 400,
-            "size": 40,
-            "duration": 2,
-            "opacity": 8,
-            "speed": 3
-          },
-          "repulse": {
-            "distance": 200,
-            "duration": 0.4
-          },
-          "push": {
-            "particles_nb": 4
-          },
-          "remove": {
-            "particles_nb": 2
-          }
-        }
-      },
-      "retina_detect": true
-    });
-
     async function fetchSim() {
       const query = document.getElementById('simQuery').value.trim();
       if (!query) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Empty Field',
-          text: 'Please enter a query.',
-        });
+        showAlert('Please enter a query.');
         return;
       }
 
       try {
         const response = await fetch(`/sim?query=${query}`);
         const data = await response.json();
-        Swal.fire({
-          icon: 'success',
-          title: 'API Response',
-          text: data.respond,
-        });
+        showAlert('Response: ' + data.respond, 'success');
         document.getElementById('simQuery').value = ''; // Clear input field
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error fetching data',
-        });
+        showAlert('Error fetching data', 'error');
         document.getElementById('simQuery').value = ''; // Clear input field
       }
     }
@@ -197,35 +92,30 @@
     async function teachApi() {
       const ask = document.getElementById('ask').value.trim();
       const ans = document.getElementById('ans').value.trim();
-
       if (!ask || !ans) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Empty Fields',
-          text: 'Please enter both a question and an answer.',
-        });
+        showAlert('Please fill in both fields.');
         return;
       }
 
       try {
         const response = await fetch(`/teach?ask=${ask}&ans=${ans}`);
         const data = await response.json();
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Successfully taught the API',
-        });
+        showAlert('Successfully taught the API', 'success');
         document.getElementById('ask').value = ''; // Clear input field
         document.getElementById('ans').value = ''; // Clear input field
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error teaching the API',
-        });
+        showAlert('Error teaching the API', 'error');
         document.getElementById('ask').value = ''; // Clear input field
         document.getElementById('ans').value = ''; // Clear input field
       }
+    }
+
+    function showAlert(message, type = 'error') {
+      Swal.fire({
+        icon: type,
+        title: type === 'error' ? 'Error' : 'Success',
+        text: message,
+      });
     }
   </script>
 </body>
