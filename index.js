@@ -20,26 +20,18 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-// Function to handle API request with fallback
-const fetchWithFallback = async (primaryUrl, backupUrl, params, timeout) => {
-  try {
-    const response = await axios.get(primaryUrl, { params, timeout });
-    return response.data;
-  } catch (error) {
-    console.error(`Primary API (${primaryUrl}) failed:`, error.message);
-    const response = await axios.get(backupUrl, { params });
-    return response.data;
-  }
+// Function to handle API request without timeout
+const fetchData = async (url, params) => {
+  const response = await axios.get(url, { params });
+  return response.data;
 };
 
 // Route to fetch data from /sim endpoint
 app.get('/sim', async (req, res) => {
   try {
-    const data = await fetchWithFallback(
-      'http://45.61.161.128:1658/sim', // Primary API
+    const data = await fetchData(
       'http://158.101.198.227:8084/sim', // Backup API
-      { query: req.query.query },
-      1000 // 1 seconds timeout for primary API
+      { query: req.query.query }
     );
     res.json(data);
   } catch (error) {
@@ -51,11 +43,9 @@ app.get('/sim', async (req, res) => {
 app.get('/teach', async (req, res) => {
   const { ask, ans } = req.query;
   try {
-    const data = await fetchWithFallback(
-      'http://45.61.161.128:1658/teach', // Primary API
+    const data = await fetchData(
       'http://158.101.198.227:8084/teach', // Backup API
-      { ask, ans },
-      1000 // 1 seconds timeout for primary API
+      { ask, ans }
     );
     res.json(data);
   } catch (error) {
@@ -66,6 +56,16 @@ app.get('/teach', async (req, res) => {
 // Serve the main HTML page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Serve the commands HTML page
+app.get('/commands', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'commands.html'));
+});
+
+// Serve the endpoints HTML page
+app.get('/endpoints', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'endpoints.html'));
 });
 
 // Middleware to handle 404 errors
