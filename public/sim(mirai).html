@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sim(mirai).js</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #282c34;
+            color: #abb2bf;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .title {
+            color: #61dafb;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .code-container {
+            background-color: #1e1e1e;
+            border-radius: 5px;
+            padding: 20px;
+            position: relative;
+            overflow: auto;
+        }
+        .code {
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            font-size: 14px;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #007acc;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .copy-btn:hover {
+            background-color: #005fa3;
+        }
+
+        @media (max-width: 600px) {
+            .title {
+                font-size: 20px;
+            }
+            .code {
+                font-size: 12px;
+            }
+            .copy-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="title">sim(mirai).js</h1>
+    <div class="code-container">
+        <button class="copy-btn" onclick="copyCode()">Copy</button>
+        <div class="code" id="code-block">
+            const axios = require("axios");<br><br>
+            module.exports.config = {<br>
+            &nbsp;&nbsp;name: "sim",<br>
+            &nbsp;&nbsp;version: "1",<br>
+            &nbsp;&nbsp;hasPermission: 0,<br>
+            &nbsp;&nbsp;credits: "Grey",<br>
+            &nbsp;&nbsp;description: "Simsimi",<br>
+            &nbsp;&nbsp;usages: "Message",<br>
+            &nbsp;&nbsp;commandCategory: "...",<br>
+            &nbsp;&nbsp;cooldowns: 0<br>
+            };<br><br>
+            module.exports.run = async ({ api, event, args }) => {<br>
+            &nbsp;&nbsp;try {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;let message = args.join(" ");<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;if (!message) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return api.sendMessage(`Please put Message`, event.threadID, event.messageID);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;const response = await axios.get(`https://sim-api-ctqz.onrender.com/sim?query=${message}`);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;const respond = response.data.respond;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;api.sendMessage(respond, event.threadID, event.messageID);<br>
+            &nbsp;&nbsp;} catch (error) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;console.error("An error occurred:", error);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;api.sendMessage("Oops! Something went wrong.", event.threadID, event.messageID);<br>
+            &nbsp;&nbsp;}<br>
+            };<br>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyCode() {
+        const codeBlock = document.getElementById('code-block');
+        const range = document.createRange();
+        range.selectNode(codeBlock);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        
+        try {
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            alert('Code copied to clipboard!');
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+        }
+    }
+</script>
+
+</body>
+</html>
