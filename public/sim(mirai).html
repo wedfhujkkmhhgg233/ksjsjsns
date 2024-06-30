@@ -36,18 +36,30 @@
             overflow-wrap: break-word;
             word-wrap: break-word;
             font-size: 14px;
+            color: #dcdcdc;
         }
         .copy-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-size: 30px;
+            padding: 15px;
+            cursor: pointer;
             position: absolute;
             top: 20px;
             right: 20px;
             background-color: #007acc;
             color: white;
-            border: none;
-            padding: 8px 12px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 14px;
+        }
+        .copy-btn.success {
+            background-color: #28a745;
+            box-shadow: 0 0 10px #00000030;
+            transition: background 0.2s linear;
+            cursor: default;
+        }
+        .copy-btn i {
+            margin-bottom: -5px;
         }
         .copy-btn:hover {
             background-color: #005fa3;
@@ -61,63 +73,85 @@
                 font-size: 12px;
             }
             .copy-btn {
-                padding: 6px 10px;
-                font-size: 12px;
+                padding: 10px;
+                font-size: 24px;
             }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
 <div class="container">
     <h1 class="title">sim(mirai).js</h1>
     <div class="code-container">
-        <button class="copy-btn" onclick="copyCode()">Copy</button>
-        <div class="code" id="code-block">
-            const axios = require("axios");<br><br>
-            module.exports.config = {<br>
-            &nbsp;&nbsp;name: "sim",<br>
-            &nbsp;&nbsp;version: "1",<br>
-            &nbsp;&nbsp;hasPermission: 0,<br>
-            &nbsp;&nbsp;credits: "Grey",<br>
-            &nbsp;&nbsp;description: "Simsimi",<br>
-            &nbsp;&nbsp;usages: "Message",<br>
-            &nbsp;&nbsp;commandCategory: "...",<br>
-            &nbsp;&nbsp;cooldowns: 0<br>
-            };<br><br>
-            module.exports.run = async ({ api, event, args }) => {<br>
-            &nbsp;&nbsp;try {<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;let message = args.join(" ");<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;if (!message) {<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return api.sendMessage(`Please put Message`, event.threadID, event.messageID);<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
-            &nbsp;&nbsp;&nbsp;&nbsp;const response = await axios.get(`https://sim-api-ctqz.onrender.com/sim?query=${message}`);<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;const respond = response.data.respond;<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;api.sendMessage(respond, event.threadID, event.messageID);<br>
-            &nbsp;&nbsp;} catch (error) {<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;console.error("An error occurred:", error);<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;api.sendMessage("Oops! Something went wrong.", event.threadID, event.messageID);<br>
-            &nbsp;&nbsp;}<br>
-            };<br>
-        </div>
+        <span class="copy-btn" data-content="const axios = require('axios');&#10;&#10;module.exports.config = {&#10;&#9;name: 'sim',&#10;&#9;version: '1',&#10;&#9;hasPermission: 0,&#10;&#9;credits: 'Grey',&#10;&#9;description: 'Simsimi',&#10;&#9;usages: 'Message',&#10;&#9;commandCategory: '...',&#10;&#9;cooldowns: 0&#10;};&#10;&#10;module.exports.run = async ({ api, event, args }) => {&#10;&#9;try {&#10;&#9;&#9;let message = args.join(' ');&#10;&#9;&#9;if (!message) {&#10;&#9;&#9;&#9;return api.sendMessage(`Please put Message`, event.threadID, event.messageID);&#10;&#9;&#9;}&#10;&#10;&#9;&#9;const response = await axios.get(`https://sim-api-ctqz.onrender.com/sim?query=${message}`);&#10;&#9;&#9;const respond = response.data.respond;&#10;&#9;&#9;api.sendMessage(respond, event.threadID, event.messageID);&#10;&#9;} catch (error) {&#10;&#9;&#9;console.error('An error occurred:', error);&#10;&#9;&#9;api.sendMessage('Oops! Something went wrong.', event.threadID, event.messageID);&#10;&#9;}&#10;};" onclick="copyCode(this)"><i class="fas fa-copy"></i></span>
+        <pre class="code" id="code-block">
+const axios = require("axios");
+
+module.exports.config = {
+    name: "sim",
+    version: "1",
+    hasPermission: 0,
+    credits: "Grey",
+    description: "Simsimi",
+    usages: "Message",
+    commandCategory: "...",
+    cooldowns: 0
+};
+
+module.exports.run = async ({ api, event, args }) => {
+    try {
+        let message = args.join(" ");
+        if (!message) {
+            return api.sendMessage(`Please put Message`, event.threadID, event.messageID);
+        }
+
+        const response = await axios.get(`https://sim-api-ctqz.onrender.com/sim?query=${message}`);
+        const respond = response.data.respond;
+        api.sendMessage(respond, event.threadID, event.messageID);
+    } catch (error) {
+        console.error("An error occurred:", error);
+        api.sendMessage("Oops! Something went wrong.", event.threadID, event.messageID);
+    }
+};
+        </pre>
     </div>
 </div>
 
 <script>
-    function copyCode() {
-        const codeBlock = document.getElementById('code-block');
-        const range = document.createRange();
-        range.selectNode(codeBlock);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(range);
+    function copyCode(toCopyEl) {
+        const opacityDuration = 300;
+        const successContent = '<i class="fas fa-check"></i>';
         
-        try {
-            document.execCommand('copy');
-            window.getSelection().removeAllRanges();
-            alert('Code copied to clipboard!');
-        } catch (err) {
+        navigator.clipboard.writeText($(toCopyEl).data("content")).then(
+            function () {
+                $(toCopyEl).addClass("ongoing");
+
+                let oldContent = $(toCopyEl).html();
+
+                $(toCopyEl).animate({ opacity: "0" }, opacityDuration);
+
+                setTimeout(() => {
+                    $(toCopyEl).html(successContent);
+                    $(toCopyEl).addClass("success");
+                }, opacityDuration);
+
+                $(toCopyEl).animate({ opacity: "1" }, opacityDuration);
+
+                setTimeout(() => {
+                    $(toCopyEl).animate({ opacity: "0" }, opacityDuration);
+                    setTimeout(() => {
+                        $(toCopyEl).html(oldContent);
+                        $(toCopyEl).removeClass("success ongoing");
+                    }, opacityDuration);
+                    $(toCopyEl).animate({ opacity: "1" }, opacityDuration);
+                }, opacityDuration * 2);
+            }
+        ).catch(err => {
             console.error('Failed to copy: ', err);
-        }
+        });
     }
 </script>
 
