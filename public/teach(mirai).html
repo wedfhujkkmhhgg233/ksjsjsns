@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>teach(mirai).js</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #282c34;
+            color: #abb2bf;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .title {
+            color: #61dafb;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .code-container {
+            background-color: #1e1e1e;
+            border-radius: 5px;
+            padding: 20px;
+            position: relative;
+            overflow: auto;
+        }
+        .code {
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            font-size: 14px;
+            color: #dcdcdc;
+        }
+        .copy-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-size: 30px;
+            padding: 15px;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #007acc;
+            color: white;
+        }
+        .copy-btn.success {
+            background-color: #28a745;
+            box-shadow: 0 0 10px #00000030;
+            transition: background 0.2s linear;
+            cursor: default;
+        }
+        .copy-btn i {
+            margin-bottom: -5px;
+        }
+        .copy-btn:hover {
+            background-color: #005fa3;
+        }
+
+        @media (max-width: 600px) {
+            .title {
+                font-size: 20px;
+            }
+            .code {
+                font-size: 12px;
+            }
+            .copy-btn {
+                padding: 10px;
+                font-size: 24px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="title">teach(mirai).js</h1>
+    <div class="code-container">
+        <span class="copy-btn" data-content="const axios = require('axios');&#10;&#10;module.exports.config = {&#10;&#9;name: 'teach',&#10;&#9;version: '1.0.0',&#10;&#9;hasPermission: 0,&#10;&#9;credits: 'https://sim-api-ctqz.onrender.com/',&#10;&#9;description: 'Teach Simsimi',&#10;&#9;usages: 'Teach',&#10;&#9;commandCategory: '...',&#10;&#9;cooldowns: 0&#10;};&#10;&#10;module.exports.run = async ({ api, event, args }) => {&#10;&#9;try {&#10;&#9;&#9;const text = args.join(' ');&#10;&#9;&#9;const text1 = text.substr(0, text.indexOf(' - '));&#10;&#9;&#9;const text2 = text.split(' - ').pop();&#10;&#10;&#9;&#9;if (!text1 || !text2) {&#10;&#9;&#9;&#9;return api.sendMessage(`Usage: ${global.config.PREFIX}teach hi - hello`, event.threadID, event.messageID);&#10;&#9;&#9;}&#10;&#10;&#9;&#9;const response = await axios.get(`https://sim-api-ctqz.onrender.com/teach?ask=${encodeURIComponent(text1)}&ans=${encodeURIComponent(text2)}`);&#10;&#10;&#9;&#9;if (response.data.message.includes('already learned')) {&#10;&#9;&#9;&#9;return api.sendMessage(`Sim API has already learned this word.`, event.threadID, event.messageID);&#10;&#9;&#9;}&#10;&#10;&#9;&#9;api.sendMessage(`Your ask: ${text1}&#10;Sim respond: ${text2}`, event.threadID, event.messageID);&#10;&#9;} catch (error) {&#10;&#9;&#9;console.error('An error occurred:', error);&#10;&#9;&#9;api.sendMessage('Oops! Something went wrong.', event.threadID, event.messageID);&#10;&#9;}&#10;};" onclick="copyCode(this)"><i class="fas fa-copy"></i></span>
+        <pre class="code" id="code-block">
+const axios = require("axios");
+
+module.exports.config = {
+    name: "teach",
+    version: "1.0.0",
+    hasPermission: 0,
+    credits: "https://sim-api-ctqz.onrender.com/",
+    description: "Teach Simsimi",
+    usages: "Teach",
+    commandCategory: "...",
+    cooldowns: 0
+};
+
+module.exports.run = async ({ api, event, args }) => {
+    try {
+        const text = args.join(" ");
+        const text1 = text.substr(0, text.indexOf(' - '));
+        const text2 = text.split(" - ").pop();
+
+        if (!text1 || !text2) {
+            return api.sendMessage(`Usage: ${global.config.PREFIX}teach hi - hello`, event.threadID, event.messageID);
+        }
+
+        const response = await axios.get(`https://sim-api-ctqz.onrender.com/teach?ask=${encodeURIComponent(text1)}&ans=${encodeURIComponent(text2)}`);
+
+        if (response.data.message.includes("already learned")) {
+            return api.sendMessage(`Sim API has already learned this word.`, event.threadID, event.messageID);
+        }
+
+        api.sendMessage(`Your ask: ${text1}\nSim respond: ${text2}`, event.threadID, event.messageID);
+    } catch (error) {
+        console.error("An error occurred:", error);
+        api.sendMessage("Oops! Something went wrong.", event.threadID, event.messageID);
+    }
+};
+        </pre>
+    </div>
+</div>
+
+<script>
+    function copyCode(toCopyEl) {
+        const opacityDuration = 300;
+        const successContent = '<i class="fas fa-check"></i>';
+        
+        navigator.clipboard.writeText($(toCopyEl).data("content")).then(
+            function () {
+                $(toCopyEl).addClass("ongoing");
+
+                let oldContent = $(toCopyEl).html();
+
+                $(toCopyEl).animate({ opacity: "0" }, opacityDuration);
+
+                setTimeout(() => {
+                    $(toCopyEl).html(successContent);
+                    $(toCopyEl).addClass("success");
+                }, opacityDuration);
+
+                $(toCopyEl).animate({ opacity: "1" }, opacityDuration);
+
+                setTimeout(() => {
+                    $(toCopyEl).animate({ opacity: "0" }, opacityDuration);
+                    setTimeout(() => {
+                        $(toCopyEl).html(oldContent);
+                        $(toCopyEl).removeClass("success ongoing");
+                    }, opacityDuration);
+                    $(toCopyEl).animate({ opacity: "1" }, opacityDuration);
+                }, opacityDuration * 2);
+            }
+        ).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    }
+</script>
+
+</body>
+</html>
