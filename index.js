@@ -81,8 +81,8 @@ app.get('/teach-mirai.js', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'teach(mirai).html'));
 });
 
-app.get('/sim-mirai.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'sim(mirai).html'));
+app.get('/sim-goatbotv1.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'sim(goatbotv1).html'));
 });
 
 app.get('/sim-mirai.js', (req, res) => {
