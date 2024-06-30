@@ -125,6 +125,14 @@
   </div>
 
   <script>
+    // Check if the page is loaded from an external URL
+    window.addEventListener('load', function() {
+      if (window.location.href !== window.location.origin + window.location.pathname) {
+        // Close the loading indicator if it's open from previous navigation
+        Swal.close();
+      }
+    });
+
     function handleButtonClick(command, url) {
       showLoading(); // Show loading indicator
 
