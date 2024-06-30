@@ -127,9 +127,14 @@
   <script>
     function handleButtonClick(command, url) {
       showLoading(); // Show loading indicator
-      // Simulate an asynchronous operation (e.g., fetch data)
+
+      // Hide loading indicator immediately
       setTimeout(() => {
-        // Redirect to the specified URL after some delay (simulating loading)
+        Swal.close();
+      }, 0);
+
+      // Redirect to the specified URL after some delay (simulating loading)
+      setTimeout(() => {
         window.location.href = url;
       }, 2000); // Example delay of 2 seconds (2000 milliseconds)
     }
