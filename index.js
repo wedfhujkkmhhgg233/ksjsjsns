@@ -72,35 +72,6 @@ app.get('/endpoints', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'endpoints.html'));
 });
 
-// Avoid special characters in route names
-app.get('/sim-mirai.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'sim(mirai).html'));
-});
-
-app.get('/teach-mirai.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'teach(mirai).html'));
-});
-
-app.get('/sim-goatbotv1.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'sim(goatbotv1).html'));
-});
-
-app.get('/sim-mirai.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'sim(mirai).html'));
-});
-
-app.get('/sim-mirai.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'sim(mirai).html'));
-});
-
-app.get('/sim-mirai.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'sim(mirai).html'));
-});
-
-app.get('/sim-mirai.js', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'sim(mirai).html'));
-});
-
 // Middleware to handle 404 errors
 app.use((req, res, next) => {
   res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
