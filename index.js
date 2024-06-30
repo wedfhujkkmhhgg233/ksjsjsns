@@ -22,8 +22,12 @@ app.use(limiter);
 
 // Function to handle API request without timeout
 const fetchData = async (url, params) => {
-  const response = await axios.get(url, { params });
-  return response.data;
+  try {
+    const response = await axios.get(url, { params });
+    return response.data;
+  } catch (error) {
+    throw new Error('Error fetching data');
+  }
 };
 
 // Route to fetch data from /sim endpoint
@@ -68,7 +72,8 @@ app.get('/endpoints', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'endpoints.html'));
 });
 
-app.get('/sim(mirai).js', (req, res) => {
+// Avoid special characters in route names
+app.get('/sim-mirai.js', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'sim(mirai).html'));
 });
 
