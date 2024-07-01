@@ -5,12 +5,12 @@ ENV NODE_ENV=production
 WORKDIR /app
 
 # Copy the package.json and package-lock.json to the container
-COPY ["package.json", "package-lock.json*", "./"]
+COPY package*.json ./
 
-# Install all dependencies and update the package-lock.json if necessary
+# Install all dependencies
 RUN npm install
 
-# Install only production dependencies and omit the dev dependencies
+# Prune the dev dependencies to only include production dependencies
 RUN npm prune --omit=dev
 
 # Copy the rest of the application code to the container
