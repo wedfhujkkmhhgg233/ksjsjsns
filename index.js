@@ -48,7 +48,7 @@ app.get('/teach', async (req, res) => {
   const { ask, ans } = req.query;
   try {
     const data = await fetchData(
-      'http://fi4.bot-hosting.net:21809/sim/teach, // Backup API
+      'http://fi4.bot-hosting.net:21809/sim/teach', // Backup API
       { ask, ans }
     );
     res.json(data);
