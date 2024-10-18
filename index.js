@@ -34,7 +34,7 @@ const fetchData = async (url, params) => {
 app.get('/sim', async (req, res) => {
   try {
     const data = await fetchData(
-      'http://158.101.198.227:8084/sim', // Backup API
+      'http://fi4.bot-hosting.net:21809/sim/sim', // Backup API
       { query: req.query.query }
     );
     res.json(data);
@@ -48,7 +48,7 @@ app.get('/teach', async (req, res) => {
   const { ask, ans } = req.query;
   try {
     const data = await fetchData(
-      'http://158.101.198.227:8084/teach', // Backup API
+      'http://fi4.bot-hosting.net:21809/sim/teach, // Backup API
       { ask, ans }
     );
     res.json(data);
