@@ -16,80 +16,74 @@
       z-index: -1;
       background-color: transparent;
     }
-
-    .custom-btn {
-      position: relative;
+    
+    .btn-blue {
       display: inline-block;
       padding: 10px 20px;
       color: #fff;
       font-size: 16px;
       text-transform: uppercase;
       text-align: center;
-      letter-spacing: 1px;
-      background-size: 300% 100%;
-      border: none;
+      background-color: #007bff;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
       cursor: pointer;
-      z-index: 1;
-      transition: all .4s ease-in-out;
     }
 
-    .btn-15 {
-      background-image: linear-gradient(to right, #24c6dc, #514a9d, #24c6dc, #514a9d);
-      box-shadow: 0 4px 15px 0 rgba(65, 132, 234, 0.75);
-    }
-
-    .btn-15:hover {
-      background-position: 100% 0;
-      transition: all .4s ease-in-out;
+    .btn-blue:hover {
+      background-color: #0056b3;
     }
 
     .input-field {
-      color: black;
+      color: #333;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    .input-field:focus {
+      border-color: #007bff;
+      outline: none;
     }
 
     .footer {
-      background: rgba(0, 0, 0, 0.7);
       padding: 10px;
       text-align: center;
-      font-size: 16px;
-      color: #fff;
+      font-size: 14px;
+      color: #777;
       margin-top: 50px;
-      border-top: 1px solid rgba(255, 255, 255, 0.3);
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(5px);
-    }
     }
   </style>
 </head>
 
-<body class="bg-gray-900 text-white flex items-center justify-center h-screen">
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen">
   <div id="particles-js"></div>
-  <div class="container max-w-lg mx-auto p-6 bg-white rounded-lg shadow-lg text-center">
+  <div class="container max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg text-center">
     <h1 class="text-3xl font-bold mb-4 text-gray-800">Sim API by Jerome Jamis</h1>
     <p class="text-lg text-gray-600 mb-6">Welcome to the Sim API. Explore our features and enjoy our service.</p>
 
     <!-- Commands and Endpoint Buttons -->
-    <div class="mb-4">
-      <a href="/commands" class="custom-btn btn-15 mr-4">Commands</a>
-      <a href="/endpoints" class="custom-btn btn-15">Endpoint</a>
+    <div class="mb-6">
+      <a href="/commands" class="btn-blue mr-2">Commands</a>
+      <a href="/endpoints" class="btn-blue">Endpoints</a>
     </div>
 
     <!-- Sim Feature -->
-    <input type="text" id="simQuery" class="input-field w-full mb-4 p-2 border border-gray-300 rounded" placeholder="Enter your query">
-    <button class="custom-btn btn-15 w-full mb-4" onclick="fetchSim()">Fetch Sim Response</button>
-    <div id="response" class="message"></div>
+    <input type="text" id="simQuery" class="input-field w-full mb-4 p-2" placeholder="Enter your query">
+    <button class="btn-blue w-full mb-4" onclick="fetchSim()">Fetch Sim Response</button>
+    <div id="response" class="text-gray-700 mt-2"></div>
 
     <!-- Teach Feature -->
-    <input type="text" id="ask" class="input-field w-full mb-4 p-2 border border-gray-300 rounded" placeholder="Question to teach">
-    <input type="text" id="ans" class="input-field w-full mb-4 p-2 border border-gray-300 rounded" placeholder="Answer to teach">
-    <button class="custom-btn btn-15 w-full" onclick="teachApi()">Teach API</button>
-    <div id="teachResponse" class="message"></div>
+    <input type="text" id="ask" class="input-field w-full mb-4 p-2" placeholder="Question to teach">
+    <input type="text" id="ans" class="input-field w-full mb-4 p-2" placeholder="Answer to teach">
+    <button class="btn-blue w-full" onclick="teachApi()">Teach API</button>
+    <div id="teachResponse" class="text-gray-700 mt-2"></div>
 
-    <footer class="text-gray-500 text-sm mt-6">© 2024 Jerome Jamis. All rights reserved.</footer>
+    <footer class="footer">© 2024 Jerome Jamis. All rights reserved.</footer>
     <div class="footer">
       <p>Time: <span id="time" style="font-weight: bold;"></span></p>
       <p>Ping: <span id="ping" style="font-weight: bold;"></span></p>
@@ -106,103 +100,22 @@
             "value_area": 800
           }
         },
-        "color": {
-          "value": "#61dafb"
-        },
+        "color": { "value": "#61dafb" },
         "shape": {
           "type": "circle",
-          "stroke": {
-            "width": 0,
-            "color": "#61dafb"
-          },
-          "polygon": {
-            "nb_sides": 5
-          },
-          "image": {
-            "src": "img/github.svg",
-            "width": 100,
-            "height": 100
-          }
+          "stroke": { "width": 0, "color": "#61dafb" },
+          "polygon": { "nb_sides": 5 }
         },
-        "opacity": {
-          "value": 0.5,
-          "random": false,
-          "anim": {
-            "enable": false,
-            "speed": 1,
-            "opacity_min": 0.1,
-            "sync": false
-          }
-        },
-        "size": {
-          "value": 3,
-          "random": true,
-          "anim": {
-            "enable": false,
-            "speed": 40,
-            "size_min": 0.1,
-            "sync": false
-          }
-        },
-        "line_linked": {
-          "enable": true,
-          "distance": 150,
-          "color": "#61dafb",
-          "opacity": 0.4,
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 6,
-          "direction": "none",
-          "random": false,
-          "straight": false,
-          "out_mode": "out",
-          "bounce": false,
-          "attract": {
-            "enable": false,
-            "rotateX": 600,
-            "rotateY": 1200
-          }
-        }
+        "opacity": { "value": 0.5 },
+        "size": { "value": 3 },
+        "line_linked": { "enable": true, "distance": 150, "color": "#61dafb", "opacity": 0.4, "width": 1 },
+        "move": { "enable": true, "speed": 6 }
       },
       "interactivity": {
         "detect_on": "canvas",
-        "events": {
-          "onhover": {
-            "enable": true,
-            "mode": "repulse"
-          },
-          "onclick": {
-            "enable": true,
-            "mode": "push"
-          },
-          "resize": true
-        },
+        "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
         "modes": {
-          "grab": {
-            "distance": 400,
-            "line_linked": {
-              "opacity": 1
-            }
-          },
-          "bubble": {
-            "distance": 400,
-            "size": 40,
-            "duration": 2,
-            "opacity": 8,
-            "speed": 3
-          },
-          "repulse": {
-            "distance": 200,
-            "duration": 0.4
-          },
-          "push": {
-            "particles_nb": 4
-          },
-          "remove": {
-            "particles_nb": 2
-          }
+          "repulse": { "distance": 200, "duration": 0.4 }
         }
       },
       "retina_detect": true
@@ -211,29 +124,16 @@
     async function fetchSim() {
       const query = document.getElementById('simQuery').value.trim();
       if (!query) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Empty Field',
-          text: 'Please enter a query.',
-        });
+        Swal.fire({ icon: 'warning', title: 'Empty Field', text: 'Please enter a query.' });
         return;
       }
-
       try {
         const response = await fetch(`/sim?query=${query}`);
         const data = await response.json();
-        Swal.fire({
-          icon: 'success',
-          title: 'API Response',
-          text: data.respond,
-        });
+        Swal.fire({ icon: 'success', title: 'API Response', text: data.respond });
         document.getElementById('simQuery').value = ''; // Clear input field
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error fetching data',
-        });
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Error fetching data' });
         document.getElementById('simQuery').value = ''; // Clear input field
       }
     }
@@ -241,63 +141,39 @@
     async function teachApi() {
       const ask = document.getElementById('ask').value.trim();
       const ans = document.getElementById('ans').value.trim();
-
       if (!ask || !ans) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Empty Fields',
-          text: 'Please enter both a question and an answer.',
-        });
+        Swal.fire({ icon: 'warning', title: 'Empty Fields', text: 'Please enter both a question and an answer.' });
         return;
       }
-
       try {
         const response = await fetch(`/teach?ask=${ask}&ans=${ans}`);
         const data = await response.json();
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Successfully taught the API',
-        });
-        document.getElementById('ask').value = ''; // Clear input field
-        document.getElementById('ans').value = ''; // Clear input field
+        Swal.fire({ icon: 'success', title: 'Success', text: 'Successfully taught the API' });
+        document.getElementById('ask').value = ''; // Clear input fields
+        document.getElementById('ans').value = ''; // Clear input fields
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error teaching the API',
-        });
-        document.getElementById('ask').value = ''; // Clear input field
-        document.getElementById('ans').value = ''; // Clear input field
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Error teaching the API' });
+        document.getElementById('ask').value = ''; // Clear input fields
+        document.getElementById('ans').value = ''; // Clear input fields
       }
     }
 
     function measurePing() {
-      var xhr = new XMLHttpRequest();
-      var startTime, endTime;
+      const xhr = new XMLHttpRequest();
+      let startTime = Date.now();
       xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
-          endTime = Date.now();
-          var pingTime = endTime - startTime;
+          const pingTime = Date.now() - startTime;
           document.getElementById("ping").textContent = pingTime + " ms";
         }
       };
-      xhr.open("GET", location.href + "?t=" + new Date().getTime());
-      startTime = Date.now();
+      xhr.open("GET", location.href + "?t=" + startTime);
       xhr.send();
     }
 
     function updateTime() {
       const now = new Date();
-      const options = {
-        timeZone: 'Asia/Manila',
-        hour12: true,
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric'
-      };
-      const formattedTime = now.toLocaleString('en-US', options);
-      document.getElementById('time').textContent = formattedTime;
+      document.getElementById('time').textContent = now.toLocaleTimeString('en-US', { hour12: true });
     }
 
     setInterval(updateTime, 1000);
