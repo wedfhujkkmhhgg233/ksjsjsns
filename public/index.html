@@ -9,6 +9,12 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #1a1a1a; /* Dark background */
+      color: #eaeaea; /* Light text color */
+    }
+
     #particles-js {
       position: fixed;
       width: 100%;
@@ -16,29 +22,39 @@
       z-index: -1;
       background-color: transparent;
     }
-    
-    .btn-blue {
-      display: inline-block;
-      padding: 10px 20px;
-      color: #fff;
-      font-size: 16px;
+
+    .container {
+      background: rgba(0, 0, 0, 0.7); /* Semi-transparent black for a darker effect */
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px); /* Glass effect */
+    }
+
+    .title {
+      color: #61dafb;
+      font-weight: 700;
       text-transform: uppercase;
-      text-align: center;
+    }
+
+    .btn-blue {
       background-color: #007bff;
+      color: #fff;
+      padding: 10px 20px;
       border-radius: 5px;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, transform 0.3s ease;
       box-shadow: 0 4px 10px rgba(0, 123, 255, 0.5);
-      cursor: pointer;
     }
 
     .btn-blue:hover {
       background-color: #0056b3;
+      transform: scale(1.05);
     }
 
     .input-field {
-      color: #333;
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
+      background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent white for input fields */
+      color: #eaeaea;
+      border: 1px solid #555;
       border-radius: 5px;
       padding: 8px;
       font-size: 16px;
@@ -51,20 +67,18 @@
     }
 
     .footer {
-      padding: 10px;
-      text-align: center;
+      margin-top: 30px;
       font-size: 14px;
       color: #777;
-      margin-top: 50px;
     }
   </style>
 </head>
 
-<body class="bg-gray-100 text-gray-800 flex items-center justify-center min-h-screen">
+<body>
   <div id="particles-js"></div>
-  <div class="container max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg text-center">
-    <h1 class="text-3xl font-bold mb-4 text-gray-800">Sim API by Jerome Jamis</h1>
-    <p class="text-lg text-gray-600 mb-6">Welcome to the Sim API. Explore our features and enjoy our service.</p>
+  <div class="container max-w-md mx-auto text-center">
+    <h1 class="title text-3xl mb-6">Sim API by Jerome Jamis</h1>
+    <p class="text-lg mb-8">Explore the features of the Sim API and enjoy our service.</p>
 
     <!-- Commands and Endpoint Buttons -->
     <div class="mb-6">
@@ -75,14 +89,15 @@
     <!-- Sim Feature -->
     <input type="text" id="simQuery" class="input-field w-full mb-4 p-2" placeholder="Enter your query">
     <button class="btn-blue w-full mb-4" onclick="fetchSim()">Fetch Sim Response</button>
-    <div id="response" class="text-gray-700 mt-2"></div>
+    <div id="response" class="text-gray-400 mt-2"></div>
 
     <!-- Teach Feature -->
     <input type="text" id="ask" class="input-field w-full mb-4 p-2" placeholder="Question to teach">
     <input type="text" id="ans" class="input-field w-full mb-4 p-2" placeholder="Answer to teach">
     <button class="btn-blue w-full" onclick="teachApi()">Teach API</button>
-    <div id="teachResponse" class="text-gray-700 mt-2"></div>
+    <div id="teachResponse" class="text-gray-400 mt-2"></div>
 
+    <!-- Footer Section -->
     <footer class="footer">© 2024 Jerome Jamis. All rights reserved.</footer>
     <div class="footer">
       <p>Time: <span id="time" style="font-weight: bold;"></span></p>
@@ -92,33 +107,21 @@
 
   <script>
     particlesJS("particles-js", {
-      "particles": {
-        "number": {
-          "value": 80,
-          "density": {
-            "enable": true,
-            "value_area": 800
-          }
-        },
-        "color": { "value": "#61dafb" },
-        "shape": {
-          "type": "circle",
-          "stroke": { "width": 0, "color": "#61dafb" },
-          "polygon": { "nb_sides": 5 }
-        },
-        "opacity": { "value": 0.5 },
-        "size": { "value": 3 },
-        "line_linked": { "enable": true, "distance": 150, "color": "#61dafb", "opacity": 0.4, "width": 1 },
-        "move": { "enable": true, "speed": 6 }
+      particles: {
+        number: { value: 60, density: { enable: true, value_area: 800 } },
+        color: { value: "#61dafb" },
+        shape: { type: "circle", stroke: { width: 0, color: "#61dafb" } },
+        opacity: { value: 0.5 },
+        size: { value: 3 },
+        line_linked: { enable: true, distance: 150, color: "#61dafb", opacity: 0.4, width: 1 },
+        move: { enable: true, speed: 6 }
       },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
-        "modes": {
-          "repulse": { "distance": 200, "duration": 0.4 }
-        }
+      interactivity: {
+        detect_on: "canvas",
+        events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
+        modes: { repulse: { distance: 200, duration: 0.4 } }
       },
-      "retina_detect": true
+      retina_detect: true
     });
 
     async function fetchSim() {
@@ -131,10 +134,10 @@
         const response = await fetch(`/sim?query=${query}`);
         const data = await response.json();
         Swal.fire({ icon: 'success', title: 'API Response', text: data.respond });
-        document.getElementById('simQuery').value = ''; // Clear input field
+        document.getElementById('simQuery').value = '';
       } catch (error) {
         Swal.fire({ icon: 'error', title: 'Error', text: 'Error fetching data' });
-        document.getElementById('simQuery').value = ''; // Clear input field
+        document.getElementById('simQuery').value = '';
       }
     }
 
@@ -149,12 +152,12 @@
         const response = await fetch(`/teach?ask=${ask}&ans=${ans}`);
         const data = await response.json();
         Swal.fire({ icon: 'success', title: 'Success', text: 'Successfully taught the API' });
-        document.getElementById('ask').value = ''; // Clear input fields
-        document.getElementById('ans').value = ''; // Clear input fields
+        document.getElementById('ask').value = '';
+        document.getElementById('ans').value = '';
       } catch (error) {
         Swal.fire({ icon: 'error', title: 'Error', text: 'Error teaching the API' });
-        document.getElementById('ask').value = ''; // Clear input fields
-        document.getElementById('ans').value = ''; // Clear input fields
+        document.getElementById('ask').value = '';
+        document.getElementById('ans').value = '';
       }
     }
 
