@@ -49,23 +49,30 @@ app.get('/sim', async (req, res) => {
 
     const botResponse = simResponse.data.respond || 'No response from FI Bot Hosting';
 
-    // Auto-teach Simsimi.vn
-    const simsimiResponse = await axios.post(
-      'https://api.simsimi.vn/v1/simtalk',
-      `text=${encodeURIComponent(query)}&lc=ph&key=`,
-      {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    // Proceed with auto-teach in the background
+    (async () => {
+      try {
+        // Fetch Simsimi.vn response for teaching
+        const simsimiResponse = await axios.post(
+          'https://api.simsimi.vn/v1/simtalk',
+          `text=${encodeURIComponent(query)}&lc=ph&key=`,
+          {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          }
+        );
+
+        const teachMessage = simsimiResponse.data.message || 'No response from Simsimi';
+
+        // Teach your own /teach endpoint
+        await axios.get('http://fi4.bot-hosting.net:21809/sim/teach', {
+          params: { ask: query, ans: teachMessage },
+        });
+      } catch (error) {
+        console.error(`Auto-teach failed for query "${query}":`, error.message);
       }
-    );
+    })();
 
-    const teachMessage = simsimiResponse.data.message || 'No response from Simsimi';
-
-    // Teach your own /teach endpoint
-    await axios.get('http://fi4.bot-hosting.net:21809/sim/teach', {
-      params: { ask: query, ans: teachMessage },
-    });
-
-    // Respond to the user with FI Bot Hosting's respond field
+    // Respond to the user with FI Bot Hosting's response
     res.type('json').send(
       JSON.stringify(
         {
@@ -82,7 +89,7 @@ app.get('/sim', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error processing /sim request',
+      message: 'Error fetching data from FI Bot Hosting',
       error: error.message,
       processingTime: measureProcessingTime(startTime),
     });
