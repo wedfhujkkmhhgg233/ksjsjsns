@@ -78,7 +78,7 @@ app.get('/sim', async (req, res) => {
         {
           author: 'Jerome',
           status: 200,
-          message: botResponse,
+          respond: botResponse,
           processingTime: measureProcessingTime(startTime),
         },
         null,
