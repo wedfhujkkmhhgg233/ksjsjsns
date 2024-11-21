@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
-const rateLimit = require('express-rate-limit');
 const path = require('path');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = 3000;
@@ -13,61 +13,130 @@ const limiter = rateLimit({
   handler: (req, res) => {
     res.status(429).json({
       message: 'Too many requests from this IP, please try again later.',
-      status: 429
+      status: 429,
+    });
+  },
+});
+
+app.use(express.json());
+app.use(limiter);
+
+// Helper function to measure processing time
+const measureProcessingTime = (start) => {
+  const end = process.hrtime(start);
+  return `${(end[0] * 1e3 + end[1] / 1e6).toFixed(2)}ms`;
+};
+
+// Route: /sim with auto-teach functionality
+app.get('/sim', async (req, res) => {
+  const startTime = process.hrtime();
+  const query = req.query.query;
+
+  if (!query) {
+    return res.status(400).json({
+      author: 'Jerome',
+      status: 400,
+      message: 'Query parameter is required',
+    });
+  }
+
+  try {
+    // Fetch response from bot-hosting API
+    const simResponse = await axios.get('http://fi4.bot-hosting.net:21809/sim/sim', {
+      params: { query },
+    });
+
+    const botMessage = simResponse.data.message || 'No response from bot-hosting API';
+
+    // Auto-teach Simsimi.vn
+    const simsimiResponse = await axios.post(
+      'https://api.simsimi.vn/v1/simtalk',
+      `text=${encodeURIComponent(query)}&lc=ph&key=`,
+      {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      }
+    );
+
+    const teachMessage = simsimiResponse.data.message || 'No response from Simsimi';
+
+    // Teach your own /teach endpoint
+    await axios.get('http://fi4.bot-hosting.net:21809/sim/teach', {
+      params: { ask: query, ans: teachMessage },
+    });
+
+    // Respond to the user with bot-hosting API response
+    res.type('json').send(
+      JSON.stringify(
+        {
+          author: 'Jerome',
+          status: 200,
+          message: botMessage,
+          processingTime: measureProcessingTime(startTime),
+        },
+        null,
+        2
+      )
+    );
+  } catch (error) {
+    res.status(500).json({
+      author: 'Jerome',
+      status: 500,
+      message: 'Error processing /sim request',
+      error: error.message,
+      processingTime: measureProcessingTime(startTime),
     });
   }
 });
 
-app.use(limiter);
-
-// Function to handle API request without timeout
-const fetchData = async (url, params) => {
-  try {
-    const response = await axios.get(url, { params });
-    return response.data;
-  } catch (error) {
-    throw new Error('Error fetching data');
-  }
-};
-
-// Route to fetch data from /sim endpoint
-app.get('/sim', async (req, res) => {
-  try {
-    const data = await fetchData(
-      'http://fi4.bot-hosting.net:21809/sim/sim', // Backup API
-      { query: req.query.query }
-    );
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: 'Error fetching data from /sim endpoint' });
-  }
-});
-
-// Route to teach the API
+// Route: /teach
 app.get('/teach', async (req, res) => {
+  const startTime = process.hrtime();
   const { ask, ans } = req.query;
+
+  if (!ask || !ans) {
+    return res.status(400).json({
+      author: 'Jerome',
+      status: 400,
+      message: 'Both "ask" and "ans" parameters are required',
+    });
+  }
+
   try {
-    const data = await fetchData(
-      'http://fi4.bot-hosting.net:21809/sim/teach', // Backup API
-      { ask, ans }
+    const teachResponse = await axios.get('http://fi4.bot-hosting.net:21809/sim/teach', {
+      params: { ask, ans },
+    });
+
+    res.type('json').send(
+      JSON.stringify(
+        {
+          author: 'Jerome',
+          status: 200,
+          message: 'Successfully taught the API',
+          teachResponse: teachResponse.data,
+          processingTime: measureProcessingTime(startTime),
+        },
+        null,
+        2
+      )
     );
-    res.json(data);
   } catch (error) {
-    res.status(500).json({ error: 'Error teaching the API' });
+    res.status(500).json({
+      author: 'Jerome',
+      status: 500,
+      message: 'Error teaching the API',
+      error: error.message,
+      processingTime: measureProcessingTime(startTime),
+    });
   }
 });
 
-// Serve the main HTML page
+// Serve HTML files
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-
-// Serve the commands HTML page
 app.get('/commands', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'commands.html'));
 });
-
-// Serve the endpoints HTML page
 app.get('/endpoints', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'endpoints.html'));
 });
@@ -83,6 +152,7 @@ app.use((err, req, res, next) => {
   res.status(500).sendFile(path.join(__dirname, 'public', '404.html'));
 });
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
