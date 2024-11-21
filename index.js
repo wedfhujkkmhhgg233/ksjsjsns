@@ -9,11 +9,12 @@ const PORT = 3000;
 // Set up rate limiting
 const limiter = rateLimit({
   windowMs: 30 * 60 * 1000, // 30 minutes
-  max: 1000, // Limit each IP to 1000 requests per windowMs
+  max: 1000,
   handler: (req, res) => {
     res.status(429).json({
-      message: 'Too many requests from this IP, please try again later.',
+      author: 'Jerome',
       status: 429,
+      message: 'Too many requests from this IP, please try again later.',
     });
   },
 });
@@ -41,12 +42,12 @@ app.get('/sim', async (req, res) => {
   }
 
   try {
-    // Fetch response from bot-hosting API
+    // Fetch response from FI Bot Hosting
     const simResponse = await axios.get('http://fi4.bot-hosting.net:21809/sim/sim', {
       params: { query },
     });
 
-    const botMessage = simResponse.data.message || 'No response from bot-hosting API';
+    const botResponse = simResponse.data.respond || 'No response from FI Bot Hosting';
 
     // Auto-teach Simsimi.vn
     const simsimiResponse = await axios.post(
@@ -64,13 +65,13 @@ app.get('/sim', async (req, res) => {
       params: { ask: query, ans: teachMessage },
     });
 
-    // Respond to the user with bot-hosting API response
+    // Respond to the user with FI Bot Hosting's respond field
     res.type('json').send(
       JSON.stringify(
         {
           author: 'Jerome',
           status: 200,
-          message: botMessage,
+          message: botResponse,
           processingTime: measureProcessingTime(startTime),
         },
         null,
