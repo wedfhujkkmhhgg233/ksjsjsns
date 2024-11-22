@@ -149,6 +149,10 @@ app.get('/endpoints', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'endpoints.html'));
 });
 
+app.get('/sitemap.xml', (req, res) => {
+  res.sendFile(path.join(__dirname, 'sitemap.xml'));
+});
+
 // Middleware to handle 404 errors
 app.use((req, res, next) => {
   res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
