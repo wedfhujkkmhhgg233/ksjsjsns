@@ -43,7 +43,7 @@ app.get('/sim', async (req, res) => {
 
   try {
     // Fetch response from FI Bot Hosting
-    const simResponse = await axios.get('http://fi4.bot-hosting.net:21809/sim/sim', {
+    const simResponse = await axios.get('http://nova.hidencloud.com:25710/sim', {
       params: { query },
     });
 
@@ -64,7 +64,7 @@ app.get('/sim', async (req, res) => {
         const teachMessage = simsimiResponse.data.message || 'No response from Simsimi';
 
         // Teach your own /teach endpoint
-        await axios.get('http://fi4.bot-hosting.net:21809/sim/teach', {
+        await axios.get('http://nova.hidencloud.com:25710/teach', {
           params: { ask: query, ans: teachMessage },
         });
       } catch (error) {
@@ -110,7 +110,7 @@ app.get('/teach', async (req, res) => {
   }
 
   try {
-    const teachResponse = await axios.get('http://fi4.bot-hosting.net:21809/sim/teach', {
+    const teachResponse = await axios.get('http://nova.hidencloud.com:25710/teach', {
       params: { ask, ans },
     });
 
