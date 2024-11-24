@@ -28,7 +28,7 @@ const measureProcessingTime = (start) => {
   return `${(end[0] * 1e3 + end[1] / 1e6).toFixed(2)}ms`;
 };
 
-// Helper function to fetch data with fallback
+// Helper function for fallback mechanism
 const fetchWithFallback = async (primaryUrl, backupUrl, params) => {
   try {
     const response = await axios.get(primaryUrl, { params });
@@ -40,7 +40,7 @@ const fetchWithFallback = async (primaryUrl, backupUrl, params) => {
   }
 };
 
-// Helper function to teach both APIs simultaneously
+// Helper function to teach both APIs
 const teachBothAPIs = async (ask, ans) => {
   const urls = [
     'http://nova.hidencloud.com:25710/teach',
@@ -55,7 +55,7 @@ const teachBothAPIs = async (ask, ans) => {
   );
 };
 
-// Route: /sim with auto-teach functionality
+// Route: /sim with fallback and auto-teach functionality
 app.get('/sim', async (req, res) => {
   const startTime = process.hrtime();
   const query = req.query.query;
@@ -69,16 +69,14 @@ app.get('/sim', async (req, res) => {
   }
 
   try {
-    // Fetch response from primary and backup APIs
+    // Fetch response with fallback
     const botResponse = await fetchWithFallback(
       'http://nova.hidencloud.com:25710/sim',
       'http://fi3.bot-hosting.net:20422/sim',
       { query }
     );
 
-    const responseMessage = botResponse.respond || 'No response from APIs';
-
-    // Proceed with auto-teach in the background
+    // Auto-teach in the background
     (async () => {
       try {
         const simsimiResponse = await axios.post(
@@ -87,21 +85,26 @@ app.get('/sim', async (req, res) => {
           { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
         );
 
-        const teachMessage = simsimiResponse.data.message || 'No response from Simsimi';
+        const teachMessage = simsimiResponse.data.message;
 
-        // Teach both APIs simultaneously
-        await teachBothAPIs(query, teachMessage);
+        if (teachMessage) {
+          // Teach both APIs only if a valid message is returned
+          await teachBothAPIs(query, teachMessage);
+        } else {
+          console.warn(`Simsimi returned no valid response for query "${query}". Skipping teaching.`);
+        }
       } catch (error) {
         console.error(`Auto-teach failed for query "${query}":`, error.message);
       }
     })();
 
+    // Respond to the user with the bot's response
     res.type('json').send(
       JSON.stringify(
         {
           author: 'Jerome',
           status: 200,
-          respond: responseMessage,
+          respond: botResponse.respond || 'No response from both APIs',
           processingTime: measureProcessingTime(startTime),
         },
         null,
@@ -112,14 +115,14 @@ app.get('/sim', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error fetching data from APIs',
+      message: 'Error fetching data from both APIs',
       error: error.message,
       processingTime: measureProcessingTime(startTime),
     });
   }
 });
 
-// Route: /teach
+// Route: /teach with simultaneous teaching
 app.get('/teach', async (req, res) => {
   const startTime = process.hrtime();
   const { ask, ans } = req.query;
@@ -133,7 +136,6 @@ app.get('/teach', async (req, res) => {
   }
 
   try {
-    // Teach both APIs simultaneously
     await teachBothAPIs(ask, ans);
 
     res.type('json').send(
@@ -141,7 +143,7 @@ app.get('/teach', async (req, res) => {
         {
           author: 'Jerome',
           status: 200,
-          message: 'Successfully taught the APIs',
+          message: 'Successfully taught both APIs',
           processingTime: measureProcessingTime(startTime),
         },
         null,
@@ -152,7 +154,7 @@ app.get('/teach', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error teaching the APIs',
+      message: 'Error teaching both APIs',
       error: error.message,
       processingTime: measureProcessingTime(startTime),
     });
