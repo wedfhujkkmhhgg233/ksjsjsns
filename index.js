@@ -28,6 +28,33 @@ const measureProcessingTime = (start) => {
   return `${(end[0] * 1e3 + end[1] / 1e6).toFixed(2)}ms`;
 };
 
+// Helper function to fetch data with fallback
+const fetchWithFallback = async (primaryUrl, backupUrl, params) => {
+  try {
+    const response = await axios.get(primaryUrl, { params });
+    return response.data;
+  } catch (error) {
+    console.warn(`Primary API failed: ${error.message}. Trying backup API.`);
+    const response = await axios.get(backupUrl, { params });
+    return response.data;
+  }
+};
+
+// Helper function to teach both APIs simultaneously
+const teachBothAPIs = async (ask, ans) => {
+  const urls = [
+    'http://nova.hidencloud.com:25710/teach',
+    'http://fi3.bot-hosting.net:20422/teach',
+  ];
+  await Promise.all(
+    urls.map((url) =>
+      axios
+        .get(url, { params: { ask, ans } })
+        .catch((error) => console.error(`Teach failed for ${url}:`, error.message))
+    )
+  );
+};
+
 // Route: /sim with auto-teach functionality
 app.get('/sim', async (req, res) => {
   const startTime = process.hrtime();
@@ -42,43 +69,39 @@ app.get('/sim', async (req, res) => {
   }
 
   try {
-    // Fetch response from FI Bot Hosting
-    const simResponse = await axios.get('http://nova.hidencloud.com:25710/sim', {
-      params: { query },
-    });
+    // Fetch response from primary and backup APIs
+    const botResponse = await fetchWithFallback(
+      'http://nova.hidencloud.com:25710/sim',
+      'http://fi3.bot-hosting.net:20422/sim',
+      { query }
+    );
 
-    const botResponse = simResponse.data.respond || 'No response from FI Bot Hosting';
+    const responseMessage = botResponse.respond || 'No response from APIs';
 
     // Proceed with auto-teach in the background
     (async () => {
       try {
-        // Fetch Simsimi.vn response for teaching
         const simsimiResponse = await axios.post(
           'https://api.simsimi.vn/v1/simtalk',
           `text=${encodeURIComponent(query)}&lc=ph&key=`,
-          {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          }
+          { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
         );
 
         const teachMessage = simsimiResponse.data.message || 'No response from Simsimi';
 
-        // Teach your own /teach endpoint
-        await axios.get('http://nova.hidencloud.com:25710/teach', {
-          params: { ask: query, ans: teachMessage },
-        });
+        // Teach both APIs simultaneously
+        await teachBothAPIs(query, teachMessage);
       } catch (error) {
         console.error(`Auto-teach failed for query "${query}":`, error.message);
       }
     })();
 
-    // Respond to the user with FI Bot Hosting's response
     res.type('json').send(
       JSON.stringify(
         {
           author: 'Jerome',
           status: 200,
-          respond: botResponse,
+          respond: responseMessage,
           processingTime: measureProcessingTime(startTime),
         },
         null,
@@ -89,7 +112,7 @@ app.get('/sim', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error fetching data from FI Bot Hosting',
+      message: 'Error fetching data from APIs',
       error: error.message,
       processingTime: measureProcessingTime(startTime),
     });
@@ -110,17 +133,15 @@ app.get('/teach', async (req, res) => {
   }
 
   try {
-    const teachResponse = await axios.get('http://nova.hidencloud.com:25710/teach', {
-      params: { ask, ans },
-    });
+    // Teach both APIs simultaneously
+    await teachBothAPIs(ask, ans);
 
     res.type('json').send(
       JSON.stringify(
         {
           author: 'Jerome',
           status: 200,
-          message: 'Successfully taught the API',
-          teachResponse: teachResponse.data,
+          message: 'Successfully taught the APIs',
           processingTime: measureProcessingTime(startTime),
         },
         null,
@@ -131,7 +152,7 @@ app.get('/teach', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error teaching the API',
+      message: 'Error teaching the APIs',
       error: error.message,
       processingTime: measureProcessingTime(startTime),
     });
@@ -148,7 +169,6 @@ app.get('/commands', (req, res) => {
 app.get('/endpoints', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'endpoints.html'));
 });
-
 app.get('/sitemap.xml', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
 });
