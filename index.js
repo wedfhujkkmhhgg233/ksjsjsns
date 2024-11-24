@@ -122,7 +122,7 @@ app.get('/sim', async (req, res) => {
   }
 });
 
-// Route: /teach with simultaneous teaching
+// Route: /teach with fallback mechanism for teaching response
 app.get('/teach', async (req, res) => {
   const startTime = process.hrtime();
   const { ask, ans } = req.query;
@@ -136,14 +136,35 @@ app.get('/teach', async (req, res) => {
   }
 
   try {
+    // Helper function to fetch teach response with fallback
+    const fetchTeachResponse = async (ask, ans) => {
+      const primaryUrl = 'http://nova.hidencloud.com:25710/teach';
+      const backupUrl = 'http://fi3.bot-hosting.net:20422/teach';
+      try {
+        // Try the primary API first
+        const response = await axios.get(primaryUrl, { params: { ask, ans } });
+        return response.data;
+      } catch (error) {
+        console.warn(`Primary teach API failed: ${error.message}. Trying backup API.`);
+        const response = await axios.get(backupUrl, { params: { ask, ans } });
+        return response.data;
+      }
+    };
+
+    // Fetch the teach response with fallback
+    const teachResponse = await fetchTeachResponse(ask, ans);
+
+    // Teach both APIs after fetching the response
     await teachBothAPIs(ask, ans);
 
+    // Respond with the teach response
     res.type('json').send(
       JSON.stringify(
         {
           author: 'Jerome',
           status: 200,
           message: 'Successfully taught both APIs',
+          teachResponse,
           processingTime: measureProcessingTime(startTime),
         },
         null,
