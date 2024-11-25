@@ -1,5 +1,4 @@
-
-# ðŸ¥ **Sim-Ph**  
+# 🐥 **Sim-Ph**  
 
 **Sim-Ph** is a powerful Node.js library for interacting with the SimSimi API. It provides seamless integration for chat and teach functionalities, complete with a backup API for enhanced reliability.  
 
@@ -7,14 +6,14 @@
 
 ---
 
-## âœ¨ **Features**  
-- ðŸ”® **Sim API**: Chat with SimSimi to get AI-generated responses.  
-- ðŸ“š **Teach API**: Teach SimSimi custom responses for specific queries.  
-- ðŸ”„ **Backup API**: Automatically switches to a backup API if the primary API fails.  
+## ✨ **Features**  
+- 🗨️ **Sim**: Chat with SimSimi to get AI-generated responses.  
+- 📚 **Teach**: Teach SimSimi custom responses for specific queries.  
+- 🔧 **Backup Server**: Automatically switches to a backup Server if the primary Server fails.  
 
 ---
 
-## ðŸ“¥ **Installation**  
+## ⚡ **Installation**  
 
 Install the package via npm:  
 
@@ -24,9 +23,9 @@ npm install sim-ph
 
 ---
 
-## ðŸš€ **Usage**  
+## 🚀 **Usage**  
 
-### Importing the Library  
+### 📥 Importing the Library  
 
 Require the `sim-ph` library in your project:  
 
@@ -34,7 +33,7 @@ Require the `sim-ph` library in your project:
 const { sim, teach } = require('sim-ph');  
 ```  
 
-### Sim API Example  
+### 💬 Sim API Example  
 
 Interact with the SimSimi chat API using the `sim` function:  
 
@@ -60,7 +59,7 @@ chatWithSim();
 SimSimi says: Hello! How can I assist you today?  
 ```  
 
-### Teach API Example  
+### ✍️ Teach API Example  
 
 Teach SimSimi custom responses using the `teach` function:  
 
@@ -89,13 +88,13 @@ Teach Response: { status: 'success', message: 'Sim has learned a new response!' 
 
 ---
 
-## ðŸ”„ **Fallback API**  
+## 🔄 **Fallback API**  
 
 If the primary API (`https://simsimi-api-pro.onrender.com`) fails, the library automatically switches to the backup API (`https://simsimi.gleeze.com`). This ensures smooth operation.  
 
 ---
 
-## ðŸ›¡ï¸ **Error Handling**  
+## ⚠️ **Error Handling**  
 
 Handle errors gracefully when both APIs fail:  
 
@@ -122,19 +121,19 @@ Both primary and backup APIs failed: Both primary and backup APIs failed
 
 ---
 
-## ðŸ¤ **Contributing**  
+## 🤝 a**Contributing**  
 
 Feel free to fork this repository and submit pull requests for improvements or new features.  
 
 ---
 
-## ðŸ“œ **License**  
+## 📜 **License**  
 
 MIT License. See [LICENSE](LICENSE) for details.  
 
 ---
 
-## ðŸ‘¤ **Author**  
+## 👤 **Author**  
 
 **Jerome Jamis**  
-[![Facebook](https://img.shields.io/badge/Facebook-Jerome-blue?style=flat-square&logo=facebook)](https://www.facebook.com/JeromeExpertise)  
+[![Facebook](https://img.shields.io/badge/Facebook-Jerome-blue?style=flat-square&logo=facebook)](https://www.facebook.com/JeromeExpertise) 
