@@ -6,7 +6,7 @@ const rateLimit = require('express-rate-limit');
 const app = express();
 const PORT = 3000;
 
-// Set up rate limiting
+// Rate limiting setup
 const limiter = rateLimit({
   windowMs: 30 * 60 * 1000, // 30 minutes
   max: 1000,
@@ -22,40 +22,23 @@ const limiter = rateLimit({
 app.use(express.json());
 app.use(limiter);
 
-// Helper function to measure processing time
+// Helper to measure processing time
 const measureProcessingTime = (start) => {
   const end = process.hrtime(start);
   return `${(end[0] * 1e3 + end[1] / 1e6).toFixed(2)}ms`;
 };
 
-// Helper function for fallback mechanism
-const fetchWithFallback = async (primaryUrl, backupUrl, params) => {
+// Helper to teach the Bot Hosting API
+const teachBotHostingAPI = async (ask, ans) => {
+  const teachUrl = 'http://fi3.bot-hosting.net:20422/teach';
   try {
-    const response = await axios.get(primaryUrl, { params });
-    return response.data;
+    await axios.get(teachUrl, { params: { ask, ans } });
   } catch (error) {
-    console.warn(`Primary API failed: ${error.message}. Trying backup API.`);
-    const response = await axios.get(backupUrl, { params });
-    return response.data;
+    console.error(`Teach failed for Bot Hosting API:`, error.message);
   }
 };
 
-// Helper function to teach both APIs
-const teachBothAPIs = async (ask, ans) => {
-  const urls = [
-    'http://nova.hidencloud.com:25710/teach',
-    'http://fi3.bot-hosting.net:20422/teach',
-  ];
-  await Promise.all(
-    urls.map((url) =>
-      axios
-        .get(url, { params: { ask, ans } })
-        .catch((error) => console.error(`Teach failed for ${url}:`, error.message))
-    )
-  );
-};
-
-// Route: /sim with fallback and auto-teach functionality
+// Route: /sim
 app.get('/sim', async (req, res) => {
   const startTime = process.hrtime();
   const query = req.query.query;
@@ -69,42 +52,23 @@ app.get('/sim', async (req, res) => {
   }
 
   try {
-    // Fetch response with fallback
-    const botResponse = await fetchWithFallback(
-      'http://nova.hidencloud.com:25710/sim',
-      'http://fi3.bot-hosting.net:20422/sim',
-      { query }
-    );
+    // Fetch response from Bot Hosting API
+    const simUrl = 'http://fi3.bot-hosting.net:20422/sim';
+    const response = await axios.get(simUrl, { params: { query } });
+    const botResponse = response.data;
 
-    // Auto-teach in the background
-    (async () => {
-      try {
-        const simsimiResponse = await axios.post(
-          'https://api.simsimi.vn/v1/simtalk',
-          `text=${encodeURIComponent(query)}&lc=ph&key=`,
-          { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-        );
+    // Teach the Bot Hosting API in the background
+    if (botResponse.respond) {
+      await teachBotHostingAPI(query, botResponse.respond);
+    }
 
-        const teachMessage = simsimiResponse.data.message;
-
-        if (teachMessage) {
-          // Teach both APIs only if a valid message is returned
-          await teachBothAPIs(query, teachMessage);
-        } else {
-          console.warn(`Simsimi returned no valid response for query "${query}". Skipping teaching.`);
-        }
-      } catch (error) {
-        console.error(`Auto-teach failed for query "${query}":`, error.message);
-      }
-    })();
-
-    // Respond to the user with the bot's response
+    // Respond to the user
     res.type('json').send(
       JSON.stringify(
         {
           author: 'Jerome',
           status: 200,
-          respond: botResponse.respond || 'No response from both APIs',
+          respond: botResponse.respond || 'No response from API',
           processingTime: measureProcessingTime(startTime),
         },
         null,
@@ -115,14 +79,14 @@ app.get('/sim', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error fetching data from both APIs',
+      message: 'Error fetching data from the Bot Hosting API',
       error: error.message,
       processingTime: measureProcessingTime(startTime),
     });
   }
 });
 
-// Route: /teach with fallback mechanism for teaching response
+// Route: /teach
 app.get('/teach', async (req, res) => {
   const startTime = process.hrtime();
   const { ask, ans } = req.query;
@@ -136,35 +100,15 @@ app.get('/teach', async (req, res) => {
   }
 
   try {
-    // Helper function to fetch teach response with fallback
-    const fetchTeachResponse = async (ask, ans) => {
-      const primaryUrl = 'http://nova.hidencloud.com:25710/teach';
-      const backupUrl = 'http://fi3.bot-hosting.net:20422/teach';
-      try {
-        // Try the primary API first
-        const response = await axios.get(primaryUrl, { params: { ask, ans } });
-        return response.data;
-      } catch (error) {
-        console.warn(`Primary teach API failed: ${error.message}. Trying backup API.`);
-        const response = await axios.get(backupUrl, { params: { ask, ans } });
-        return response.data;
-      }
-    };
+    // Teach the Bot Hosting API
+    await teachBotHostingAPI(ask, ans);
 
-    // Fetch the teach response with fallback
-    const teachResponse = await fetchTeachResponse(ask, ans);
-
-    // Teach both APIs after fetching the response
-    await teachBothAPIs(ask, ans);
-
-    // Respond with the teach response
     res.type('json').send(
       JSON.stringify(
         {
           author: 'Jerome',
           status: 200,
-          message: 'Successfully taught both APIs',
-          teachResponse,
+          message: 'Successfully taught the Bot Hosting API',
           processingTime: measureProcessingTime(startTime),
         },
         null,
@@ -175,7 +119,7 @@ app.get('/teach', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error teaching both APIs',
+      message: 'Error teaching the Bot Hosting API',
       error: error.message,
       processingTime: measureProcessingTime(startTime),
     });
