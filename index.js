@@ -6,7 +6,7 @@ const rateLimit = require('express-rate-limit');
 const app = express();
 const PORT = 3000;
 
-// Rate limiting setup
+// Set up rate limiting
 const limiter = rateLimit({
   windowMs: 30 * 60 * 1000, // 30 minutes
   max: 1000,
@@ -22,19 +22,21 @@ const limiter = rateLimit({
 app.use(express.json());
 app.use(limiter);
 
-// Helper to measure processing time
+// Helper function to measure processing time
 const measureProcessingTime = (start) => {
   const end = process.hrtime(start);
   return `${(end[0] * 1e3 + end[1] / 1e6).toFixed(2)}ms`;
 };
 
-// Helper to teach the Bot Hosting API
-const teachBotHostingAPI = async (ask, ans) => {
+// Helper function to handle teaching
+const teachAPI = async (ask, ans) => {
   const teachUrl = 'http://fi3.bot-hosting.net:20422/teach';
   try {
-    await axios.get(teachUrl, { params: { ask, ans } });
+    const response = await axios.get(teachUrl, { params: { ask, ans } });
+    return response.data;
   } catch (error) {
-    console.error(`Teach failed for Bot Hosting API:`, error.message);
+    console.error(`Teach API failed: ${error.message}`);
+    throw new Error('Error teaching the API.');
   }
 };
 
@@ -52,23 +54,33 @@ app.get('/sim', async (req, res) => {
   }
 
   try {
-    // Fetch response from Bot Hosting API
-    const simUrl = 'http://fi3.bot-hosting.net:20422/sim';
-    const response = await axios.get(simUrl, { params: { query } });
-    const botResponse = response.data;
+    // Fetch response from the bot API
+    const botResponse = await axios.get('http://fi3.bot-hosting.net:20422/sim', {
+      params: { query },
+    });
 
-    // Teach the Bot Hosting API in the background
-    if (botResponse.respond) {
-      await teachBotHostingAPI(query, botResponse.respond);
-    }
+    const botMessage = botResponse.data.respond || 'No response from the API';
 
-    // Respond to the user
+    // Auto-teach in the background
+    (async () => {
+      try {
+        // Simulate a logic to determine an appropriate response (replace with your actual logic)
+        const autoTeachMessage = `Simulated response for: "${query}"`;
+        if (autoTeachMessage) {
+          await teachAPI(query, autoTeachMessage);
+        }
+      } catch (error) {
+        console.error(`Auto-teach failed for query "${query}":`, error.message);
+      }
+    })();
+
+    // Respond with the bot's message
     res.type('json').send(
       JSON.stringify(
         {
           author: 'Jerome',
           status: 200,
-          respond: botResponse.respond || 'No response from API',
+          respond: botMessage,
           processingTime: measureProcessingTime(startTime),
         },
         null,
@@ -79,7 +91,7 @@ app.get('/sim', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error fetching data from the Bot Hosting API',
+      message: 'Error fetching data from the API',
       error: error.message,
       processingTime: measureProcessingTime(startTime),
     });
@@ -100,15 +112,17 @@ app.get('/teach', async (req, res) => {
   }
 
   try {
-    // Teach the Bot Hosting API
-    await teachBotHostingAPI(ask, ans);
+    // Teach the API and get the response
+    const teachResponse = await teachAPI(ask, ans);
 
+    // Respond with the teachResponse
     res.type('json').send(
       JSON.stringify(
         {
           author: 'Jerome',
           status: 200,
-          message: 'Successfully taught the Bot Hosting API',
+          message: 'Successfully taught the API',
+          teachResponse,
           processingTime: measureProcessingTime(startTime),
         },
         null,
@@ -119,7 +133,7 @@ app.get('/teach', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error teaching the Bot Hosting API',
+      message: 'Error teaching the API',
       error: error.message,
       processingTime: measureProcessingTime(startTime),
     });
