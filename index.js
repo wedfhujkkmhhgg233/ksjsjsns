@@ -28,19 +28,29 @@ const measureProcessingTime = (start) => {
   return `${(end[0] * 1e3 + end[1] / 1e6).toFixed(2)}ms`;
 };
 
-// Helper function to handle teaching
-const teachAPI = async (ask, ans) => {
-  const teachUrl = 'http://fi3.bot-hosting.net:20422/teach';
+// Helper function for fallback mechanism
+const fetchWithFallback = async (primaryUrl, backupUrl, params) => {
   try {
-    const response = await axios.get(teachUrl, { params: { ask, ans } });
+    const response = await axios.get(primaryUrl, { params });
     return response.data;
   } catch (error) {
-    console.error(`Teach API failed: ${error.message}`);
-    throw new Error('Error teaching the API.');
+    console.warn(`Primary API failed: ${error.message}. Trying backup API.`);
+    const response = await axios.get(backupUrl, { params });
+    return response.data;
   }
 };
 
-// Route: /sim
+// Helper function to teach both APIs
+const teachBothAPIs = async (ask, ans) => {
+  const url = 'http://fi3.bot-hosting.net:20422/teach'; // Only using fi.bot.hosting API
+  try {
+    await axios.get(url, { params: { ask, ans } });
+  } catch (error) {
+    console.error(`Teach failed for ${url}:`, error.message);
+  }
+};
+
+// Route: /sim with fallback and auto-teach functionality
 app.get('/sim', async (req, res) => {
   const startTime = process.hrtime();
   const query = req.query.query;
@@ -54,33 +64,42 @@ app.get('/sim', async (req, res) => {
   }
 
   try {
-    // Fetch response from the bot API
-    const botResponse = await axios.get('http://fi3.bot-hosting.net:20422/sim', {
-      params: { query },
-    });
-
-    const botMessage = botResponse.data.respond || 'No response from the API';
+    // Fetch response from the fi.bot.hosting API (primary)
+    const botResponse = await fetchWithFallback(
+      'http://fi3.bot-hosting.net:20422/sim',
+      'http://fi3.bot-hosting.net:20422/sim', // Only fi.bot.hosting is used
+      { query }
+    );
 
     // Auto-teach in the background
     (async () => {
       try {
-        // Simulate a logic to determine an appropriate response (replace with your actual logic)
-        const autoTeachMessage = `Simulated response for: "${query}"`;
-        if (autoTeachMessage) {
-          await teachAPI(query, autoTeachMessage);
+        const simsimiResponse = await axios.post(
+          'https://api.simsimi.vn/v1/simtalk',
+          `text=${encodeURIComponent(query)}&lc=ph&key=`,
+          { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+        );
+
+        const teachMessage = simsimiResponse.data.message;
+
+        if (teachMessage) {
+          // Teach the fi.bot.hosting API only if a valid message is returned
+          await teachBothAPIs(query, teachMessage);
+        } else {
+          console.warn(`Simsimi returned no valid response for query "${query}". Skipping teaching.`);
         }
       } catch (error) {
         console.error(`Auto-teach failed for query "${query}":`, error.message);
       }
     })();
 
-    // Respond with the bot's message
+    // Respond to the user with the bot's response
     res.type('json').send(
       JSON.stringify(
         {
           author: 'Jerome',
           status: 200,
-          respond: botMessage,
+          respond: botResponse.respond || 'No response from the API',
           processingTime: measureProcessingTime(startTime),
         },
         null,
@@ -98,7 +117,7 @@ app.get('/sim', async (req, res) => {
   }
 });
 
-// Route: /teach
+// Route: /teach with fallback mechanism for teaching response
 app.get('/teach', async (req, res) => {
   const startTime = process.hrtime();
   const { ask, ans } = req.query;
@@ -112,10 +131,25 @@ app.get('/teach', async (req, res) => {
   }
 
   try {
-    // Teach the API and get the response
-    const teachResponse = await teachAPI(ask, ans);
+    // Helper function to fetch teach response from fi.bot.hosting API
+    const fetchTeachResponse = async (ask, ans) => {
+      const url = 'http://fi3.bot-hosting.net:20422/teach'; // Only using fi.bot.hosting API
+      try {
+        const response = await axios.get(url, { params: { ask, ans } });
+        return response.data;
+      } catch (error) {
+        console.warn(`Teach API failed: ${error.message}.`);
+        throw new Error('Teach API failed');
+      }
+    };
 
-    // Respond with the teachResponse
+    // Fetch the teach response with fi.bot.hosting API
+    const teachResponse = await fetchTeachResponse(ask, ans);
+
+    // Teach the fi.bot.hosting API after fetching the response
+    await teachBothAPIs(ask, ans);
+
+    // Respond with the teach response
     res.type('json').send(
       JSON.stringify(
         {
