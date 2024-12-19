@@ -4,22 +4,22 @@
   <meta charset="UTF-8">
   <meta name="google-site-verification" content="cTmJx2WsktZHFDSDDfGuUcS8neBrlX9s0r5ItZKXN8o" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>API Documentation - Sim & Teach</title>
+  <title>API Documentation - Sim & Teach (Christmas Edition)</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
     /* Global Styles */
     body {
-      background-color: #121212;
+      background-color: #0b3d0b;
       color: #ffffff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     /* Navigation Bar */
     .navbar {
-      background: linear-gradient(135deg, #000000, #1e1e1e);
-      border-bottom: 2px solid #333333;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      background: linear-gradient(135deg, #b22222, #8b0000);
+      border-bottom: 3px solid #ffd700;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
     }
 
     .navbar-brand, .nav-link {
@@ -28,18 +28,7 @@
     }
 
     .navbar-brand:hover, .nav-link:hover {
-      color: #17a2b8;
-    }
-
-    .nav-link {
-      font-size: 1.1rem;
-      padding: 10px 15px;
-    }
-
-    /* Smooth animations for hover */
-    .nav-link:hover {
-      text-shadow: 0 0 5px #17a2b8;
-      transform: scale(1.1);
+      color: #ffd700;
     }
 
     /* Container and Header */
@@ -51,59 +40,59 @@
     .header {
       text-align: center;
       padding: 20px;
-      background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+      background: linear-gradient(135deg, #b22222, #006400);
       border-radius: 8px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     }
 
     .header h1 {
-      font-size: 2.5rem;
-      color: #17a2b8;
-      text-shadow: 0 0 10px #17a2b8;
+      font-size: 3rem;
+      color: #ffd700;
+      text-shadow: 0 0 10px #ffd700;
     }
 
     .header p {
       font-size: 1.2rem;
-      color: #aaaaaa;
+      color: #ffffff;
     }
 
     /* Endpoint Cards */
     .endpoint-card {
-      background-color: #1e1e1e;
-      border: 1px solid #333333;
+      background-color: #006400;
+      border: 2px solid #b22222;
       border-radius: 8px;
       padding: 20px;
       margin-bottom: 30px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .endpoint-card:hover {
       transform: scale(1.03);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7);
     }
 
     .endpoint-card h3 {
-      color: #17a2b8;
+      color: #ffd700;
       margin-bottom: 15px;
     }
 
     .endpoint-card pre {
-      background-color: #2a2a2a;
+      background-color: #2e8b57;
       padding: 15px;
       border-radius: 5px;
-      color: #00d1b2;
+      color: #ffffff;
       font-size: 0.95rem;
     }
 
     .endpoint-card .btn-primary {
-      background: linear-gradient(135deg, #17a2b8, #007bff);
+      background: linear-gradient(135deg, #b22222, #ffd700);
       border: none;
       transition: background 0.3s ease, transform 0.2s ease;
     }
 
     .endpoint-card .btn-primary:hover {
-      background: linear-gradient(135deg, #007bff, #17a2b8);
+      background: linear-gradient(135deg, #ffd700, #b22222);
       transform: scale(1.1);
     }
 
@@ -112,13 +101,13 @@
       text-align: center;
       margin-top: 30px;
       padding: 20px;
-      background-color: #1e1e1e;
-      border-top: 1px solid #333333;
-      color: #aaaaaa;
+      background-color: #8b0000;
+      border-top: 3px solid #ffd700;
+      color: #ffffff;
     }
 
     footer a {
-      color: #17a2b8;
+      color: #ffd700;
       text-decoration: none;
     }
 
@@ -163,24 +152,23 @@
   </style>
 </head>
 <body>
-
   <!-- Snowflake Container -->
   <div id="snowflakes"></div>
 
   <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Sim & Teach API</a>
+      <a class="navbar-brand" href="#">🎄 Sim & Teach API</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link" href="#sim">Sim Endpoint</a>
+            <a class="nav-link" href="#sim">🎅 Sim Endpoint</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#teach">Teach Endpoint</a>
+            <a class="nav-link" href="#teach">🎁 Teach Endpoint</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#footer">About</a>
@@ -194,69 +182,28 @@
   <div class="container">
     <!-- Header Section -->
     <div class="header">
-      <h1>Sim & Teach API Documentation</h1>
-      <p>API documentation for developers to integrate with the Sim and Teach endpoints.</p>
+      <h1>🎄 Sim & Teach API Documentation 🎅</h1>
+      <p>API documentation for developers to integrate with the Sim and Teach endpoints. 🎁</p>
     </div>
 
     <!-- Sim Endpoint -->
     <div class="endpoint-card" id="sim">
       <h3><i class="fas fa-comment-dots"></i> Sim Endpoint</h3>
-      <p>
-        The <strong>/sim</strong> endpoint is used to query a chatbot for a response. Use the query parameter 
-        to pass your text query.
-      </p>
-      <p><strong>HTTP Method:</strong> GET</p>
-      <p><strong>Endpoint:</strong> <code>/sim</code></p>
-      <p><strong>Parameters:</strong></p>
-      <ul>
-        <li><code>query</code> (string, required): The input message or query for the bot.</li>
-      </ul>
-      <p><strong>Example Request:</strong></p>
-      <pre>GET /sim?query=hello</pre>
-      <p><strong>Example Response:</strong></p>
-      <pre>
-{
-  "author": "Jerome",
-  "status": 200,
-  "respond": "Hi! How can I help you?",
-  "processingTime": "12.34ms"
-}
-      </pre>
+      <p>The <strong>/sim</strong> endpoint is used to query a chatbot for a response. Use the query parameter to pass your text query.</p>
       <a href="/sim?query=" class="btn btn-primary">Test Now</a>
     </div>
 
     <!-- Teach Endpoint -->
     <div class="endpoint-card" id="teach">
       <h3><i class="fas fa-chalkboard-teacher"></i> Teach Endpoint</h3>
-      <p>
-        The <strong>/teach</strong> endpoint is used to teach the chatbot new responses. Use the ask and ans 
-        parameters to pass the input query and the corresponding response.
-      </p>
-      <p><strong>HTTP Method:</strong> GET</p>
-      <p><strong>Endpoint:</strong> <code>/teach</code></p>
-      <p><strong>Parameters:</strong></p>
-      <ul>
-        <li><code>ask</code> (string, required): The input message or query to teach.</li>
-        <li><code>ans</code> (string, required): The response or answer to associate with the query.</li>
-      </ul>
-      <p><strong>Example Request:</strong></p>
-      <pre>GET /teach?ask=How%20are%20you?&amp;ans=I%20am%20good,%20thank%20you!</pre>
-      <p><strong>Example Response:</strong></p>
-      <pre>
-{
-  "author": "Jerome",
-  "status": 200,
-  "message": "Successfully taught the Bot Hosting API",
-  "processingTime": "15.67ms"
-}
-      </pre>
+      <p>The <strong>/teach</strong> endpoint is used to teach the chatbot new responses.</p>
       <a href="/teach?ask=&ans=" class="btn btn-primary">Test Now</a>
     </div>
   </div>
 
   <!-- Footer -->
   <footer id="footer">
-    <p>Developed by Jerome Jamis | View source on <a href="https://news.rr.nihalnavath.com/posts/Simsimi-Source-Code-ec8a012c">GitHub</a></p>
+    <p>🎄 Developed by Jerome Jamis | Merry Christmas! 🎁</p>
   </footer>
 
   <!-- Bootstrap JS -->
