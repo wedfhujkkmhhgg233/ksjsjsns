@@ -28,10 +28,23 @@ const measureProcessingTime = (start) => {
   return `${(end[0] * 1e3 + end[1] / 1e6).toFixed(2)}ms`;
 };
 
-// Helper function for fallback mechanism
+// Helper function to perform a GET request with a timeout
+const axiosWithTimeout = async (url, params, timeout = 6000) => {
+  try {
+    const response = await axios.get(url, { params, timeout });
+    return response;
+  } catch (error) {
+    if (error.code === 'ECONNABORTED') {
+      throw new Error('API request timed out');
+    }
+    throw error;
+  }
+};
+
+// Helper function for fallback mechanism (with axios only)
 const fetchWithFallback = async (primaryUrl, backupUrl, params) => {
   try {
-    const response = await axios.get(primaryUrl, { params });
+    const response = await axiosWithTimeout(primaryUrl, params);
     return response.data;
   } catch (error) {
     console.warn(`Primary API failed: ${error.message}. Trying backup API.`);
@@ -71,9 +84,24 @@ app.get('/sim', async (req, res) => {
       { query }
     );
 
-    // Auto-teach in the background
+    // Send the response immediately, without waiting for auto-teach to complete
+    res.type('json').send(
+      JSON.stringify(
+        {
+          author: 'Jerome',
+          status: 200,
+          respond: botResponse.respond || '🚧 𝗠𝗮𝗶𝗻𝘁𝗲𝗻𝗮𝗻𝗰𝗲 𝗔𝗹𝗲𝗿𝘁 🚧\n\n𝖳𝗁𝖾 𝖲𝗂𝗆𝗌𝗂𝗆𝗂 𝖽𝖺𝗍𝖺𝖻𝖺𝗌𝖾 𝗂𝗌 𝖼𝗎𝗋𝗋𝖾𝗇𝗍𝗅𝗒 𝖾𝗑𝗉𝖾𝗋𝗂𝖾𝗇𝖼𝗂𝗇𝗀 𝗂𝗌𝗌𝗎𝖾𝗌. 𝖯𝗅𝖾𝖺𝗌𝖾 𝖼𝗈𝗇𝗍𝖺𝖼𝗍 𝗎𝗌 𝖺𝗍 [https://www.facebook.com/JeromeExpertise] 𝗍𝗈 𝖺𝖽𝖽𝗋𝖾𝗌𝗌 𝗍𝗁𝗂𝗌 𝗉𝗋𝗈𝖻𝗅𝖾𝗆 𝗂𝗆𝗆𝖾𝖽𝗂𝖺𝗍𝖾𝗅𝗒. 𝖳𝗁𝖺𝗇𝗄 𝗒𝗈𝗎 𝖿𝗈𝗋 𝗒𝗈𝗎𝗋 𝗉𝖺𝗍𝗂𝖾𝗇𝖼𝖾! 💬✨',
+          processingTime: measureProcessingTime(startTime),
+        },
+        null,
+        2
+      )
+    );
+
+    // Auto-teach in the background (does not block the response)
     (async () => {
       try {
+        // Simsimi API auto-teach
         const simsimiResponse = await axios.post(
           'https://api.simsimi.vn/v1/simtalk',
           `text=${encodeURIComponent(query)}&lc=ph&key=`,
@@ -81,31 +109,32 @@ app.get('/sim', async (req, res) => {
         );
 
         const teachMessage = simsimiResponse.data.message;
-
         if (teachMessage) {
-          // Teach the fi.bot.hosting API only if a valid message is returned
           await teachBothAPIs(query, teachMessage);
-        } else {
-          console.warn(`Simsimi returned no valid response for query "${query}". Skipping teaching.`);
+        }
+
+        // Auto-teach using Markdevs69 API (v1)
+        const markDevsV1 = await axios.get(`https://markdevs69v2.onrender.com/api/sim/get/${encodeURIComponent(query)}`);
+        if (markDevsV1.data.reply) {
+          await teachBothAPIs(query, markDevsV1.data.reply);
+        }
+
+        // Auto-teach using Markdevs69 API (v2)
+        const markDevsV2 = await axios.get(`https://markdevs69v2.onrender.com/api/simv2/get/${encodeURIComponent(query)}`);
+        if (markDevsV2.data.reply.trim()) {
+          await teachBothAPIs(query, markDevsV2.data.reply);
+        }
+
+        // Auto-teach using Markdevs69 API (v3)
+        const markDevsV3 = await axios.get(`https://markdevs69v2.onrender.com/api/sim/simv3`, { params: { type: 'ask', ask: query } });
+        if (markDevsV3.data.answer) {
+          await teachBothAPIs(query, markDevsV3.data.answer);
         }
       } catch (error) {
         console.error(`Auto-teach failed for query "${query}":`, error.message);
       }
     })();
-
-    // Respond to the user with the bot's response
-    res.type('json').send(
-      JSON.stringify(
-        {
-          author: 'Jerome',
-          status: 200,
-          respond: botResponse.respond || 'No response from the API',
-          processingTime: measureProcessingTime(startTime),
-        },
-        null,
-        2
-      )
-    );
+    
   } catch (error) {
     res.status(500).json({
       author: 'Jerome',
@@ -131,20 +160,8 @@ app.get('/teach', async (req, res) => {
   }
 
   try {
-    // Helper function to fetch teach response from fi.bot.hosting API
-    const fetchTeachResponse = async (ask, ans) => {
-      const url = 'http://fi3.bot-hosting.net:20422/teach'; // Only using fi.bot.hosting API
-      try {
-        const response = await axios.get(url, { params: { ask, ans } });
-        return response.data;
-      } catch (error) {
-        console.warn(`Teach API failed: ${error.message}.`);
-        throw new Error('Teach API failed');
-      }
-    };
-
     // Fetch the teach response with fi.bot.hosting API
-    const teachResponse = await fetchTeachResponse(ask, ans);
+    const teachResponse = await axiosWithTimeout('http://fi3.bot-hosting.net:20422/teach', { ask, ans });
 
     // Teach the fi.bot.hosting API after fetching the response
     await teachBothAPIs(ask, ans);
@@ -156,7 +173,7 @@ app.get('/teach', async (req, res) => {
           author: 'Jerome',
           status: 200,
           message: 'Successfully taught the API',
-          teachResponse,
+          teachResponse: teachResponse,
           processingTime: measureProcessingTime(startTime),
         },
         null,
