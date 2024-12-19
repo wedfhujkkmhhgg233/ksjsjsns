@@ -173,7 +173,7 @@ app.get('/teach', async (req, res) => {
           author: 'Jerome',
           status: 200,
           message: 'Successfully taught the API',
-          teachResponse: teachResponse,
+          teachResponse: teachResponse.data,
           processingTime: measureProcessingTime(startTime),
         },
         null,
