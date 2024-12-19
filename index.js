@@ -29,7 +29,7 @@ const measureProcessingTime = (start) => {
 };
 
 // Helper function to perform a GET request with a timeout
-const axiosWithTimeout = async (url, params, timeout = 6000) => {
+const axiosWithTimeout = async (url, params, timeout = 7000) => {
   try {
     const response = await axios.get(url, { params, timeout });
     return response;
