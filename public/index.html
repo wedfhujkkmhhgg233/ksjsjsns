@@ -6,7 +6,7 @@
   <meta name="google-site-verification" content="cTmJx2WsktZHFDSDDfGuUcS8neBrlX9s0r5ItZKXN8o">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="FREE Simsimi API Documentation for Sim & Teach API [ph version]. Learn how to use our chatbot API endpoints with detailed examples and testing options.">
-  <meta name="keywords" content="free simsimi api, sim api, simsimi api, chatbot API, documentation, developer tools">
+  <meta name="keywords" content="free simsimi api, sim api, simsimi api, Free Simsimi Api, Simsimi Api, Simsimi, chatbot API, documentation, developer tools">
   <meta name="author" content="Jerome Jamis">
   <meta property="og:title" content="FREE Simsimi & Teach API - Sim & Teach (PH VERSION)">
   <meta property="og:description" content="Integrate with the Sim & Teach API. Explore detailed documentation and examples.">
@@ -17,111 +17,146 @@
   <meta name="twitter:title" content="FREE Simsimi API Documentation - Sim & Teach (PH VERSION)">
   <meta name="twitter:description" content="Integrate with the Sim & Teach API. Explore detailed documentation and examples.">
   <meta name="twitter:image" content="https://i.ibb.co/Fw7yp2r/image.jpg">
-  <title>Simsimi API Documentation - Sim & Teach (PH VERSION)</title>
+  <title>Simsimi API - Sim & Teach Documentation (PH VERSION)</title>
   <link rel="icon" href="https://i.ibb.co/Fw7yp2r/image.jpg" type="image/png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
     /* Global Styles */
     body {
-      background-color: #0b3d0b;
-      color: #ffffff;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #f9f9f9;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
     }
 
     /* Navigation Bar */
     .navbar {
-      background: linear-gradient(135deg, #b22222, #8b0000);
-      border-bottom: 3px solid #ffd700;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+      background: linear-gradient(135deg, #1c1c1e, #3a3a3c);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
     .navbar-brand, .nav-link {
-      color: #ffffff;
+      color: #f9f9f9;
       transition: color 0.3s ease;
     }
 
     .navbar-brand:hover, .nav-link:hover {
-      color: #ffd700;
+      color: #00d1b2;
+      text-shadow: 0 0 5px #00d1b2;
     }
 
-    /* Container and Header */
-    .container {
-      margin-top: 60px;
-      padding-bottom: 50px;
+    .navbar-toggler {
+      border-color: #00d1b2;
     }
 
+    /* Header Section */
     .header {
       text-align: center;
-      padding: 20px;
-      background: linear-gradient(135deg, #b22222, #006400);
+      padding: 30px 20px;
+      background: linear-gradient(135deg, #1a2a38, #243b4a);
       border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      margin-top: 80px;
+      margin-bottom: 40px;
     }
 
     .header h1 {
       font-size: 3rem;
-      color: #ffd700;
-      text-shadow: 0 0 10px #ffd700;
+      color: #00d1b2;
+      text-shadow: 0 0 10px #00d1b2;
     }
 
     .header p {
       font-size: 1.2rem;
-      color: #ffffff;
+      color: #d1d1d1;
     }
 
     /* Endpoint Cards */
     .endpoint-card {
-      background-color: #006400;
-      border: 2px solid #b22222;
+      background: linear-gradient(135deg, #2a343e, #1e272f);
+      border: 1px solid #444;
       border-radius: 8px;
       padding: 20px;
-      margin-bottom: 30px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+      margin: 30px 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .endpoint-card:hover {
-      transform: scale(1.03);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.7);
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
     }
 
     .endpoint-card h3 {
-      color: #ffd700;
+      color: #00d1b2;
       margin-bottom: 15px;
     }
 
     .endpoint-card pre {
-      background-color: #2e8b57;
+      background-color: #1c2938;
       padding: 15px;
       border-radius: 5px;
-      color: #ffffff;
+      color: #4cd137;
       font-size: 0.95rem;
     }
 
     .endpoint-card .btn-primary {
-      background: linear-gradient(135deg, #b22222, #ffd700);
+      background: linear-gradient(135deg, #00d1b2, #007bff);
       border: none;
       transition: background 0.3s ease, transform 0.2s ease;
     }
 
     .endpoint-card .btn-primary:hover {
-      background: linear-gradient(135deg, #ffd700, #b22222);
+      background: linear-gradient(135deg, #007bff, #00d1b2);
       transform: scale(1.1);
+    }
+
+    /* Contact Section */
+    .contact-section {
+      background: linear-gradient(135deg, #1c1c1e, #2c2c2e);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 40px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .contact-section h3 {
+      color: #00d1b2;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .contact-section p {
+      color: #f9f9f9;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .contact-section a {
+      color: #00d1b2;
+      text-decoration: none;
+    }
+
+    .contact-section a:hover {
+      text-decoration: underline;
     }
 
     /* Footer */
     footer {
       text-align: center;
-      margin-top: 30px;
       padding: 20px;
-      background-color: #8b0000;
-      border-top: 3px solid #ffd700;
-      color: #ffffff;
+      background: linear-gradient(135deg, #1a2a38, #243b4a);
+      color: #b8b8b8;
+      border-top: 1px solid #333;
+      position: relative;
+      width: 100%;
     }
 
     footer a {
-      color: #ffd700;
+      color: #00d1b2;
       text-decoration: none;
     }
 
@@ -129,114 +164,242 @@
       text-decoration: underline;
     }
 
-    /* Christmas Snowflakes */
-    .snowflake {
-      position: fixed;
-      top: -10px;
-      z-index: 9999;
-      color: white;
-      opacity: 0.8;
-      font-size: 1.5em;
-      animation: fall 10s linear infinite;
-      user-select: none;
-      pointer-events: none;
-    }
-
-    @keyframes fall {
-      0% {
-        transform: translateY(0) rotate(0deg);
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2.5rem;
       }
-      100% {
-        transform: translateY(100vh) rotate(360deg);
+      .endpoint-card {
+        margin: 20px 0;
       }
     }
 
-    @keyframes drift {
-      0%, 100% {
-        transform: translateX(0);
-      }
-      50% {
-        transform: translateX(20px);
-      }
+    /* Ensuring Scrolling and Button Visibility */
+    .container {
+      padding-top: 100px; /* Adjust to ensure content doesn't overlap with the navbar */
     }
 
-    .snowflake:nth-child(odd) {
-      animation: fall 8s linear infinite, drift 4s ease-in-out infinite;
+    /* To prevent footer overlap */
+    .footer {
+      margin-top: 50px; /* Ensure the footer doesn't cover content */
     }
   </style>
 </head>
 <body>
-  <!-- Snowflake Container -->
-  <div id="snowflakes"></div>
 
   <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">🎄 Sim & Teach API</a>
+      <a class="navbar-brand" href="#">Sim & Teach API 🇵🇭</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link" href="#sim">🎅 Sim Endpoint</a>
+            <a class="nav-link" href="#sim">
+  <i class="fas fa-comment-dots"></i> Sim Endpoint
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#teach">🎁 Teach Endpoint</a>
+            <a class="nav-link" href="#teach">
+  <i class="fas fa-chalkboard-teacher"></i> Teach Endpoint
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#footer">About</a>
+            <a class="nav-link" href="#contact">
+  <i class="fas fa-phone"></i> Contact
+            </a>
           </li>
+          <a class="nav-link" href="#terms">
+  <i class="fas fa-file-contract"></i> Terms of Use
+</a>
+</li>
+        <a class="nav-link" href="#privacy-policy">
+  <i class="fas fa-shield-alt"></i> Privacy Policy 
+</a>
+</li>
         </ul>
       </div>
     </div>
   </nav>
 
   <!-- Main Container -->
-  <div class="container">
+  <div class="container pt-5">
     <!-- Header Section -->
     <div class="header">
-      <h1>🎄 Sim & Teach API Documentation 🎅</h1>
-      <p>API documentation for developers to integrate with the Sim and Teach endpoints. 🎁</p>
+      <h1>Sim & Teach API Documentation 🇵🇭</h1>
+      <p>API documentation to easily integrate the Sim & Teach endpoints. [ PH 🇵🇭 ]</p>
     </div>
 
     <!-- Sim Endpoint -->
-    <div class="endpoint-card" id="sim">
-      <h3><i class="fas fa-comment-dots"></i> Sim Endpoint</h3>
-      <p>The <strong>/sim</strong> endpoint is used to query a chatbot for a response. Use the query parameter to pass your text query.</p>
-      <a href="/sim?query=" class="btn btn-primary">Test Now</a>
-    </div>
+<div class="endpoint-card" id="sim">
+  <h3><i class="fas fa-comment-dots"></i> Sim Endpoint</h3>
+  <p>
+    Use the <strong>/sim</strong> endpoint to query a chatbot. Provide your text query as a parameter.
+  </p>
+  <p><strong>Example Request:</strong></p>
+  <pre>GET /sim?query=hello</pre>
+  <p><strong>Example Response:</strong></p>
+  <pre>{
+  "author": "Jerome",
+  "status": 200,
+  "respond": "Hi! How can I help you?",
+  "processingTime": "12.34ms"
+}</pre>
+  
+  <!-- Node.js Example -->
+  <p><strong>Node.js Example:</strong></p>
+  <pre><code class="language-javascript">
+// Node.js Example for /sim Endpoint
+const axios = require('axios');
+
+axios.get('https://simsimi.ooguy.com/sim', {
+    params: {
+        query: 'hello'
+    }
+})
+.then(response => {
+    console.log(response.data);
+})
+.catch(error => {
+    console.error(error);
+});
+  </code></pre>
+  
+  <a href="/sim?query=" class="btn btn-primary">Test Now</a>
+</div>
+
 
     <!-- Teach Endpoint -->
-    <div class="endpoint-card" id="teach">
-      <h3><i class="fas fa-chalkboard-teacher"></i> Teach Endpoint</h3>
-      <p>The <strong>/teach</strong> endpoint is used to teach the chatbot new responses.</p>
-      <a href="/teach?ask=&ans=" class="btn btn-primary">Test Now</a>
+<div class="endpoint-card">
+  <h3><i class="fas fa-chalkboard-teacher"></i> Teach Endpoint</h3>
+  <p>
+    Use the <strong>/teach</strong> endpoint to add responses. Provide the query and the response parameters.
+  </p>
+  <p><strong>Example Request:</strong></p>
+  <pre>GET /teach?ask=Hi&ans=Hello</pre>
+  <p><strong>Example Response:</strong></p>
+  <pre>{
+  "author": "Jerome",
+  "status": 200,
+  "message": "Successfully taught!",
+  "processingTime": "15.67ms"
+}</pre>
+  
+  <!-- Node.js Example -->
+  <p><strong>Node.js Example:</strong></p>
+  <pre><code class="language-javascript">
+// Node.js Example for /teach Endpoint
+const axios = require('axios');
+
+axios.get('https://simsimi.ooguy.com/teach', {
+    params: {
+        ask: 'Hi',
+        ans: 'Hello'
+    }
+})
+.then(response => {
+    console.log(response.data);
+})
+.catch(error => {
+    console.error(error);
+});
+  </code></pre>
+  
+  <a href="/teach?ask=&ans=" class="btn btn-primary">Test Now</a>
+</div>
+
+    
+    <!-- Terms of Use Section -->
+<div class="endpoint-card" id="terms">
+  <h3><i class="fas fa-file-contract"></i> Terms of Use</h3>
+  <p><strong>Last Updated:</strong> December 21, 2024</p>
+  <p>
+    Welcome to Simsimi API [ PH VERSION 🇵🇭 ]! By accessing or using our services, you agree to comply with the following terms and conditions. Please read them carefully before using the service.
+  </p>
+  <ul>
+    <li>
+      <strong>Acceptance of Terms:</strong> By using the Simsimi API, you agree to these Terms of Use. If you do not agree to these terms, you may not access or use the service.
+    </li>
+    <li>
+      <strong>Usage Rights:</strong> You may use the API for personal, educational, or commercial purposes, subject to the restrictions below. Proper credit to the Simsimi API must be included in any public-facing project.
+    </li>
+    <li>
+      <strong>Prohibited Activities:</strong>
+      <ul>
+        <li>Using the API for any unlawful purpose.</li>
+        <li>Overloading or attempting to compromise the service infrastructure.</li>
+        <li>Reselling or redistributing access to the API.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Rate Limiting:</strong> API usage may be subject to rate limits. Exceeding these limits may result in temporary or permanent suspension.
+    </li>
+    <li>
+      <strong>Intellectual Property:</strong> All intellectual property related to the API remains the sole property of Jerome.
+    </li>
+  </ul>
+</div>
+
+    <!-- Privacy Policy Section -->
+<div class="endpoint-card" id="privacy-policy">
+  <h3><i class="fas fa-shield-alt"></i> Privacy Policy</h3>
+  <p><strong>Last Updated:</strong> December 21, 2024</p>
+  <p>
+    Your privacy is important to us. This Privacy Policy outlines the types of information we collect, how we use it, and the measures we take to protect it.
+  </p>
+  <ul>
+    <li>
+      <strong>Information We Collect:</strong>
+      <ul>
+        <li>Personal Information: We may collect personal information such as your name, email address, and other details you provide voluntarily.</li>
+        <li>Usage Data: We collect information about how you interact with our API, including IP addresses, request data, and timestamps.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>How We Use Your Information:</strong>
+      <ul>
+        <li>To provide and maintain our services.</li>
+        <li>To improve the API experience and functionality.</li>
+        <li>To communicate with you regarding updates, security, and other relevant notices.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Data Sharing:</strong> We do not sell or share your personal information with third parties, except as required by law or to protect our rights.
+    </li>
+    <li>
+      <strong>Data Security:</strong> We use industry-standard measures to protect your data. However, no method of transmission or storage is 100% secure.
+    </li>
+    <li>
+      <strong>Your Rights:</strong> You have the right to access, update, or delete your personal information. Contact us if you have any requests or concerns.
+    </li>
+    <li>
+      <strong>Policy Updates:</strong> We may update this Privacy Policy from time to time. Changes will be reflected on this page with a new effective date.
+    </li>
+  </ul>
+</div>
+
+
+    <!-- Contact Section -->
+    <div class="endpoint-card" id="contact">
+      <h3><i class="fas fa-phone"></i> Contact Jerome Jamis</h3>
+      <p>If you have inquiries, questions, feedback, or encounter errors, feel free to reach out:</p>
+      <p>
+        <i class="fas fa-envelope"></i> Email: 
+        <a href="mailto:webjerome91@gmail.com">webjerome91@gmail.com</a>
+      </p>
+      <p>
+        <i class="fab fa-facebook"></i> Facebook: 
+        <a href="https://www.facebook.com/JeromeExpertise" target="_blank">Jerome Expertise</a>
+      </p>
     </div>
-  </div>
 
   <!-- Footer -->
   <footer id="footer">
-    <p>🎄 Developed by Jerome Jamis | Merry Christmas! 🎁</p>
+    <p>Made with ❤️ by Jerome</p>
   </footer>
 
-  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <!-- Snowflake Script -->
-  <script>
-    const snowflakeContainer = document.getElementById("snowflakes");
-    const snowflakeCount = 20;
-
-    for (let i = 0; i < snowflakeCount; i++) {
-      const snowflake = document.createElement("div");
-      snowflake.textContent = "❄";
-      snowflake.className = "snowflake";
-      snowflake.style.left = Math.random() * window.innerWidth + "px";
-      snowflake.style.animationDelay = Math.random() * 10 + "s";
-      snowflake.style.fontSize = Math.random() * 20 + 10 + "px";
-      snowflakeContainer.appendChild(snowflake);
-    }
-  </script>
 </body>
 </html>
