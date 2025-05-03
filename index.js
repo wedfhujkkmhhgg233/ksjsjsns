@@ -9,7 +9,7 @@ const PORT = 3000;
 // Set up rate limiting
 const limiter = rateLimit({
   windowMs: 30 * 60 * 1000, // 30 minutes
-  max: 1000,
+  max: 500,
   handler: (req, res) => {
     res.status(429).json({
       author: 'Jerome',
@@ -98,42 +98,63 @@ app.get('/sim', async (req, res) => {
       )
     );
 
-    // Auto-teach in the background (does not block the response)
-    (async () => {
-      try {
-        // Simsimi API auto-teach
-        const simsimiResponse = await axios.post(
-          'https://api.simsimi.vn/v1/simtalk',
-          `text=${encodeURIComponent(query)}&lc=ph&key=`,
-          { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-        );
+(async () => {
+  const tasks = [];
 
-        const teachMessage = simsimiResponse.data.message;
-        if (teachMessage) {
-          await teachBothAPIs(query, teachMessage);
+  // Simsimi API
+  tasks.push(
+    axios
+      .post('https://api.simsimi.vn/v1/simtalk', `text=${encodeURIComponent(query)}&lc=ph&key=`, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      })
+      .then((res) => {
+        if (res.data.message) {
+          return teachBothAPIs(query, res.data.message);
         }
+      })
+  );
 
-        // Auto-teach using Markdevs69 API (v1)
-        const markDevsV1 = await axios.get(`https://markdevs69v2.onrender.com/api/sim/get/${encodeURIComponent(query)}`);
-        if (markDevsV1.data.reply) {
-          await teachBothAPIs(query, markDevsV1.data.reply);
+  // Markdevs69 v1
+  tasks.push(
+    axios
+      .get(`https://markdevs69v2.onrender.com/api/sim/get/${encodeURIComponent(query)}`)
+      .then((res) => {
+        if (res.data.reply) {
+          return teachBothAPIs(query, res.data.reply);
         }
+      })
+  );
 
-        // Auto-teach using Markdevs69 API (v2)
-        const markDevsV2 = await axios.get(`https://markdevs69v2.onrender.com/api/simv2/get/${encodeURIComponent(query)}`);
-        if (markDevsV2.data.reply.trim()) {
-          await teachBothAPIs(query, markDevsV2.data.reply);
+  // Markdevs69 v2
+  tasks.push(
+    axios
+      .get(`https://markdevs69v2.onrender.com/api/simv2/get/${encodeURIComponent(query)}`)
+      .then((res) => {
+        if (res.data.reply && res.data.reply.trim()) {
+          return teachBothAPIs(query, res.data.reply);
         }
+      })
+  );
 
-        // Auto-teach using Markdevs69 API (v3)
-        const markDevsV3 = await axios.get(`https://markdevs69v2.onrender.com/api/sim/simv3`, { params: { type: 'ask', ask: query } });
-        if (markDevsV3.data.answer) {
-          await teachBothAPIs(query, markDevsV3.data.answer);
+  // Markdevs69 v3
+  tasks.push(
+    axios
+      .get(`https://markdevs69v2.onrender.com/api/sim/simv3`, { params: { type: 'ask', ask: query } })
+      .then((res) => {
+        if (res.data.answer) {
+          return teachBothAPIs(query, res.data.answer);
         }
-      } catch (error) {
-        console.error(`Auto-teach failed for query "${query}":`, error.message);
-      }
-    })();
+      })
+  );
+
+  // Fire all tasks in parallel and log results
+  const results = await Promise.allSettled(tasks);
+  results.forEach((result, i) => {
+    if (result.status === 'rejected') {
+      console.warn(`Auto-teach task ${i + 1} failed: ${result.reason.message}`);
+    }
+  });
+})();
     
   } catch (error) {
     res.status(500).json({
