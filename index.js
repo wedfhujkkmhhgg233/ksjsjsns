@@ -100,9 +100,9 @@ res.status(403).json({ error: e.message });
 // Route: /sim with fallback and auto-teach functionality
 app.get('/sim', async (req, res) => {
   const startTime = process.hrtime();
-  const { ask } = req.query;
+  const { query } = req.query;
 
-  if (!ask) {
+  if (!query) {
     return res.status(400).json({
       author: 'Jerome',
       status: 400,
@@ -127,7 +127,7 @@ app.get('/sim', async (req, res) => {
         {
           author: 'Jerome',
           status: 200,
-          ask: ask,
+          ask: query,
           respond: simResponse.respond || 'No reply',
           usage: user.usage,
           resetIn: 600000 - (Date.now() - user.lastReset),
