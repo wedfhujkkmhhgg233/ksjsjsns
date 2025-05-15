@@ -120,8 +120,8 @@ app.get('/sim', async (req, res) => {
   }
 
   try {
-    const user = await authenticate(apiKey); // Validate API key
-    await useSim(user); // Track usage limit
+    const user = await auth.authenticate(apiKey); // Validate API key
+    await auth.useSim(user); // Track usage limit
 
     const botResponse = await fetchWithFallback(
       'http://fi3.bot-hosting.net:20422/sim',
