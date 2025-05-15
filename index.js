@@ -101,6 +101,7 @@ res.status(403).json({ error: e.message });
 app.get('/sim', async (req, res) => {
   const startTime = process.hrtime();
   const query = req.query.query;
+  const apiKey = req.query.apikey;
 
   if (!query) {
     return res.status(400).json({
@@ -110,13 +111,18 @@ app.get('/sim', async (req, res) => {
     });
   }
 
-  try {
-    // Support x-api-key header or ?apikey=
-    const apiKey = req.headers['x-api-key'] || req.query.apikey;
-    const user = await auth.authenticate(apiKey);
-    await auth.useSim(user);
+  if (!apiKey) {
+    return res.status(401).json({
+      author: 'Jerome',
+      status: 401,
+      message: 'API key is required',
+    });
+  }
 
-    // Fetch response from fi.bot.hosting
+  try {
+    const user = await authenticate(apiKey); // Validate API key
+    await useSim(user); // Track usage limit
+
     const botResponse = await fetchWithFallback(
       'http://fi3.bot-hosting.net:20422/sim',
       'http://fi3.bot-hosting.net:20422/sim',
@@ -128,7 +134,9 @@ app.get('/sim', async (req, res) => {
         {
           author: 'Jerome',
           status: 200,
-          respond: botResponse.respond || '🚧 𝗠𝗮𝗶𝗻𝘁𝗲𝗻𝗮𝗻𝗰𝗲 𝗔𝗹𝗲𝗿𝘁 🚧\n\n𝖳𝗁𝖾 𝖲𝗂𝗆𝗌𝗂𝗆𝗂 𝖽𝖺𝗍𝖺𝖻𝖺𝗌𝖾 𝗂𝗌 𝖼𝗎𝗋𝗋𝖾𝗇𝗍𝗅𝗒 𝖾𝗑𝗉𝖾𝗋𝗂𝖾𝗇𝖼𝗂𝗇𝗀 𝗂𝗌𝗌𝗎𝖾𝗌. 𝖯𝗅𝖾𝖺𝗌𝖾 𝖼𝗈𝗇𝗍𝖺𝖼𝗍 𝗎𝗌 𝖺𝗍 [https://www.facebook.com/JeromeExpertise] 𝗍𝗈 𝖺𝖽𝖽𝗋𝖾𝗌𝗌 𝗍𝗁𝗂𝗌 𝗉𝗋𝗈𝖻𝗅𝗂𝗆 𝗂𝗆𝗆𝖾𝖽𝗂𝖺𝗍𝗅𝗒. 𝖳𝗁𝖺𝗇𝗄 𝗒𝗈𝗎 𝖿𝗈𝗋 𝗒𝗈𝗎𝗋 𝗉𝖺𝗍𝗂𝖾𝗇𝖼𝖾!',
+          respond:
+            botResponse.respond ||
+            '🚧 𝗠𝗮𝗶𝗻𝘁𝗲𝗻𝗮𝗻𝗰𝗲 𝗔𝗹𝗲𝗿𝘁 🚧\n\n𝖳𝗁𝖾 𝖲𝗂𝗆𝗌𝗂𝗆𝗂 𝖽𝖺𝗍𝖺𝖻𝖺𝗌𝖾 𝗂𝗌 𝖼𝗎𝗋𝗋𝖾𝗇𝗍𝗅𝗒 𝖾𝗑𝗉𝖾𝗋𝗂𝖾𝗇𝖼𝗂𝗇𝗀 𝗂𝗌𝗌𝗎𝖾𝗌. 𝖯𝗅𝖾𝖺𝗌𝖾 𝖼𝗈𝗇𝗍𝖺𝖼𝗍 𝗎𝗌 𝖺𝗍 [https://www.facebook.com/JeromeExpertise] 𝗍𝗈 𝖺𝖽𝖽𝗋𝖾𝗌𝗌 𝗍𝗁𝗂𝗌 𝗉𝗋𝗈𝖻𝗅𝖾𝗆 𝗂𝗆𝗆𝖾𝖽𝗂𝖺𝗍𝖾𝗅𝗒. 𝖳𝗁𝖺𝗇𝗄 𝗒𝗈𝗎 𝖿𝗈𝗋 𝗒𝗈𝗎𝗋 𝗉𝖺𝗍𝗂𝖾𝗇𝖼𝖾! 💬✨',
           processingTime: measureProcessingTime(startTime),
         },
         null,
