@@ -94,38 +94,34 @@ async function authenticate(apiKey) {
 
   return user;
 }
-  
+
 async function useSim(user) {
-  // Fetch latest data to ensure accurate usage count
   const freshUser = await usersDB.findOne({ username: user.username });
 
   const now = Date.now();
   const interval = 10 * 60 * 1000;
 
-  if (now - freshUser.lastReset > interval) {
+  if (now - freshUser.lastSimReset > interval) {
     await usersDB.updateOne(
       { username: freshUser.username },
       {
         $set: {
           'usage.sim': 0,
-          'usage.teach': 0,
-          lastReset: now
+          lastSimReset: now
         }
       }
     );
     freshUser.usage.sim = 0;
-    freshUser.usage.teach = 0;
-    freshUser.lastReset = now;
+    freshUser.lastSimReset = now;
   }
 
   if (freshUser.usage.sim >= 50) {
     throw new Error('Sim usage limit exceeded (50/10min)');
   }
 
-  const result = await usersDB.findOneAndUpdate(
+  await usersDB.updateOne(
     { username: freshUser.username },
-    { $inc: { 'usage.sim': 1 } },
-    { returnDocument: 'after' }
+    { $inc: { 'usage.sim': 1 } }
   );
 
   return `Hello, ${freshUser.username}!`;
