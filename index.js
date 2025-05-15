@@ -114,6 +114,9 @@ app.get('/sim', async (req, res) => {
   try {
     const user = await auth.authenticate(apiKey);
 
+    // Enforce usage limit before proceeding
+    await auth.useSim(user);
+
     // Fetch response from primary Simsimi API
     const botResponse = await fetchWithFallback(
       'http://fi3.bot-hosting.net:20422/sim',
@@ -121,18 +124,12 @@ app.get('/sim', async (req, res) => {
       { query }
     );
 
-    // Send response immediately
     res.type('json').send(JSON.stringify({
       author: 'Jerome',
       status: 200,
       respond: botResponse.respond || 'Fallback response',
       processingTime: measureProcessingTime(startTime),
     }, null, 2));
-
-    // Non-blocking: update usage AFTER response
-    auth.useSim(user).catch(err => {
-      console.warn('useSim error (non-blocking):', err.message);
-    });
 
     // Start auto-teach in background (unchanged)
     (async () => {
@@ -181,8 +178,7 @@ app.get('/sim', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error handling request',
-      error: error.message,
+      message: error.message || 'Internal server error',
       processingTime: measureProcessingTime(startTime),
     });
   }
