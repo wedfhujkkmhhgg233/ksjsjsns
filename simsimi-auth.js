@@ -71,11 +71,11 @@ async function login(username, password) {
 async function authenticate(apiKey) {
   if (!apiKey) throw new Error('API key required');
 
-  const user = await usersDB.findOne({ apiKey });
+  let user = await usersDB.findOne({ apiKey });
   if (!user) throw new Error('Invalid API key');
 
   const now = Date.now();
-  const interval = 10 * 60 * 1000;
+  const interval = 10 * 60 * 1000; // 10 minutes
 
   if (now - user.lastReset > interval) {
     await usersDB.updateOne(
@@ -88,14 +88,13 @@ async function authenticate(apiKey) {
         }
       }
     );
-    user.usage.sim = 0;
-    user.usage.teach = 0;
-    user.lastReset = now;
+    // Re-fetch user to get fresh usage counts and lastReset
+    user = await usersDB.findOne({ apiKey });
   }
 
   return user;
 }
-
+  
 async function useSim(user) {
   const result = await usersDB.findOneAndUpdate(
     {
