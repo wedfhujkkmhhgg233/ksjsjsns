@@ -103,113 +103,85 @@ app.get('/sim', async (req, res) => {
   const query = req.query.query;
   const apiKey = req.query.apikey;
 
-  if (!query) {
+  if (!query || !apiKey) {
     return res.status(400).json({
       author: 'Jerome',
       status: 400,
-      message: 'Query parameter is required',
-    });
-  }
-
-  if (!apiKey) {
-    return res.status(401).json({
-      author: 'Jerome',
-      status: 401,
-      message: 'API key is required',
+      message: 'Both query and apikey parameters are required',
     });
   }
 
   try {
-    const user = await auth.authenticate(apiKey); // Validate API key
+    const user = await auth.authenticate(apiKey);
 
+    // Fetch response from primary Simsimi API
     const botResponse = await fetchWithFallback(
       'http://fi3.bot-hosting.net:20422/sim',
       'http://fi3.bot-hosting.net:20422/sim',
       { query }
     );
 
-    res.type('json').send(
-      JSON.stringify(
-        {
-          author: 'Jerome',
-          status: 200,
-          respond:
-            botResponse.respond ||
-            '🚧 𝗠𝗮𝗶𝗻𝘁𝗲𝗻𝗮𝗻𝗰𝗲 𝗔𝗹𝗲𝗿𝘁 🚧\n\n𝖳𝗁𝖾 𝖲𝗂𝗆𝗌𝗂𝗆𝗂 𝖽𝖺𝗍𝖺𝖻𝖺𝗌𝖾 𝗂𝗌 𝖼𝗎𝗋𝗋𝖾𝗇𝗍𝗅𝗒 𝖾𝗑𝗉𝖾𝗋𝗂𝖾𝗇𝖼𝗂𝗇𝗀 𝗂𝗌𝗌𝗎𝖾𝗌. 𝖯𝗅𝖾𝖺𝗌𝖾 𝖼𝗈𝗇𝗍𝖺𝖼𝗍 𝗎𝗌 𝖺𝗍 [https://www.facebook.com/JeromeExpertise] 𝗍𝗈 𝖺𝖽𝖽𝗋𝖾𝗌𝗌 𝗍𝗁𝗂𝗌 𝗉𝗋𝗈𝖻𝗅𝖾𝗆 𝗂𝗆𝗆𝖾𝖽𝗂𝖺𝗍𝖾𝗅𝗒. 𝖳𝗁𝖺𝗇𝗄 𝗒𝗈𝗎 𝖿𝗈𝗋 𝗒𝗈𝗎𝗋 𝗉𝖺𝗍𝗂𝖾𝗇𝖼𝖾! 💬✨',
-          processingTime: measureProcessingTime(startTime),
-        },
-        null,
-        2
-      )
-    );
+    // Send response immediately
+    res.type('json').send(JSON.stringify({
+      author: 'Jerome',
+      status: 200,
+      respond: botResponse.respond || 'Fallback response',
+      processingTime: measureProcessingTime(startTime),
+    }, null, 2));
 
+    // Non-blocking: update usage AFTER response
     auth.useSim(user).catch(err => {
       console.warn('useSim error (non-blocking):', err.message);
     });
 
-(async () => {
-  const tasks = [];
+    // Start auto-teach in background (unchanged)
+    (async () => {
+      const tasks = [];
 
-  // Simsimi API
-  tasks.push(
-    axios
-      .post('https://api.simsimi.vn/v1/simtalk', `text=${encodeURIComponent(query)}&lc=ph&key=`, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      })
-      .then((res) => {
-        if (res.data.message) {
-          return teachBothAPIs(query, res.data.message);
+      tasks.push(
+        axios.post('https://api.simsimi.vn/v1/simtalk', 
+          `text=${encodeURIComponent(query)}&lc=ph&key=`, {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        }).then(res => {
+          if (res.data.message) teachBothAPIs(query, res.data.message);
+        })
+      );
+
+      tasks.push(
+        axios.get(`https://markdevs69v2.onrender.com/api/sim/get/${encodeURIComponent(query)}`)
+          .then(res => {
+            if (res.data.reply) teachBothAPIs(query, res.data.reply);
+          })
+      );
+
+      tasks.push(
+        axios.get(`https://markdevs69v2.onrender.com/api/simv2/get/${encodeURIComponent(query)}`)
+          .then(res => {
+            if (res.data.reply?.trim()) teachBothAPIs(query, res.data.reply);
+          })
+      );
+
+      tasks.push(
+        axios.get('https://markdevs69v2.onrender.com/api/sim/simv3', {
+          params: { type: 'ask', ask: query }
+        }).then(res => {
+          if (res.data.answer) teachBothAPIs(query, res.data.answer);
+        })
+      );
+
+      const results = await Promise.allSettled(tasks);
+      results.forEach((result, i) => {
+        if (result.status === 'rejected') {
+          console.warn(`Auto-teach task ${i + 1} failed: ${result.reason?.message}`);
         }
-      })
-  );
+      });
+    })();
 
-  // Markdevs69 v1
-  tasks.push(
-    axios
-      .get(`https://markdevs69v2.onrender.com/api/sim/get/${encodeURIComponent(query)}`)
-      .then((res) => {
-        if (res.data.reply) {
-          return teachBothAPIs(query, res.data.reply);
-        }
-      })
-  );
-
-  // Markdevs69 v2
-  tasks.push(
-    axios
-      .get(`https://markdevs69v2.onrender.com/api/simv2/get/${encodeURIComponent(query)}`)
-      .then((res) => {
-        if (res.data.reply && res.data.reply.trim()) {
-          return teachBothAPIs(query, res.data.reply);
-        }
-      })
-  );
-
-  // Markdevs69 v3
-  tasks.push(
-    axios
-      .get(`https://markdevs69v2.onrender.com/api/sim/simv3`, { params: { type: 'ask', ask: query } })
-      .then((res) => {
-        if (res.data.answer) {
-          return teachBothAPIs(query, res.data.answer);
-        }
-      })
-  );
-
-  // Fire all tasks in parallel and log results
-  const results = await Promise.allSettled(tasks);
-  results.forEach((result, i) => {
-    if (result.status === 'rejected') {
-      console.warn(`Auto-teach task ${i + 1} failed: ${result.reason.message}`);
-    }
-  });
-})();
-    
   } catch (error) {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error fetching data from the API',
+      message: 'Error handling request',
       error: error.message,
       processingTime: measureProcessingTime(startTime),
     });
