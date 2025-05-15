@@ -100,35 +100,35 @@ res.status(403).json({ error: e.message });
 // Route: /sim with fallback and auto-teach functionality
 app.get('/sim', async (req, res) => {
   const startTime = process.hrtime();
-  const { query } = req.query;
+  const query = req.query.query;
 
   if (!query) {
     return res.status(400).json({
       author: 'Jerome',
       status: 400,
-      message: '"ask" parameter is required',
+      message: 'Query parameter is required',
     });
   }
 
   try {
-    // Accept x-api-key header or apikey query parameter
+    // Support x-api-key header or ?apikey=
     const apiKey = req.headers['x-api-key'] || req.query.apikey;
-
-    // Authenticate and apply usage limit
     const user = await auth.authenticate(apiKey);
     await auth.useSim(user);
 
-    // Simulate using fi.bot-hosting
-    const simResponse = await axiosWithTimeout('http://fi3.bot-hosting.net:20422/sim', { query });
+    // Fetch response from fi.bot.hosting
+    const botResponse = await fetchWithFallback(
+      'http://fi3.bot-hosting.net:20422/sim',
+      'http://fi3.bot-hosting.net:20422/sim',
+      { query }
+    );
 
-    // Respond with data
     res.type('json').send(
       JSON.stringify(
         {
           author: 'Jerome',
           status: 200,
-          ask: query,
-          respond: simResponse.respond || 'No reply',
+          respond: botResponse.respond || '🚧 𝗠𝗮𝗶𝗻𝘁𝗲𝗻𝗮𝗻𝗰𝗲 𝗔𝗹𝗲𝗿𝘁 🚧\n\n𝖳𝗁𝖾 𝖲𝗂𝗆𝗌𝗂𝗆𝗂 𝖽𝖺𝗍𝖺𝖻𝖺𝗌𝖾 𝗂𝗌 𝖼𝗎𝗋𝗋𝖾𝗇𝗍𝗅𝗒 𝖾𝗑𝗉𝖾𝗋𝗂𝖾𝗇𝖼𝗂𝗇𝗀 𝗂𝗌𝗌𝗎𝖾𝗌. 𝖯𝗅𝖾𝖺𝗌𝖾 𝖼𝗈𝗇𝗍𝖺𝖼𝗍 𝗎𝗌 𝖺𝗍 [https://www.facebook.com/JeromeExpertise] 𝗍𝗈 𝖺𝖽𝖽𝗋𝖾𝗌𝗌 𝗍𝗁𝗂𝗌 𝗉𝗋𝗈𝖻𝗅𝗂𝗆 𝗂𝗆𝗆𝖾𝖽𝗂𝖺𝗍𝗅𝗒. 𝖳𝗁𝖺𝗇𝗄 𝗒𝗈𝗎 𝖿𝗈𝗋 𝗒𝗈𝗎𝗋 𝗉𝖺𝗍𝗂𝖾𝗇𝖼𝖾!',
           usage: user.usage,
           resetIn: 600000 - (Date.now() - user.lastReset),
           processingTime: measureProcessingTime(startTime),
