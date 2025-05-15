@@ -2,9 +2,15 @@ const express = require('express');
 const axios = require('axios');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
-
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const auth = require('./simsimi-auth');
 const app = express();
+app.use(cors());
+app.use(bodyParser.json());
 const PORT = 3000;
+
+auth.connectDB();
 
 // Set up rate limiting
 const limiter = rateLimit({
@@ -62,6 +68,34 @@ const teachBothAPIs = async (ask, ans) => {
     console.error(`Teach failed for ${url}:`, error.message);
   }
 };
+
+app.post('/api/auth', async (req, res) => {
+const { username, password, mode } = req.body;
+
+try {
+if (mode === 'signup') {
+const result = await auth.signup(username, password);
+return res.json(result);
+}
+if (mode === 'login') {
+const result = await auth.login(username, password);
+return res.json(result);
+}
+res.status(400).json({ error: 'Invalid mode' });
+} catch (e) {
+res.status(400).json({ error: e.message });
+}
+});
+
+app.get('/api/userinfo', async (req, res) => {
+try {
+const user = await auth.authenticate(req.headers['x-api-key']);
+const info = auth.getUserInfo(user);
+res.json(info);
+} catch (e) {
+res.status(403).json({ error: e.message });
+}
+});
 
 // Route: /sim with fallback and auto-teach functionality
 app.get('/sim', async (req, res) => {
