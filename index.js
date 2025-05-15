@@ -216,6 +216,9 @@ app.get('/teach', async (req, res) => {
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
 app.get('/commands', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'commands.html'));
 });
