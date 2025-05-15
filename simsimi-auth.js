@@ -1,5 +1,3 @@
-// simsimi-auth.js
-
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -20,6 +18,8 @@ let usersDB;
 async function connectDB() {
   await client.connect();
   usersDB = client.db("simsimi").collection("users");
+  await usersDB.createIndex({ username: 1 });
+  await usersDB.createIndex({ apiKey: 1 });
   console.log("Connected to MongoDB");
 }
 
@@ -75,32 +75,54 @@ async function authenticate(apiKey) {
   if (!user) throw new Error('Invalid API key');
 
   const now = Date.now();
-  const interval = 10 * 60 * 1000; // 10 minutes
+  const interval = 10 * 60 * 1000;
 
   if (now - user.lastReset > interval) {
+    await usersDB.updateOne(
+      { apiKey },
+      {
+        $set: {
+          'usage.sim': 0,
+          'usage.teach': 0,
+          lastReset: now
+        }
+      }
+    );
     user.usage.sim = 0;
     user.usage.teach = 0;
     user.lastReset = now;
-    await usersDB.updateOne({ apiKey }, {
-      $set: {
-        usage: user.usage,
-        lastReset: now
-      }
-    });
   }
 
   return user;
 }
 
 async function useSim(user) {
-  if (user.usage.sim >= 50) throw new Error('Sim usage limit exceeded (50/10min)');
-  await usersDB.updateOne({ username: user.username }, { $inc: { 'usage.sim': 1 } });
+  const result = await usersDB.findOneAndUpdate(
+    {
+      username: user.username,
+      'usage.sim': { $lt: 50 }
+    },
+    { $inc: { 'usage.sim': 1 } },
+    { returnDocument: 'after' }
+  );
+
+  if (!result.value) throw new Error('Sim usage limit exceeded (50/10min)');
+  user.usage.sim = result.value.usage.sim;
   return `Hello, ${user.username}!`;
 }
 
 async function useTeach(user) {
-  if (user.usage.teach >= 50) throw new Error('Teach usage limit exceeded (50/10min)');
-  await usersDB.updateOne({ username: user.username }, { $inc: { 'usage.teach': 1 } });
+  const result = await usersDB.findOneAndUpdate(
+    {
+      username: user.username,
+      'usage.teach': { $lt: 50 }
+    },
+    { $inc: { 'usage.teach': 1 } },
+    { returnDocument: 'after' }
+  );
+
+  if (!result.value) throw new Error('Teach usage limit exceeded (50/10min)');
+  user.usage.teach = result.value.usage.teach;
   return 'learned';
 }
 
@@ -109,7 +131,7 @@ function getUserInfo(user) {
     username: user.username,
     apiKey: user.apiKey,
     usage: user.usage,
-    resetIn: 600000 - (Date.now() - user.lastReset)
+    resetIn: Math.max(0, 600000 - (Date.now() - user.lastReset))
   };
 }
 
