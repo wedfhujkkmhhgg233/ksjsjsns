@@ -154,40 +154,61 @@
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.76 6.879 2.054M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
     <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">User Dashboard</h2>
+
+    <!-- Refresh Icon -->
+    <button onclick="loadDashboard()" class="ml-4 text-yellow-400 hover:text-yellow-300 relative">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M4 20l16-16" />
+      </svg>
+      <span id="refreshSpinner" class="absolute -top-1 -right-6 hidden animate-spin text-yellow-400">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4v1m0 14v1m8-8h1M3 12H2m15.364-6.364l.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l.707.707" />
+        </svg>
+      </span>
+    </button>
   </div>
+
   <!-- Description -->
-  <p class="text-gray-400 text-sm mb-6 italic">View your API key, usage limits, and reset status.</p>  <!-- Cards -->  <div class="space-y-4 text-sm">
+  <p class="text-gray-400 text-sm mb-6 italic">View your API key, usage limits, and reset status.</p>
+
+  <!-- Cards -->
+  <div class="space-y-4 text-sm">
     <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
       <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Username</h3>
       <p id="dash-username" class="text-green-400 break-all">Loading...</p>
-    </div><div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 relative">
-  <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">API Key</h3>
-  <p id="dash-apikey" class="text-green-400 break-all pr-14">Loading...</p>
-  <button onclick="copyApiKey()" class="absolute top-3 right-3 text-xs bg-yellow-400 text-black font-bold px-2 py-1 rounded hover:bg-yellow-300 transition">Copy</button>
-</div>
+    </div>
 
-<div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-  <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-2">Sim Usage</h3>
-  <div class="w-full h-2 bg-gray-700 rounded-full mb-2">
-    <div id="sim-progress" class="h-full bg-yellow-400 rounded-full transition-all" style="width:0%"></div>
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 relative">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">API Key</h3>
+      <p id="dash-apikey" class="text-green-400 break-all pr-14">Loading...</p>
+      <button onclick="copyApiKey()" class="absolute top-3 right-3 text-xs bg-yellow-400 text-black font-bold px-2 py-1 rounded hover:bg-yellow-300 transition">Copy</button>
+    </div>
+
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-2">Sim Usage</h3>
+      <div class="w-full h-2 bg-gray-700 rounded-full mb-2">
+        <div id="sim-progress" class="h-full bg-yellow-400 rounded-full transition-all" style="width:0%"></div>
+      </div>
+      <p id="dash-sim" class="text-green-400 text-xs">0 / 50</p>
+    </div>
+
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-2">Teach Usage</h3>
+      <div class="w-full h-2 bg-gray-700 rounded-full mb-2">
+        <div id="teach-progress" class="h-full bg-yellow-400 rounded-full transition-all" style="width:0%"></div>
+      </div>
+      <p id="dash-teach" class="text-green-400 text-xs">0 / 50</p>
+    </div>
+
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Reset In</h3>
+      <p id="dash-reset" class="text-gray-300">Checking...</p>
+    </div>
   </div>
-  <p id="dash-sim" class="text-green-400 text-xs">0 / 50</p>
-</div>
 
-<div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-  <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-2">Teach Usage</h3>
-  <div class="w-full h-2 bg-gray-700 rounded-full mb-2">
-    <div id="teach-progress" class="h-full bg-yellow-400 rounded-full transition-all" style="width:0%"></div>
-  </div>
-  <p id="dash-teach" class="text-green-400 text-xs">0 / 50</p>
-</div>
-
-<div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-  <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Reset In</h3>
-  <p id="dash-reset" class="text-gray-300">Checking...</p>
-</div>
-
-  </div>  <!-- Logout Button -->  <div class="text-center mt-8">
+  <!-- Logout Button -->
+  <div class="text-center mt-8">
     <button onclick="logout()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-lg transition duration-300">
       Logout
     </button>
@@ -616,28 +637,38 @@ function copyCode(btn) {
     setTimeout(() => btn.innerText = "Copy", 1500);
   });
 }
-  
-  async function loadDashboard() {
+
+    async function loadDashboard() {
+  const spinner = document.getElementById('refreshSpinner');
+  spinner.classList.remove('hidden');
+
   const apiKey = localStorage.getItem('apiKey');
   if (!apiKey) return;
 
-  const res = await fetch('/api/userinfo', {
-    headers: { 'x-api-key': apiKey }
-  });
-  const data = await res.json();
+  try {
+    const res = await fetch('/api/userinfo', {
+      headers: { 'x-api-key': apiKey }
+    });
+    const data = await res.json();
 
-  document.getElementById('dash-username').textContent = data.username;
-  document.getElementById('dash-apikey').textContent = data.apiKey;
-  document.getElementById('dash-sim').textContent = `${data.usage.sim} / 50`;
-  document.getElementById('dash-teach').textContent = `${data.usage.teach} / 50`;
+    document.getElementById('dash-username').textContent = data.username;
+    document.getElementById('dash-apikey').textContent = data.apiKey;
+    document.getElementById('dash-sim').textContent = `${data.usage.sim} / 50`;
+    document.getElementById('dash-teach').textContent = `${data.usage.teach} / 50`;
 
-  document.getElementById('sim-progress').style.width = `${Math.min(100, (data.usage.sim / 50) * 100)}%`;
-  document.getElementById('teach-progress').style.width = `${Math.min(100, (data.usage.teach / 50) * 100)}%`;
+    document.getElementById('sim-progress').style.width = `${(data.usage.sim / 50) * 100}%`;
+    document.getElementById('teach-progress').style.width = `${(data.usage.teach / 50) * 100}%`;
 
-  const minutes = Math.floor(data.resetIn / 60000);
-  const seconds = Math.floor((data.resetIn % 60000) / 1000);
-  document.getElementById('dash-reset').textContent = `${minutes}m ${seconds}s until reset`;
+    const minutes = Math.floor(data.resetIn / 60000);
+    const seconds = Math.floor((data.resetIn % 60000) / 1000);
+    document.getElementById('dash-reset').textContent = `${minutes}m ${seconds}s until reset`;
+  } catch (err) {
+    alert("Failed to refresh dashboard.");
+  } finally {
+    spinner.classList.add('hidden');
+  }
 }
+</script>
 
 function copyApiKey() {
   const apiKey = document.getElementById('dash-apikey').textContent;
