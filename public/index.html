@@ -158,17 +158,18 @@
     <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">User Dashboard</h2>
 
     <!-- Refresh Icon -->
-    <button onclick="loadDashboard()" class="ml-4 text-yellow-400 hover:text-yellow-300 relative">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M4 20l16-16" />
-      </svg>
-      <span id="refreshSpinner" class="absolute -top-1 -right-6 hidden animate-spin text-yellow-400">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 4v1m0 14v1m8-8h1M3 12H2m15.364-6.364l.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l.707.707" />
-        </svg>
-      </span>
-    </button>
+    <button onclick="loadDashboard()" class="ml-auto flex items-center gap-1 px-3 py-1.5 rounded-full border border-yellow-400 hover:bg-yellow-400 hover:text-black text-yellow-300 text-xs transition duration-200 group">
+  <svg class="w-4 h-4 group-hover:animate-spin transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M4 20l16-16" />
+  </svg>
+  <span class="hidden sm:inline">Refresh</span>
+  <span id="refreshSpinner" class="ml-1 hidden animate-spin">
+    <svg class="w-4 h-4 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 4v1m0 14v1m8-8h1M3 12H2m15.364-6.364l.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l.707.707" />
+    </svg>
+  </span>
+</button>
   </div>
 
   <!-- Description -->
