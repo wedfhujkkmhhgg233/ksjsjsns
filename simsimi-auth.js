@@ -128,17 +128,35 @@ async function useSim(user) {
 }
 
 async function useTeach(user) {
-  const result = await usersDB.findOneAndUpdate(
-    {
-      username: user.username,
-      'usage.teach': { $lt: 50 }
-    },
-    { $inc: { 'usage.teach': 1 } },
-    { returnDocument: 'after' }
+  // Fetch fresh data
+  const freshUser = await usersDB.findOne({ username: user.username });
+
+  const now = Date.now();
+  const interval = 10 * 60 * 1000;
+
+  if (now - freshUser.lastTeachReset > interval) {
+    await usersDB.updateOne(
+      { username: freshUser.username },
+      {
+        $set: {
+          'usage.teach': 0,
+          lastTeachReset: now
+        }
+      }
+    );
+    freshUser.usage.teach = 0;
+    freshUser.lastTeachReset = now;
+  }
+
+  if (freshUser.usage.teach >= 50) {
+    throw new Error('Teach usage limit exceeded (50/10min)');
+  }
+
+  await usersDB.updateOne(
+    { username: freshUser.username },
+    { $inc: { 'usage.teach': 1 } }
   );
 
-  if (!result.value) throw new Error('Teach usage limit exceeded (50/10min)');
-  user.usage.teach = result.value.usage.teach;
   return 'learned';
 }
 
