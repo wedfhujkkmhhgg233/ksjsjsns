@@ -199,7 +199,7 @@ app.get('/teach', async (req, res) => {
 
   try {
     // Authenticate the user
-    const user = await auth.authenticate(apiKey);
+    const user = await auth.authenticate(apikey);
 
     // Apply teach usage logic
     await auth.useTeach(user);
