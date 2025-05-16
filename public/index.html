@@ -216,26 +216,18 @@
     <pre id="simOutput" class="bg-black/60 border border-yellow-500/10 text-green-400 p-4 rounded-lg text-sm whitespace-pre-wrap font-mono shadow-inner max-h-60 overflow-auto"></pre>
   </div>  <!-- API Tip -->  <div class="mt-6 bg-black/40 border border-yellow-500/10 p-4 rounded-lg text-xs text-gray-400">
     <strong class="text-yellow-400">Tip:</strong> Access directly via
-    <a href="/sim?query=hi&apikey=YOUR_API_KEY" class="text-green-400 underline hover:text-green-300 transition">
-      <code>/sim?query=hi&apikey=</code>
+    <a href="/sim?query=hi&apikey=" class="text-green-400 underline hover:text-green-300 transition">
+      <code>/sim?query=hi&apikey=YOUR_API_KEY</code>
     </a>
   </div>
 </section>
 
-    <section id="teach" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md">
-
-  <!-- Header -->
-  <div class="flex items-center gap-3 mb-4">
+    <section id="teach" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md">  <!-- Header -->  <div class="flex items-center gap-3 mb-4">
     <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
     </svg>
     <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">GET /teach</h2>
-  </div>
-
-  <p class="text-gray-400 text-sm mb-6 italic">Teach the bot how to respond to a custom message with your chosen reply.</p>
-
-  <!-- Teach Form -->
-  <div class="space-y-4">
+  </div>  <p class="text-gray-400 text-sm mb-6 italic">Teach the bot how to respond to a custom message with your chosen reply.</p>  <!-- Teach Form -->  <div class="space-y-4">
     <div>
       <label class="text-xs uppercase tracking-wider text-yellow-400 mb-1 block">Message (ask)</label>
       <input id="teachAsk" type="text" placeholder="e.g. hello" class="w-full bg-gray-950 text-white border border-yellow-500/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-300 transition duration-200 placeholder:text-gray-500" />
@@ -244,34 +236,27 @@
       <label class="text-xs uppercase tracking-wider text-yellow-400 mb-1 block">Bot's Reply (ans)</label>
       <input id="teachAns" type="text" placeholder="e.g. hey!" class="w-full bg-gray-950 text-white border border-yellow-500/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-300 transition duration-200 placeholder:text-gray-500" />
     </div>
+    <div>
+      <label class="text-xs uppercase tracking-wider text-yellow-400 mb-1 block">API Key</label>
+      <input id="teachKey" type="text" placeholder="Enter your API key" class="w-full bg-gray-950 text-white border border-yellow-500/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-300 transition duration-200 placeholder:text-gray-500" />
+    </div>
     <button onclick="runTeach()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-2.5 rounded-lg shadow-md hover:shadow-yellow-300/40 transition duration-300">
       Teach Bot
     </button>
-  </div>
-
-  <!-- Response Preview -->
-  <div id="teachResult" class="mt-8 hidden">
+  </div>  <!-- Response Preview -->  <div id="teachResult" class="mt-8 hidden">
     <h3 class="text-sm text-yellow-500 font-semibold uppercase tracking-wide mb-1">Response</h3>
     <pre id="teachOutput" class="bg-black/60 border border-yellow-500/10 text-green-400 p-4 rounded-lg text-sm whitespace-pre-wrap font-mono shadow-inner max-h-60 overflow-auto"></pre>
-  </div>
-
-  <!-- Tip -->
-  <div class="mt-6 bg-black/40 border border-yellow-500/10 p-4 rounded-lg text-xs text-gray-400">
+  </div>  <!-- Tip -->  <div class="mt-6 bg-black/40 border border-yellow-500/10 p-4 rounded-lg text-xs text-gray-400">
     <strong class="text-yellow-400">Tip:</strong> Use the endpoint directly via
-    <a href="/teach?ask=&ans=" class="text-green-400 underline hover:text-green-300 transition">
-      <code>/teach?ask=&ans=</code>
+    <a href="/teach?ask=hello&ans=hey!&apikey=" class="text-green-400 underline hover:text-green-300 transition">
+      <code>/teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY</code>
     </a>
-  </div>
-
-  <!-- Example -->
-  <div class="bg-black/40 mt-6 p-4 rounded-lg text-xs text-gray-400 border border-yellow-500/10">
+  </div>  <!-- Example -->  <div class="bg-black/40 mt-6 p-4 rounded-lg text-xs text-gray-400 border border-yellow-500/10">
     <strong class="text-yellow-300 block mb-2 uppercase tracking-wider">Example</strong>
-    <code class="text-green-400">POST /teach?ask=hello&ans=hey!</code><br />
+    <code class="text-green-400">GET /teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY</code><br />
     <strong class="text-yellow-400 block mt-1">Returns:</strong>
     <code class="text-green-400">{"status": "learned"}</code>
-  </div>
-
-</section>
+  </div></section>
 
     <section id="docs" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md text-gray-300 max-w-4xl mx-auto">
 
@@ -582,11 +567,12 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!")
   function runTeach() {
   const ask = document.getElementById('teachAsk').value.trim();
   const ans = document.getElementById('teachAns').value.trim();
+  const key = document.getElementById('teachKey').value.trim();
   const output = document.getElementById('teachOutput');
   const resultBox = document.getElementById('teachResult');
 
-  if (!ask || !ans) {
-    output.textContent = "Both fields are required.";
+  if (!ask || !ans || !key) {
+    output.textContent = "Please fill in ask, ans, and your API key.";
     resultBox.classList.remove('hidden');
     return;
   }
@@ -594,7 +580,7 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!")
   output.textContent = "Submitting...";
   resultBox.classList.remove('hidden');
 
-  fetch(`/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}`, { method: 'GET' })
+  fetch(`/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}&apikey=${encodeURIComponent(key)}`)
     .then(res => {
       if (!res.ok) throw new Error(`Error ${res.status}`);
       return res.json();
@@ -605,7 +591,7 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!")
     .catch(err => {
       output.textContent = `Request failed: ${err.message}`;
     });
-}
+    }
   
   const footer = document.querySelector('footer');
 
