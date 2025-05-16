@@ -140,54 +140,49 @@
         </svg>
       </div>
     </section>
-    
-    <section id="dashboard" class="page-section bg-gray-800 rounded-2xl p-6 shadow-2xl border border-yellow-400/20 max-w-4xl mx-auto mt-10">
-  <div class="flex items-center gap-2 mb-6">
+
+    <section id="dashboard" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10">
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-4">
     <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.76 6.879 2.054M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.76 6.879 2.054M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
-    <h2 class="text-2xl font-bold text-yellow-400 tracking-tight">User Dashboard</h2>
+    <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">User Dashboard</h2>
   </div>
-
-  <!-- User Info -->
-  <div class="space-y-4 text-sm">
-    <div class="bg-gray-700 p-4 rounded border border-yellow-400/10">
-      <h3 class="text-yellow-400 font-semibold mb-1">Username</h3>
+  <!-- Description -->
+  <p class="text-gray-400 text-sm mb-6 italic">View your API key, usage limits, and reset status.</p>  <!-- Cards -->  <div class="space-y-4 text-sm">
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Username</h3>
       <p id="dash-username" class="text-green-400 break-all">Loading...</p>
-    </div>
+    </div><div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 relative">
+  <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">API Key</h3>
+  <p id="dash-apikey" class="text-green-400 break-all pr-14">Loading...</p>
+  <button onclick="copyApiKey()" class="absolute top-3 right-3 text-xs bg-yellow-400 text-black font-bold px-2 py-1 rounded hover:bg-yellow-300 transition">Copy</button>
+</div>
 
-    <div class="bg-gray-700 p-4 rounded border border-yellow-400/10 relative">
-      <h3 class="text-yellow-400 font-semibold mb-1">API Key</h3>
-      <p id="dash-apikey" class="text-green-400 break-all pr-12">Loading...</p>
-      <button onclick="copyApiKey()" class="absolute top-3 right-3 text-xs bg-yellow-400 text-black font-bold px-2 py-1 rounded hover:bg-yellow-300 transition">Copy</button>
-    </div>
-
-    <div class="bg-gray-700 p-4 rounded border border-yellow-400/10">
-      <h3 class="text-yellow-400 font-semibold mb-2">Sim Usage</h3>
-      <div class="w-full h-2 bg-gray-600 rounded-full mb-1">
-        <div id="sim-progress" class="h-full bg-yellow-400 rounded-full transition-all" style="width:0%"></div>
-      </div>
-      <p id="dash-sim" class="text-green-400">0 / 50</p>
-    </div>
-
-    <div class="bg-gray-700 p-4 rounded border border-yellow-400/10">
-      <h3 class="text-yellow-400 font-semibold mb-2">Teach Usage</h3>
-      <div class="w-full h-2 bg-gray-600 rounded-full mb-1">
-        <div id="teach-progress" class="h-full bg-yellow-400 rounded-full transition-all" style="width:0%"></div>
-      </div>
-      <p id="dash-teach" class="text-green-400">0 / 50</p>
-    </div>
-
-    <div class="bg-gray-700 p-4 rounded border border-yellow-400/10">
-      <h3 class="text-yellow-400 font-semibold mb-1">Reset In</h3>
-      <p id="dash-reset" class="text-gray-300">Checking...</p>
-    </div>
+<div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+  <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-2">Sim Usage</h3>
+  <div class="w-full h-2 bg-gray-700 rounded-full mb-2">
+    <div id="sim-progress" class="h-full bg-yellow-400 rounded-full transition-all" style="width:0%"></div>
   </div>
+  <p id="dash-sim" class="text-green-400 text-xs">0 / 50</p>
+</div>
 
-  <!-- Logout -->
-  <div class="text-center mt-8">
-    <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white font-bold px-6 py-2 rounded shadow transition">
+<div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+  <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-2">Teach Usage</h3>
+  <div class="w-full h-2 bg-gray-700 rounded-full mb-2">
+    <div id="teach-progress" class="h-full bg-yellow-400 rounded-full transition-all" style="width:0%"></div>
+  </div>
+  <p id="dash-teach" class="text-green-400 text-xs">0 / 50</p>
+</div>
+
+<div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+  <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Reset In</h3>
+  <p id="dash-reset" class="text-gray-300">Checking...</p>
+</div>
+
+  </div>  <!-- Logout Button -->  <div class="text-center mt-8">
+    <button onclick="logout()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-lg transition duration-300">
       Logout
     </button>
   </div>
