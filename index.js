@@ -187,24 +187,30 @@ app.get('/sim', async (req, res) => {
 // Route: /teach with fallback mechanism for teaching response
 app.get('/teach', async (req, res) => {
   const startTime = process.hrtime();
-  const { ask, ans } = req.query;
+  const { ask, ans, apiKey } = req.query;
 
-  if (!ask || !ans) {
+  if (!ask || !ans || !apiKey) {
     return res.status(400).json({
       author: 'Jerome',
       status: 400,
-      message: 'Both "ask" and "ans" parameters are required',
+      message: 'Parameters "ask", "ans", and "apiKey" are required',
     });
   }
 
   try {
-    // Fetch the teach response with fi.bot.hosting API
+    // Authenticate the user
+    const user = await auth.authenticate(apiKey);
+
+    // Apply teach usage logic
+    await auth.useTeach(user);
+
+    // Teach to fi.bot.hosting API
     const teachResponse = await axiosWithTimeout('http://fi3.bot-hosting.net:20422/teach', { ask, ans });
 
-    // Teach the fi.bot.hosting API after fetching the response
+    // Optionally teach to a second API
     await teachBothAPIs(ask, ans);
 
-    // Respond with the teach response
+    // Respond
     res.type('json').send(
       JSON.stringify(
         {
@@ -222,8 +228,7 @@ app.get('/teach', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: 'Error teaching the API',
-      error: error.message,
+      message: error.message || 'Error teaching the API',
       processingTime: measureProcessingTime(startTime),
     });
   }
