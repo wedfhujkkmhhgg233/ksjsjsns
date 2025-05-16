@@ -193,7 +193,7 @@ app.get('/teach', async (req, res) => {
     return res.status(400).json({
       author: 'Jerome',
       status: 400,
-      message: 'Parameters "ask", "ans", and "apiKey" are required',
+      message: 'Parameters "ask", "ans", and "apikey" are required',
     });
   }
 
