@@ -189,7 +189,7 @@ app.get('/teach', async (req, res) => {
   const startTime = process.hrtime();
   const { ask, ans, apikey } = req.query;
 
-  if (!ask || !ans || !apiKey) {
+  if (!ask || !ans || !apikey) {
     return res.status(400).json({
       author: 'Jerome',
       status: 400,
