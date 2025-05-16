@@ -187,7 +187,7 @@ app.get('/sim', async (req, res) => {
 // Route: /teach with fallback mechanism for teaching response
 app.get('/teach', async (req, res) => {
   const startTime = process.hrtime();
-  const { ask, ans, apiKey } = req.query;
+  const { ask, ans, apikey } = req.query;
 
   if (!ask || !ans || !apiKey) {
     return res.status(400).json({
