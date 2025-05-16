@@ -258,114 +258,105 @@
     <code class="text-green-400">{"status": "learned"}</code>
   </div></section>
 
-    <section id="docs" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md text-gray-300 max-w-4xl mx-auto">
-
+<section id="docs" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md text-gray-300 max-w-4xl mx-auto">
   <div class="flex items-center gap-2 mb-6">
     <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M20 12c0 4.418-4.03 8-9 8s-9-3.582-9-8 4.03-8 9-8 9 3.582 9 8z" />
     </svg>
     <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">API Documentation</h2>
-  </div>
-
-  <!-- SIM Endpoint -->
-  <div class="mb-10">
+  </div>  <!-- SIM Endpoint -->  <div class="mb-10">
     <h3 class="text-xl font-bold text-yellow-400 mb-2">GET /sim</h3>
-    <p class="text-sm text-gray-400 mb-4">Retrieve chatbot-style responses to queries.</p>
+    <p class="text-sm text-gray-400 mb-4">Retrieve chatbot-style responses to queries. Requires <code>apikey</code>.</p><div class="mb-4">
+  <label for="lang-sim" class="text-sm text-gray-400 block mb-1">Select Language:</label>
+  <select id="lang-sim" onchange="showTab('sim', this.value)" class="w-full md:w-48 bg-gray-800 border border-yellow-500/20 text-yellow-300 text-sm rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+    <option value="node">Node.js</option>
+    <option value="python">Python</option>
+    <option value="fetch">Fetch</option>
+  </select>
+</div>
 
-    <div class="mb-4">
-      <label for="lang-sim" class="text-sm text-gray-400 block mb-1">Select Language:</label>
-      <select id="lang-sim" onchange="showTab('sim', this.value)" class="w-full md:w-48 bg-gray-800 border border-yellow-500/20 text-yellow-300 text-sm rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-        <option value="node">Node.js</option>
-        <option value="python">Python</option>
-        <option value="fetch">Fetch</option>
-      </select>
-    </div>
+<div class="tab-content" id="code-sim-node">
+  <div class="relative">
+    <button onclick="copyCode(this)" class="copy-btn">Copy</button>
 
-    <!-- Code Blocks -->
-    <div class="tab-content" id="code-sim-node">
-      <div class="relative">
-        <button onclick="copyCode(this)" class="copy-btn">Copy</button>
 <pre class="pt-6 bg-black/60 p-4 rounded-lg border border-yellow-400/10 overflow-auto text-green-400 text-sm font-mono">
 const axios = require('axios');
 axios.get('https://simsimi.ooguy.com/sim', {
-  params: { query: 'hi' }
+  params: { query: 'hi', apikey: 'YOUR_API_KEY' }
 }).then(res => console.log(res.data));
-</pre>
-      </div>
-    </div>
+</pre></div>
+</div>
 
-    <div class="tab-content hidden" id="code-sim-python">
-      <div class="relative">
-        <button onclick="copyCode(this)" class="copy-btn">Copy</button>
+<div class="tab-content hidden" id="code-sim-python">
+  <div class="relative">
+    <button onclick="copyCode(this)" class="copy-btn">Copy</button>
+
 <pre class="pt-6 bg-black/60 p-4 rounded-lg border border-yellow-400/10 overflow-auto text-green-400 text-sm font-mono">
 import requests
-res = requests.get("https://simsimi.ooguy.com/sim", params={"query": "hi"})
+res = requests.get("https://simsimi.ooguy.com/sim", params={"query": "hi", "apikey": "YOUR_API_KEY"})
 print(res.json())
-</pre>
-      </div>
-    </div>
+</pre></div>
+</div>
 
-    <div class="tab-content hidden" id="code-sim-fetch">
-      <div class="relative">
-        <button onclick="copyCode(this)" class="copy-btn">Copy</button>
+<div class="tab-content hidden" id="code-sim-fetch">
+  <div class="relative">
+    <button onclick="copyCode(this)" class="copy-btn">Copy</button>
+
 <pre class="pt-6 bg-black/60 p-4 rounded-lg border border-yellow-400/10 overflow-auto text-green-400 text-sm font-mono">
-fetch("https://simsimi.ooguy.com/sim?query=hi")
+fetch("https://simsimi.ooguy.com/sim?query=hi&apikey=YOUR_API_KEY")
   .then(res => res.json())
   .then(data => console.log(data));
-</pre>
-      </div>
-    </div>
-  </div>
+</pre></div>
+</div>
 
-  <!-- TEACH Endpoint -->
-  <div>
+  </div>  <!-- TEACH Endpoint -->  <div>
     <h3 class="text-xl font-bold text-yellow-400 mb-2">GET /teach</h3>
-    <p class="text-sm text-gray-400 mb-4">Teach the bot how to respond using a phrase and an answer.</p>
+    <p class="text-sm text-gray-400 mb-4">Teach the bot using a phrase and an answer. Requires <code>apikey</code>.</p><div class="mb-4">
+  <label for="lang-teach" class="text-sm text-gray-400 block mb-1">Select Language:</label>
+  <select id="lang-teach" onchange="showTab('teach', this.value)" class="w-full md:w-48 bg-gray-800 border border-yellow-500/20 text-yellow-300 text-sm rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+    <option value="node">Node.js</option>
+    <option value="python">Python</option>
+    <option value="fetch">Fetch</option>
+  </select>
+</div>
 
-    <div class="mb-4">
-      <label for="lang-teach" class="text-sm text-gray-400 block mb-1">Select Language:</label>
-      <select id="lang-teach" onchange="showTab('teach', this.value)" class="w-full md:w-48 bg-gray-800 border border-yellow-500/20 text-yellow-300 text-sm rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-        <option value="node">Node.js</option>
-        <option value="python">Python</option>
-        <option value="fetch">Fetch</option>
-      </select>
-    </div>
+<div class="tab-content" id="code-teach-node">
+  <div class="relative">
+    <button onclick="copyCode(this)" class="copy-btn">Copy</button>
 
-    <div class="tab-content" id="code-teach-node">
-      <div class="relative">
-        <button onclick="copyCode(this)" class="copy-btn">Copy</button>
 <pre class="pt-6 bg-black/60 p-4 rounded-lg border border-yellow-400/10 overflow-auto text-green-400 text-sm font-mono">
 const axios = require('axios');
 axios.get('https://simsimi.ooguy.com/teach', {
-  params: { ask: 'hello', ans: 'hey!' }
+  params: { ask: 'hello', ans: 'hey!', apikey: 'YOUR_API_KEY' }
 }).then(res => console.log(res.data));
-</pre>
-      </div>
-    </div>
+</pre></div>
+</div>
 
-    <div class="tab-content hidden" id="code-teach-python">
-      <div class="relative">
-        <button onclick="copyCode(this)" class="copy-btn">Copy</button>
+<div class="tab-content hidden" id="code-teach-python">
+  <div class="relative">
+    <button onclick="copyCode(this)" class="copy-btn">Copy</button>
+
 <pre class="pt-6 bg-black/60 p-4 rounded-lg border border-yellow-400/10 overflow-auto text-green-400 text-sm font-mono">
 import requests
-res = requests.get("https://simsimi.ooguy.com/teach", params={"ask": "hello", "ans": "hey!"})
+res = requests.get("https://simsimi.ooguy.com/teach", params={"ask": "hello", "ans": "hey!", "apikey": "YOUR_API_KEY"})
 print(res.json())
-</pre>
-      </div>
-    </div>
+</pre></div>
+</div>
 
-    <div class="tab-content hidden" id="code-teach-fetch">
-      <div class="relative">
-        <button onclick="copyCode(this)" class="copy-btn">Copy</button>
+<div class="tab-content hidden" id="code-teach-fetch">
+  <div class="relative">
+    <button onclick="copyCode(this)" class="copy-btn">Copy</button>
+
 <pre class="pt-6 bg-black/60 p-4 rounded-lg border border-yellow-400/10 overflow-auto text-green-400 text-sm font-mono">
-fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!")
+fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY")
   .then(res => res.json())
   .then(data => console.log(data));
-</pre>
-      </div>
-    </div>
+</pre></div>
+</div>
+
   </div>
 </section>
+    
     <section id="about" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md text-gray-300 max-w-4xl mx-auto mt-10">
 
   <!-- Profile -->
