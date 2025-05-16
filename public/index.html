@@ -684,7 +684,7 @@ function logout() {
   fetch('/api/logout', { method: 'POST' })
     .then(() => {
       localStorage.clear();
-      window.location.href = '/login.html';
+      window.location.href = '/login';
     });
 }
 
