@@ -40,12 +40,16 @@ async function signup(username, password) {
 
   const hashed = await bcrypt.hash(password, 10);
   const apiKey = generateApiKey();
+  const now = Date.now();
   const newUser = {
     username,
     password: hashed,
     apiKey,
     usage: { sim: 0, teach: 0 },
-    lastReset: Date.now()
+    totalCalls: 0,
+    lastReset: now,
+    lastSimReset: now,
+    lastTeachReset: now
   };
 
   await usersDB.insertOne(newUser);
@@ -75,7 +79,7 @@ async function authenticate(apiKey) {
   if (!user) throw new Error('Invalid API key');
 
   const now = Date.now();
-  const interval = 10 * 60 * 1000; // 10 minutes
+  const interval = 10 * 60 * 1000;
 
   if (now - user.lastReset > interval) {
     await usersDB.updateOne(
@@ -88,7 +92,6 @@ async function authenticate(apiKey) {
         }
       }
     );
-    // Re-fetch user to get fresh usage counts and lastReset
     user = await usersDB.findOne({ apiKey });
   }
 
@@ -97,7 +100,6 @@ async function authenticate(apiKey) {
 
 async function useSim(user) {
   const freshUser = await usersDB.findOne({ username: user.username });
-
   const now = Date.now();
   const interval = 10 * 60 * 1000;
 
@@ -121,16 +123,19 @@ async function useSim(user) {
 
   await usersDB.updateOne(
     { username: freshUser.username },
-    { $inc: { 'usage.sim': 1 } }
+    {
+      $inc: {
+        'usage.sim': 1,
+        totalCalls: 1
+      }
+    }
   );
 
   return `Hello, ${freshUser.username}!`;
 }
 
 async function useTeach(user) {
-  // Fetch fresh data
   const freshUser = await usersDB.findOne({ username: user.username });
-
   const now = Date.now();
   const interval = 10 * 60 * 1000;
 
@@ -154,7 +159,12 @@ async function useTeach(user) {
 
   await usersDB.updateOne(
     { username: freshUser.username },
-    { $inc: { 'usage.teach': 1 } }
+    {
+      $inc: {
+        'usage.teach': 1,
+        totalCalls: 1
+      }
+    }
   );
 
   return 'learned';
@@ -165,7 +175,31 @@ function getUserInfo(user) {
     username: user.username,
     apiKey: user.apiKey,
     usage: user.usage,
+    totalCalls: user.totalCalls || 0,
     resetIn: Math.max(0, 600000 - (Date.now() - user.lastReset))
+  };
+}
+
+async function getStatsAndRank(apiKey) {
+  const user = await authenticate(apiKey);
+  const allUsers = await usersDB.find({}).sort({ totalCalls: -1 }).toArray();
+
+  const totalUsers = allUsers.length;
+  const totalApiCalls = allUsers.reduce((sum, u) => sum + (u.totalCalls || 0), 0);
+
+  const rank = allUsers.findIndex(u => u.apiKey === apiKey) + 1;
+
+  const top20 = allUsers.slice(0, 20).map(u => ({
+    username: u.username,
+    totalCalls: u.totalCalls || 0
+  }));
+
+  return {
+    totalUsers,
+    totalApiCalls,
+    yourRank: rank,
+    yourTotalCalls: user.totalCalls || 0,
+    top20
   };
 }
 
@@ -176,5 +210,6 @@ module.exports = {
   authenticate,
   useSim,
   useTeach,
-  getUserInfo
+  getUserInfo,
+  getStatsAndRank
 };
