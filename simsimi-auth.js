@@ -186,6 +186,8 @@ async function getRanking(apiKey) {
   if (!user) throw new Error('Invalid API key');
 
   const totalUsers = await usersDB.countDocuments();
+  const totalRequestUser = await usersDB.countDocuments({ totalUsage: { $gt: 0 } });
+
   const totalApiCalls = await usersDB.aggregate([
     {
       $group: {
@@ -210,6 +212,7 @@ async function getRanking(apiKey) {
 
   return {
     totalUsers,
+    totalRequestUser,
     totalApiCalls: totalApiCalls[0]?.total || 0,
     yourRank,
     topUsers: sorted
