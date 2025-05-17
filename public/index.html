@@ -75,6 +75,15 @@
   @apply absolute -top-3 right-0 text-xs bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-2 py-1 rounded shadow transition;
 }
 
+     .glow-gold {
+    animation: glowGold 2s ease-in-out infinite;
+  }
+  @keyframes glowGold {
+    0% { text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
+    50% { text-shadow: 0 0 15px #ffec8b, 0 0 20px #ffd700; }
+    100% { text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
+  }
+
     #loader { transition: opacity 0.5s ease; }
     #modalContent { transition: transform 0.3s ease, opacity 0.3s ease; }
   </style>
@@ -738,23 +747,32 @@ async function loadRanking() {
   const data = await res.json();
 
   document.getElementById('rank-position').textContent = `#${data.yourRank}`;
-  document.getElementById('rank-usage').textContent = data.totalRequestUser ;
+  document.getElementById('rank-usage').textContent = data.totalRequestUser;
   document.getElementById('rank-total-users').textContent = data.totalUsers;
   document.getElementById('rank-total-calls').textContent = data.totalApiCalls.toLocaleString();
 
   const list = document.getElementById('top-users-list');
   list.innerHTML = '';
+
+  const trophyIcons = [
+    '<svg class="w-5 h-5 text-yellow-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2a1 1 0 00-1 1v2H3a1 1 0 00-1 1v1c0 2.76 2.24 5 5 5a5.978 5.978 0 003-.8 5.978 5.978 0 003 .8c2.76 0 5-2.24 5-5V6a1 1 0 00-1-1h-2V3a1 1 0 00-1-1H6zM4 7V7a3 3 0 003 3c.61 0 1.18-.183 1.66-.5A5.973 5.973 0 014 7zm12 0a3 3 0 01-4.66 2.5c.48.317 1.05.5 1.66.5a3 3 0 003-3V7z"/><path d="M8 14a1 1 0 102 0v-1a1 1 0 00-2 0v1z"/></svg>',
+    '<svg class="w-5 h-5 text-gray-300 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2a1 1 0 00-1 1v2H3a1 1 0 00-1 1v1c0 2.76 2.24 5 5 5a5.978 5.978 0 003-.8 5.978 5.978 0 003 .8c2.76 0 5-2.24 5-5V6a1 1 0 00-1-1h-2V3a1 1 0 00-1-1H6z"/><path d="M8 14a1 1 0 102 0v-1a1 1 0 00-2 0v1z"/></svg>',
+    '<svg class="w-5 h-5 text-orange-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2a1 1 0 00-1 1v2H3a1 1 0 00-1 1v1c0 2.76 2.24 5 5 5a5.978 5.978 0 003-.8 5.978 5.978 0 003 .8c2.76 0 5-2.24 5-5V6a1 1 0 00-1-1h-2V3a1 1 0 00-1-1H6z"/><path d="M8 14a1 1 0 102 0v-1a1 1 0 00-2 0v1z"/></svg>'
+  ];
+
   data.topUsers.forEach((user, i) => {
     const youClass = user.username === 'You' ? 'text-yellow-400 font-bold' : 'text-gray-300';
+    const trophy = trophyIcons[i] || '';
+    const rankLabel = trophy ? `${trophy}` : `<span class="text-yellow-700">#${i + 1}</span>`;
+
     list.innerHTML += `
-      <li class="flex justify-between px-4 py-2 ${youClass}">
-        <span>#${i + 1}. ${user.username}</span>
+      <li class="flex justify-between items-center px-4 py-2 ${youClass}">
+        <div class="flex items-center gap-2">${rankLabel}<span>${user.username}</span></div>
         <span>${user.totalUsage} calls</span>
       </li>
     `;
   });
 }
-window.addEventListener('DOMContentLoaded', loadRanking);
     
        </script>
 </body>
