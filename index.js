@@ -97,6 +97,15 @@ res.status(403).json({ error: e.message });
 }
 });
 
+app.get('/api/ranking', async (req, res) => {
+  try {
+    const stats = await auth.getStatsAndRank(req.headers['x-api-key']);
+    res.json(stats);
+  } catch (e) {
+    res.status(403).json({ error: e.message });
+  }
+});
+
 // Route: /sim with fallback and auto-teach functionality
 app.get('/sim', async (req, res) => {
   const startTime = process.hrtime();
