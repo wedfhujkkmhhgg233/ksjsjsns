@@ -517,26 +517,6 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY")
     }
 
     burgerBtn.addEventListener('click', toggleBurger);
-
-    window.addEventListener('load', () => {
-      const loader = document.getElementById('loader');
-      const modal = document.getElementById('welcomeModal');
-      const modalContent = document.getElementById('modalContent');
-
-      loader.classList.add('opacity-0');
-      setTimeout(() => {
-        loader.style.display = 'none';
-        modal.classList.remove('hidden');
-        setTimeout(() => {
-          modalContent.classList.remove('scale-90', 'opacity-0');
-        }, 50);
-      }, 500);
-    });
-
-    function closeModal() {
-      const modal = document.getElementById('welcomeModal');
-      modal.classList.add('hidden');
-    }
   
   function typeWriter(text, target, delay = 30) {
   target.textContent = "";
