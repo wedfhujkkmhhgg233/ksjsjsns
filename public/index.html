@@ -32,6 +32,11 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    .trophy.gold { color: gold; }
+  .trophy.silver { color: silver; }
+  .trophy.bronze { color: #cd7f32; }
+  .highlight-user { background-color: rgba(234, 179, 8, 0.2); border-left: 4px solid #facc15; }
+
     .animate-fade-in-up {
       animation: fadeInUp 0.6s ease forwards;
     }
@@ -157,7 +162,7 @@
     </svg>
     <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">Leaderboard</h2>
   </div>
-  <p class="text-sm text-gray-400 italic mb-6">View the top API users and your current rank.</p>  <div id="ranking-stats" class="grid md:grid-cols-2 gap-4 mb-6 text-sm">
+  <p class="text-sm text-gray-400 italic mb-6">View the top API users and your current rank.</p>  <div class="grid md:grid-cols-2 gap-4 mb-6 text-sm">
     <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
       <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your Rank</h3>
       <p id="your-rank" class="text-green-400 font-bold">Loading...</p>
@@ -176,7 +181,7 @@
     </div>
   </div>  <div class="bg-black/40 border border-yellow-500/10 rounded-lg p-4">
     <h3 class="text-yellow-300 text-sm font-bold uppercase tracking-wide mb-3">Top Users</h3>
-    <ul id="top-users" class="space-y-2 text-sm">
+    <ul id="top-users" class="space-y-2 text-sm animate-fade-in">
       <li class="text-gray-400">Loading top users...</li>
     </ul>
   </div>
@@ -731,35 +736,41 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
   }
 
     async function loadRanking() {
-  const apiKey = localStorage.getItem('apiKey');
-  if (!apiKey) return;
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) return;
 
-  try {
-    const res = await fetch('/api/ranking', {
-      headers: { 'x-api-key': apiKey }
-    });
-    const data = await res.json();
+    try {
+      const res = await fetch('/api/ranking', { headers: { 'x-api-key': apiKey } });
+      const data = await res.json();
 
-    document.getElementById('your-rank').textContent = `#${data.yourRank}`;
-    document.getElementById('your-calls').textContent = data.totalRequestUser || 0;
-    document.getElementById('total-users').textContent = `${data.totalUsers}`;
-    document.getElementById('total-calls').textContent = data.totalApiCalls || 0;
+      document.getElementById('your-rank').textContent = `#${data.yourRank}`;
+      document.getElementById('your-calls').textContent = data.totalRequestUser || 0;
+      document.getElementById('total-users').textContent = data.totalUsers;
+      document.getElementById('total-calls').textContent = data.totalApiCalls;
 
-    const list = document.getElementById('top-users');
-    list.innerHTML = '';
-    data.topUsers.forEach((user, index) => {
-      const li = document.createElement('li');
-      li.innerHTML = `<span class="text-yellow-400 font-bold">#${index + 1}</span> <span class="text-green-400">${user.username}</span> — <span class="text-gray-400">${user.totalUsage} calls</span>`;
-      list.appendChild(li);
-    });
-  } catch (err) {
-    console.error(err);
-    document.getElementById('top-users').innerHTML = '<li class="text-red-500">Failed to load ranking.</li>';
+      const list = document.getElementById('top-users');
+      list.innerHTML = '';
+
+      data.topUsers.forEach((user, index) => {
+        const li = document.createElement('li');
+        const trophyClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+        const trophyIcon = index < 3 ? `<i class='fa-solid fa-trophy trophy ${trophyClass} mr-2'></i>` : `<span class='text-yellow-400 font-bold mr-2'>#${index + 1}</span>`;
+
+        li.className = `flex items-center justify-between bg-gray-800 p-3 rounded-lg border border-yellow-500/10 ${user.username.toLowerCase() === 'you' ? 'highlight-user' : ''}`;
+        li.innerHTML = `
+          <div class='flex items-center'>${trophyIcon}<span class='text-green-400'>${user.username}</span></div>
+          <span class='text-gray-400 font-mono'>${user.totalUsage || 0} calls</span>`;
+
+        list.appendChild(li);
+      });
+
+    } catch (err) {
+      console.error(err);
+      document.getElementById('top-users').innerHTML = '<li class="text-red-500">Failed to load ranking.</li>';
+    }
   }
-}
 
-window.addEventListener('DOMContentLoaded', loadRanking);
-  
+  window.addEventListener('DOMContentLoaded', loadRanking);
   </script>
 </body>
   </html>
