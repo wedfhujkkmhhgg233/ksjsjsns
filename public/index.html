@@ -150,39 +150,35 @@
   </div>
 </section>
 
-    <section id="ranking" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10 text-gray-300">
-  <!-- Header -->
-  <div class="flex items-center gap-3 mb-6">
+    <section id="ranking" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10">
+  <div class="flex items-center gap-3 mb-4">
     <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2l4-4" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4 4 4-4m0-8l-4-4-4 4" />
     </svg>
-    <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">API Usage Rankings</h2>
+    <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">Leaderboard</h2>
   </div>
-
-  <!-- Stats -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-6">
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total Users</h3>
-      <p id="totalUsers" class="text-green-400">...</p>
-    </div>
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total Calls</h3>
-      <p id="totalApiCalls" class="text-green-400">...</p>
-    </div>
+  <p class="text-sm text-gray-400 italic mb-6">View the top API users and your current rank.</p>  <div id="ranking-stats" class="grid md:grid-cols-2 gap-4 mb-6 text-sm">
     <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
       <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your Rank</h3>
-      <p id="yourRank" class="text-green-400">...</p>
+      <p id="your-rank" class="text-green-400 font-bold">Loading...</p>
     </div>
     <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your Calls</h3>
-      <p id="yourTotalCalls" class="text-green-400">...</p>
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your API Calls</h3>
+      <p id="your-calls" class="text-green-400 font-bold">Loading...</p>
     </div>
-  </div>
-
-  <!-- Top Users -->
-  <h3 class="text-yellow-300 font-bold mb-3 text-lg">Top Users</h3>
-  <div id="topUsers" class="space-y-2 max-h-[400px] overflow-y-auto pr-2">
-    <!-- Filled dynamically -->
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total Users</h3>
+      <p id="total-users" class="text-green-400">Loading...</p>
+    </div>
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total API Calls</h3>
+      <p id="total-calls" class="text-green-400">Loading...</p>
+    </div>
+  </div>  <div class="bg-black/40 border border-yellow-500/10 rounded-lg p-4">
+    <h3 class="text-yellow-300 text-sm font-bold uppercase tracking-wide mb-3">Top Users</h3>
+    <ul id="top-users" class="space-y-2 text-sm">
+      <li class="text-gray-400">Loading top users...</li>
+    </ul>
   </div>
 </section>
 
@@ -734,48 +730,36 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
     window.location.href = '/login';
   }
 
-async function loadRanking() {
-    const apiKey = localStorage.getItem('apiKey');
+    async function loadRanking() {
+  const apiKey = localStorage.getItem('apiKey');
+  if (!apiKey) return;
+
+  try {
     const res = await fetch('/api/ranking', {
       headers: { 'x-api-key': apiKey }
     });
     const data = await res.json();
 
-    document.getElementById('totalUsers').textContent = data.totalUsers;
-    document.getElementById('totalApiCalls').textContent = data.totalApiCalls || 0;
-    document.getElementById('yourRank').textContent = data.yourRank || '-';
-    document.getElementById('yourTotalCalls').textContent = data.totalRequestUser || 0;
+    document.getElementById('your-rank').textContent = `#${data.yourRank}`;
+    document.getElementById('your-calls').textContent = data.totalRequestUser || 0;
+    document.getElementById('total-users').textContent = `${data.totalUsers}`;
+    document.getElementById('total-calls').textContent = data.totalApiCalls || 0;
 
-    const topContainer = document.getElementById('topUsers');
-    topContainer.innerHTML = '';
-
-    const colors = ['text-yellow-300', 'text-gray-300', 'text-amber-700'];
-    const trophies = [
-      `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7-6-4.5L7 20l2-7L3.5 9H11l1-7z"/></svg>`,
-      `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7-6-4.5L7 20l2-7L3.5 9H11l1-7z"/></svg>`,
-      `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7-6-4.5L7 20l2-7L3.5 9H11l1-7z"/></svg>`
-    ];
-
-    data.topUsers.forEach((user, i) => {
-      const isTopThree = i < 3;
-      const color = colors[i] || 'text-gray-500';
-      const icon = isTopThree ? trophies[i] : `<span class="font-bold">${i + 1}.</span>`;
-
-      const div = document.createElement('div');
-      div.className = 'bg-gray-800 p-3 rounded-lg flex items-center justify-between border border-yellow-500/10';
-      div.innerHTML = \`
-        <div class="flex items-center gap-3">
-          <div class="\${color}">\${icon}</div>
-          <span class="text-sm font-medium">\${user.username || 'Anonymous'}</span>
-        </div>
-        <span class="text-green-400 text-sm font-mono">\${user.totalUsage || 0} calls</span>
-      \`;
-      topContainer.appendChild(div);
+    const list = document.getElementById('top-users');
+    list.innerHTML = '';
+    data.topUsers.forEach((user, index) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="text-yellow-400 font-bold">#${index + 1}</span> <span class="text-green-400">${user.username}</span> — <span class="text-gray-400">${user.totalCalls} calls</span>`;
+      list.appendChild(li);
     });
+  } catch (err) {
+    console.error(err);
+    document.getElementById('top-users').innerHTML = '<li class="text-red-500">Failed to load ranking.</li>';
   }
+}
 
-  window.addEventListener('DOMContentLoaded', loadRanking);
-    
-       </script>
+window.addEventListener('DOMContentLoaded', loadRanking);
+  
+  </script>
 </body>
   </html>
