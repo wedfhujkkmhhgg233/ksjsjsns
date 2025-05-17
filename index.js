@@ -99,7 +99,7 @@ res.status(403).json({ error: e.message });
 
 app.get('/api/ranking', async (req, res) => {
   try {
-    const stats = await auth.getStatsAndRank(req.headers['x-api-key']);
+    const stats = await auth.getRanking(req.headers['x-api-key']);
     res.json(stats);
   } catch (e) {
     res.status(403).json({ error: e.message });
