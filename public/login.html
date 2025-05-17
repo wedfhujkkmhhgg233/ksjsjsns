@@ -50,7 +50,7 @@
 </div>
 
 <script>
-  const form = document.getElementById('authForm');
+   const form = document.getElementById('authForm');
   const modeInput = document.getElementById('mode');
   const formTitle = document.getElementById('formTitle');
   const toggleText = document.getElementById('toggleText');
@@ -72,11 +72,30 @@
     eyeIcon.className = isHidden ? 'ph ph-eye-slash' : 'ph ph-eye';
   }
 
+  function isValidUsername(username) {
+    // Only allow letters (no numbers, emojis, or symbols)
+    return /^[A-Za-z]{3,20}$/.test(username);
+  }
+
+  function isStrongPassword(password) {
+    // Minimum 6 characters, must include both letters and numbers
+    return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/.test(password);
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = passwordInput.value;
+    const username = document.getElementById('username').value.trim();
+    const password = passwordInput.value.trim();
     const mode = modeInput.value;
+
+    if (mode === 'signup') {
+      if (!isValidUsername(username)) {
+        return alert('Username must only contain letters (no emojis, numbers, or symbols), and be 3–20 characters.');
+      }
+      if (!isStrongPassword(password)) {
+        return alert('Password must be at least 6 characters long and include both letters and numbers.');
+      }
+    }
 
     const res = await fetch('/api/auth', {
       method: 'POST',
