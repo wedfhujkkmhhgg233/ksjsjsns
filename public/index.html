@@ -754,20 +754,14 @@ async function loadRanking() {
   const list = document.getElementById('top-users-list');
   list.innerHTML = '';
 
-  const trophyIcons = [
-    '<svg class="w-5 h-5 text-yellow-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2a1 1 0 00-1 1v2H3a1 1 0 00-1 1v1c0 2.76 2.24 5 5 5a5.978 5.978 0 003-.8 5.978 5.978 0 003 .8c2.76 0 5-2.24 5-5V6a1 1 0 00-1-1h-2V3a1 1 0 00-1-1H6zM4 7V7a3 3 0 003 3c.61 0 1.18-.183 1.66-.5A5.973 5.973 0 014 7zm12 0a3 3 0 01-4.66 2.5c.48.317 1.05.5 1.66.5a3 3 0 003-3V7z"/><path d="M8 14a1 1 0 102 0v-1a1 1 0 00-2 0v1z"/></svg>',
-    '<svg class="w-5 h-5 text-gray-300 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2a1 1 0 00-1 1v2H3a1 1 0 00-1 1v1c0 2.76 2.24 5 5 5a5.978 5.978 0 003-.8 5.978 5.978 0 003 .8c2.76 0 5-2.24 5-5V6a1 1 0 00-1-1h-2V3a1 1 0 00-1-1H6z"/><path d="M8 14a1 1 0 102 0v-1a1 1 0 00-2 0v1z"/></svg>',
-    '<svg class="w-5 h-5 text-orange-400 animate-pulse" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2a1 1 0 00-1 1v2H3a1 1 0 00-1 1v1c0 2.76 2.24 5 5 5a5.978 5.978 0 003-.8 5.978 5.978 0 003 .8c2.76 0 5-2.24 5-5V6a1 1 0 00-1-1h-2V3a1 1 0 00-1-1H6z"/><path d="M8 14a1 1 0 102 0v-1a1 1 0 00-2 0v1z"/></svg>'
-  ];
+  const medals = ['🥇', '🥈', '🥉'];
 
   data.topUsers.forEach((user, i) => {
     const youClass = user.username === 'You' ? 'text-yellow-400 font-bold' : 'text-gray-300';
-    const trophy = trophyIcons[i] || '';
-    const rankLabel = trophy ? `${trophy}` : `<span class="text-yellow-700">#${i + 1}</span>`;
-
+    const rankLabel = medals[i] || `#${i + 1}`;
     list.innerHTML += `
-      <li class="flex justify-between items-center px-4 py-2 ${youClass}">
-        <div class="flex items-center gap-2">${rankLabel}<span>${user.username}</span></div>
+      <li class="flex justify-between px-4 py-2 ${youClass}">
+        <span>${rankLabel} ${user.username}</span>
         <span>${user.totalUsage} calls</span>
       </li>
     `;
