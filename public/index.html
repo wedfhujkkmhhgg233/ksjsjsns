@@ -75,15 +75,6 @@
   @apply absolute -top-3 right-0 text-xs bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-2 py-1 rounded shadow transition;
 }
 
-     .glow-gold {
-    animation: glowGold 2s ease-in-out infinite;
-  }
-  @keyframes glowGold {
-    0% { text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
-    50% { text-shadow: 0 0 15px #ffec8b, 0 0 20px #ffd700; }
-    100% { text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700; }
-  }
-
     #loader { transition: opacity 0.5s ease; }
     #modalContent { transition: transform 0.3s ease, opacity 0.3s ease; }
   </style>
@@ -159,37 +150,41 @@
   </div>
 </section>
 
-    <section id="ranking" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10 text-sm text-gray-300">
-  <div class="flex items-center gap-2 mb-4">
+    <section id="ranking" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10 text-gray-300">
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-6">
     <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h11m0 0l-4-4m4 4l-4 4m12-4a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2l4-4" />
     </svg>
-    <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">Global Ranking</h2>
+    <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">API Usage Rankings</h2>
   </div>
-  <p class="text-gray-400 text-sm mb-6 italic">See where you stand among all users and who’s leading the charts.</p>  <div id="ranking-summary" class="grid md:grid-cols-2 gap-4 mb-6">
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your Rank</h3>
-      <p id="rank-position" class="text-green-400 text-lg font-bold">#5</p>
-    </div>
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your API Calls</h3>
-      <p id="rank-usage" class="text-green-400 text-lg font-bold">639</p>
-    </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-6">
     <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
       <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total Users</h3>
-      <p id="rank-total-users" class="text-gray-300">147</p>
+      <p id="totalUsers" class="text-green-400">...</p>
     </div>
     <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total API Calls</h3>
-      <p id="rank-total-calls" class="text-gray-300">18,394</p>
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total Calls</h3>
+      <p id="totalApiCalls" class="text-green-400">...</p>
     </div>
-  </div>  <div class="mt-4">
-    <h3 class="text-yellow-400 font-semibold mb-2">Top Users</h3>
-    <ul id="top-users-list" class="bg-black/40 border border-yellow-500/10 rounded-lg divide-y divide-yellow-500/10 overflow-hidden">
-      <!-- Entries will be injected here -->
-    </ul>
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your Rank</h3>
+      <p id="yourRank" class="text-green-400">...</p>
+    </div>
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your Calls</h3>
+      <p id="yourTotalCalls" class="text-green-400">...</p>
+    </div>
   </div>
-</section>  
+
+  <!-- Top Users -->
+  <h3 class="text-yellow-300 font-bold mb-3 text-lg">Top Users</h3>
+  <div id="topUsers" class="space-y-2 max-h-[400px] overflow-y-auto pr-2">
+    <!-- Filled dynamically -->
+  </div>
+</section>
 
     <section id="dashboard" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10">
   <!-- Header -->
@@ -740,33 +735,46 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
   }
 
 async function loadRanking() {
-  const apiKey = localStorage.getItem('apiKey');
-  const res = await fetch('/api/ranking', {
-    headers: { 'x-api-key': apiKey }
-  });
-  const data = await res.json();
+    const apiKey = localStorage.getItem('apiKey');
+    const res = await fetch('/api/ranking', {
+      headers: { 'x-api-key': apiKey }
+    });
+    const data = await res.json();
 
-  document.getElementById('rank-position').textContent = `#${data.yourRank}`;
-  document.getElementById('rank-usage').textContent = data.totalRequestUser;
-  document.getElementById('rank-total-users').textContent = data.totalUsers;
-  document.getElementById('rank-total-calls').textContent = data.totalApiCalls.toLocaleString();
+    document.getElementById('totalUsers').textContent = data.totalUsers;
+    document.getElementById('totalApiCalls').textContent = data.totalApiCalls || 0;
+    document.getElementById('yourRank').textContent = data.yourRank || '-';
+    document.getElementById('yourTotalCalls').textContent = data.totalRequestUser || 0;
 
-  const list = document.getElementById('top-users-list');
-  list.innerHTML = '';
+    const topContainer = document.getElementById('topUsers');
+    topContainer.innerHTML = '';
 
-  const medals = ['🥇', '🥈', '🥉'];
+    const colors = ['text-yellow-300', 'text-gray-300', 'text-amber-700'];
+    const trophies = [
+      `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7-6-4.5L7 20l2-7L3.5 9H11l1-7z"/></svg>`,
+      `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7-6-4.5L7 20l2-7L3.5 9H11l1-7z"/></svg>`,
+      `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7-6-4.5L7 20l2-7L3.5 9H11l1-7z"/></svg>`
+    ];
 
-  data.topUsers.forEach((user, i) => {
-    const youClass = user.username === 'You' ? 'text-yellow-400 font-bold' : 'text-gray-300';
-    const rankLabel = medals[i] || `#${i + 1}`;
-    list.innerHTML += `
-      <li class="flex justify-between px-4 py-2 ${youClass}">
-        <span>${rankLabel} ${user.username}</span>
-        <span>${user.totalUsage} calls</span>
-      </li>
-    `;
-  });
-}
+    data.topUsers.forEach((user, i) => {
+      const isTopThree = i < 3;
+      const color = colors[i] || 'text-gray-500';
+      const icon = isTopThree ? trophies[i] : `<span class="font-bold">${i + 1}.</span>`;
+
+      const div = document.createElement('div');
+      div.className = 'bg-gray-800 p-3 rounded-lg flex items-center justify-between border border-yellow-500/10';
+      div.innerHTML = \`
+        <div class="flex items-center gap-3">
+          <div class="\${color}">\${icon}</div>
+          <span class="text-sm font-medium">\${user.username || 'Anonymous'}</span>
+        </div>
+        <span class="text-green-400 text-sm font-mono">\${user.totalUsage || 0} calls</span>
+      \`;
+      topContainer.appendChild(div);
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', loadRanking);
     
        </script>
 </body>
