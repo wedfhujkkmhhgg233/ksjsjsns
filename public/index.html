@@ -109,6 +109,7 @@
       <nav id="burgerMenu" class="absolute right-4 top-16 bg-gray-800 rounded-lg p-4 w-48 shadow-xl md:hidden transition-all duration-300 scale-95 opacity-0 pointer-events-none">
         <button onclick="showSection('home'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Home</button>
         <button onclick="showSection('dashboard'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Dashboard</button>
+        <button onclick="showSection('about'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Rankings</button>
         <button onclick="showSection('sim'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Sim</button>
         <button onclick="showSection('teach'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Teach</button>
         <button onclick="showSection('docs'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Docs</button>
@@ -146,6 +147,38 @@
     <svg class="w-16 h-16 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c1.38 0 2.5-1.12 2.5-2.5S13.38 6 12 6s-2.5 1.12-2.5 2.5S10.62 11 12 11zm0 0v1.5m0 4h.01M19.4 15.6a8 8 0 10-14.8 0M12 21v.01" />
     </svg>
+  </div>
+</section>
+
+    <section id="ranking" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10">
+  <div class="flex items-center gap-3 mb-4">
+    <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4 4 4-4m0-8l-4-4-4 4" />
+    </svg>
+    <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">Leaderboard</h2>
+  </div>
+  <p class="text-sm text-gray-400 italic mb-6">View the top API users and your current rank.</p>  <div id="ranking-stats" class="grid md:grid-cols-2 gap-4 mb-6 text-sm">
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your Rank</h3>
+      <p id="your-rank" class="text-green-400 font-bold">Loading...</p>
+    </div>
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your API Calls</h3>
+      <p id="your-calls" class="text-green-400 font-bold">Loading...</p>
+    </div>
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total Users</h3>
+      <p id="total-users" class="text-green-400">Loading...</p>
+    </div>
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total API Calls</h3>
+      <p id="total-calls" class="text-green-400">Loading...</p>
+    </div>
+  </div>  <div class="bg-black/40 border border-yellow-500/10 rounded-lg p-4">
+    <h3 class="text-yellow-300 text-sm font-bold uppercase tracking-wide mb-3">Top Users</h3>
+    <ul id="top-users" class="space-y-2 text-sm">
+      <li class="text-gray-400">Loading top users...</li>
+    </ul>
   </div>
 </section>
 
@@ -696,6 +729,36 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
   if (!token || !apiKey) {
     window.location.href = '/login';
   }
+
+    async function loadRanking() {
+  const apiKey = localStorage.getItem('apiKey');
+  if (!apiKey) return;
+
+  try {
+    const res = await fetch('/api/ranking', {
+      headers: { 'x-api-key': apiKey }
+    });
+    const data = await res.json();
+
+    document.getElementById('your-rank').textContent = `#${data.yourRank}`;
+    document.getElementById('your-calls').textContent = `${data.yourTotalCalls} calls`;
+    document.getElementById('total-users').textContent = `${data.totalUsers}`;
+    document.getElementById('total-calls').textContent = `${data.totalApiCalls}`;
+
+    const list = document.getElementById('top-users');
+    list.innerHTML = '';
+    data.topUsers.forEach((user, index) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="text-yellow-400 font-bold">#${index + 1}</span> <span class="text-green-400">${user.username}</span> — <span class="text-gray-400">${user.totalCalls} calls</span>`;
+      list.appendChild(li);
+    });
+  } catch (err) {
+    console.error(err);
+    document.getElementById('top-users').innerHTML = '<li class="text-red-500">Failed to load ranking.</li>';
+  }
+}
+
+window.addEventListener('DOMContentLoaded', loadRanking);
   
   </script>
 </body>
