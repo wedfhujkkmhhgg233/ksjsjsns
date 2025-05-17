@@ -109,6 +109,7 @@
       <nav id="burgerMenu" class="absolute right-4 top-16 bg-gray-800 rounded-lg p-4 w-48 shadow-xl md:hidden transition-all duration-300 scale-95 opacity-0 pointer-events-none">
         <button onclick="showSection('home'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Home</button>
         <button onclick="showSection('dashboard'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Dashboard</button>
+        <button onclick="showSection('ranking'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Rankings</button>
         <button onclick="showSection('sim'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Sim</button>
         <button onclick="showSection('teach'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Teach</button>
         <button onclick="showSection('docs'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Docs</button>
@@ -148,13 +149,38 @@
     </svg>
   </div>
 </section>
-    
-  <!-- Top Users -->
-  <h3 class="text-yellow-300 font-bold mb-3 text-lg">Top Users</h3>
-  <div id="topUsers" class="space-y-2 max-h-[400px] overflow-y-auto pr-2">
-    <!-- Filled dynamically -->
+
+    <section id="ranking" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10 text-sm text-gray-300">
+  <div class="flex items-center gap-2 mb-4">
+    <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h11m0 0l-4-4m4 4l-4 4m12-4a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">Global Ranking</h2>
   </div>
-</section>
+  <p class="text-gray-400 text-sm mb-6 italic">See where you stand among all users and who’s leading the charts.</p>  <div id="ranking-summary" class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your Rank</h3>
+      <p id="rank-position" class="text-green-400 text-lg font-bold">#5</p>
+    </div>
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your API Calls</h3>
+      <p id="rank-usage" class="text-green-400 text-lg font-bold">639</p>
+    </div>
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total Users</h3>
+      <p id="rank-total-users" class="text-gray-300">147</p>
+    </div>
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total API Calls</h3>
+      <p id="rank-total-calls" class="text-gray-300">18,394</p>
+    </div>
+  </div>  <div class="mt-4">
+    <h3 class="text-yellow-400 font-semibold mb-2">Top Users</h3>
+    <ul id="top-users-list" class="bg-black/40 border border-yellow-500/10 rounded-lg divide-y divide-yellow-500/10 overflow-hidden">
+      <!-- Entries will be injected here -->
+    </ul>
+  </div>
+</section>  
 
     <section id="dashboard" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10">
   <!-- Header -->
@@ -517,6 +543,26 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY")
     }
 
     burgerBtn.addEventListener('click', toggleBurger);
+
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loader');
+      const modal = document.getElementById('welcomeModal');
+      const modalContent = document.getElementById('modalContent');
+
+      loader.classList.add('opacity-0');
+      setTimeout(() => {
+        loader.style.display = 'none';
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          modalContent.classList.remove('scale-90', 'opacity-0');
+        }, 50);
+      }, 500);
+    });
+
+    function closeModal() {
+      const modal = document.getElementById('welcomeModal');
+      modal.classList.add('hidden');
+    }
   
   function typeWriter(text, target, delay = 30) {
   target.textContent = "";
@@ -683,6 +729,32 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
   if (!token || !apiKey) {
     window.location.href = '/login';
   }
+
+async function loadRanking() {
+  const apiKey = localStorage.getItem('apiKey');
+  const res = await fetch('/api/ranking', {
+    headers: { 'x-api-key': apiKey }
+  });
+  const data = await res.json();
+
+  document.getElementById('rank-position').textContent = `#${data.yourRank}`;
+  document.getElementById('rank-usage').textContent = data.totalRequestUser ;
+  document.getElementById('rank-total-users').textContent = data.totalUsers;
+  document.getElementById('rank-total-calls').textContent = data.totalApiCalls.toLocaleString();
+
+  const list = document.getElementById('top-users-list');
+  list.innerHTML = '';
+  data.topUsers.forEach((user, i) => {
+    const youClass = user.username === 'You' ? 'text-yellow-400 font-bold' : 'text-gray-300';
+    list.innerHTML += `
+      <li class="flex justify-between px-4 py-2 ${youClass}">
+        <span>#${i + 1}. ${user.username}</span>
+        <span>${user.totalUsage} calls</span>
+      </li>
+    `;
+  });
+}
+window.addEventListener('DOMContentLoaded', loadRanking);
     
        </script>
 </body>
