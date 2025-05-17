@@ -749,7 +749,7 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
     list.innerHTML = '';
     data.topUsers.forEach((user, index) => {
       const li = document.createElement('li');
-      li.innerHTML = `<span class="text-yellow-400 font-bold">#${index + 1}</span> <span class="text-green-400">${user.username}</span> — <span class="text-gray-400">${user.totalCalls} calls</span>`;
+      li.innerHTML = `<span class="text-yellow-400 font-bold">#${index + 1}</span> <span class="text-green-400">${user.username}</span> — <span class="text-gray-400">${user.totalUsage} calls</span>`;
       list.appendChild(li);
     });
   } catch (err) {
