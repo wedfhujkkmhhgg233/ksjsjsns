@@ -14,12 +14,15 @@ const client = new MongoClient(uri, {
 });
 
 let usersDB;
+let connected = false;
 
 async function connectDB() {
+  if (connected) return;
   await client.connect();
   usersDB = client.db("simsimi").collection("users");
-  await usersDB.createIndex({ username: 1 });
-  await usersDB.createIndex({ apiKey: 1 });
+  await usersDB.createIndex({ username: 1 }, { unique: true });
+  await usersDB.createIndex({ apiKey: 1 }, { unique: true });
+  connected = true;
   console.log("Connected to MongoDB");
 }
 
@@ -74,7 +77,6 @@ async function login(username, password) {
 
 async function authenticate(apiKey) {
   if (!apiKey) throw new Error('API key required');
-
   let user = await usersDB.findOne({ apiKey });
   if (!user) throw new Error('Invalid API key');
 
@@ -99,13 +101,12 @@ async function authenticate(apiKey) {
 }
 
 async function useSim(user) {
-  const freshUser = await usersDB.findOne({ username: user.username });
   const now = Date.now();
   const interval = 10 * 60 * 1000;
 
-  if (now - freshUser.lastSimReset > interval) {
+  if (now - user.lastSimReset > interval) {
     await usersDB.updateOne(
-      { username: freshUser.username },
+      { username: user.username },
       {
         $set: {
           'usage.sim': 0,
@@ -113,16 +114,13 @@ async function useSim(user) {
         }
       }
     );
-    freshUser.usage.sim = 0;
-    freshUser.lastSimReset = now;
+    user.usage.sim = 0;
   }
 
-  if (freshUser.usage.sim >= 50) {
-    throw new Error('Sim usage limit exceeded (50/10min)');
-  }
+  if (user.usage.sim >= 50) throw new Error('Sim usage limit exceeded (50/10min)');
 
   await usersDB.updateOne(
-    { username: freshUser.username },
+    { username: user.username },
     {
       $inc: {
         'usage.sim': 1,
@@ -130,18 +128,16 @@ async function useSim(user) {
       }
     }
   );
-
-  return `Hello, ${freshUser.username}!`;
+  return `Hello, ${user.username}!`;
 }
 
 async function useTeach(user) {
-  const freshUser = await usersDB.findOne({ username: user.username });
   const now = Date.now();
   const interval = 10 * 60 * 1000;
 
-  if (now - freshUser.lastTeachReset > interval) {
+  if (now - user.lastTeachReset > interval) {
     await usersDB.updateOne(
-      { username: freshUser.username },
+      { username: user.username },
       {
         $set: {
           'usage.teach': 0,
@@ -149,16 +145,13 @@ async function useTeach(user) {
         }
       }
     );
-    freshUser.usage.teach = 0;
-    freshUser.lastTeachReset = now;
+    user.usage.teach = 0;
   }
 
-  if (freshUser.usage.teach >= 50) {
-    throw new Error('Teach usage limit exceeded (50/10min)');
-  }
+  if (user.usage.teach >= 50) throw new Error('Teach usage limit exceeded (50/10min)');
 
   await usersDB.updateOne(
-    { username: freshUser.username },
+    { username: user.username },
     {
       $inc: {
         'usage.teach': 1,
@@ -166,7 +159,6 @@ async function useTeach(user) {
       }
     }
   );
-
   return 'learned';
 }
 
@@ -174,7 +166,7 @@ function getUserInfo(user) {
   return {
     username: user.username,
     apiKey: user.apiKey,
-    usage: user.usage,
+    usage: user.usage || { sim: 0, teach: 0 },
     totalCalls: user.totalCalls || 0,
     resetIn: Math.max(0, 600000 - (Date.now() - user.lastReset))
   };
