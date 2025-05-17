@@ -14,15 +14,12 @@ const client = new MongoClient(uri, {
 });
 
 let usersDB;
-let connected = false;
 
 async function connectDB() {
-  if (connected) return;
   await client.connect();
   usersDB = client.db("simsimi").collection("users");
-  await usersDB.createIndex({ username: 1 }, { unique: true });
-  await usersDB.createIndex({ apiKey: 1 }, { unique: true });
-  connected = true;
+  await usersDB.createIndex({ username: 1 });
+  await usersDB.createIndex({ apiKey: 1 });
   console.log("Connected to MongoDB");
 }
 
@@ -43,16 +40,15 @@ async function signup(username, password) {
 
   const hashed = await bcrypt.hash(password, 10);
   const apiKey = generateApiKey();
-  const now = Date.now();
   const newUser = {
     username,
     password: hashed,
     apiKey,
     usage: { sim: 0, teach: 0 },
-    totalCalls: 0,
-    lastReset: now,
-    lastSimReset: now,
-    lastTeachReset: now
+    totalUsage: 0,
+    lastReset: Date.now(),
+    lastSimReset: Date.now(),
+    lastTeachReset: Date.now()
   };
 
   await usersDB.insertOne(newUser);
@@ -77,6 +73,7 @@ async function login(username, password) {
 
 async function authenticate(apiKey) {
   if (!apiKey) throw new Error('API key required');
+
   let user = await usersDB.findOne({ apiKey });
   if (!user) throw new Error('Invalid API key');
 
@@ -101,12 +98,14 @@ async function authenticate(apiKey) {
 }
 
 async function useSim(user) {
+  const freshUser = await usersDB.findOne({ username: user.username });
+
   const now = Date.now();
   const interval = 10 * 60 * 1000;
 
-  if (now - user.lastSimReset > interval) {
+  if (now - freshUser.lastSimReset > interval) {
     await usersDB.updateOne(
-      { username: user.username },
+      { username: freshUser.username },
       {
         $set: {
           'usage.sim': 0,
@@ -114,30 +113,36 @@ async function useSim(user) {
         }
       }
     );
-    user.usage.sim = 0;
+    freshUser.usage.sim = 0;
+    freshUser.lastSimReset = now;
   }
 
-  if (user.usage.sim >= 50) throw new Error('Sim usage limit exceeded (50/10min)');
+  if (freshUser.usage.sim >= 50) {
+    throw new Error('Sim usage limit exceeded (50/10min)');
+  }
 
   await usersDB.updateOne(
-    { username: user.username },
+    { username: freshUser.username },
     {
       $inc: {
         'usage.sim': 1,
-        totalCalls: 1
+        totalUsage: 1
       }
     }
   );
-  return `Hello, ${user.username}!`;
+
+  return `Hello, ${freshUser.username}!`;
 }
 
 async function useTeach(user) {
+  const freshUser = await usersDB.findOne({ username: user.username });
+
   const now = Date.now();
   const interval = 10 * 60 * 1000;
 
-  if (now - user.lastTeachReset > interval) {
+  if (now - freshUser.lastTeachReset > interval) {
     await usersDB.updateOne(
-      { username: user.username },
+      { username: freshUser.username },
       {
         $set: {
           'usage.teach': 0,
@@ -145,20 +150,24 @@ async function useTeach(user) {
         }
       }
     );
-    user.usage.teach = 0;
+    freshUser.usage.teach = 0;
+    freshUser.lastTeachReset = now;
   }
 
-  if (user.usage.teach >= 50) throw new Error('Teach usage limit exceeded (50/10min)');
+  if (freshUser.usage.teach >= 50) {
+    throw new Error('Teach usage limit exceeded (50/10min)');
+  }
 
   await usersDB.updateOne(
-    { username: user.username },
+    { username: freshUser.username },
     {
       $inc: {
         'usage.teach': 1,
-        totalCalls: 1
+        totalUsage: 1
       }
     }
   );
+
   return 'learned';
 }
 
@@ -166,32 +175,44 @@ function getUserInfo(user) {
   return {
     username: user.username,
     apiKey: user.apiKey,
-    usage: user.usage || { sim: 0, teach: 0 },
-    totalCalls: user.totalCalls || 0,
+    usage: user.usage,
     resetIn: Math.max(0, 600000 - (Date.now() - user.lastReset))
   };
 }
 
-async function getStatsAndRank(apiKey) {
-  const user = await authenticate(apiKey);
-  const allUsers = await usersDB.find({}).sort({ totalCalls: -1 }).toArray();
+// Ranking system
+async function getRanking(apiKey) {
+  const user = await usersDB.findOne({ apiKey });
+  if (!user) throw new Error('Invalid API key');
 
-  const totalUsers = allUsers.length;
-  const totalApiCalls = allUsers.reduce((sum, u) => sum + (u.totalCalls || 0), 0);
+  const totalUsers = await usersDB.countDocuments();
+  const totalApiCalls = await usersDB.aggregate([
+    {
+      $group: {
+        _id: null,
+        total: { $sum: "$totalUsage" }
+      }
+    }
+  ]).toArray();
 
-  const rank = allUsers.findIndex(u => u.apiKey === apiKey) + 1;
+  const sorted = await usersDB.find()
+    .sort({ totalUsage: -1 })
+    .project({ username: 1, totalUsage: 1 })
+    .limit(20)
+    .toArray();
 
-  const top20 = allUsers.slice(0, 20).map(u => ({
-    username: u.username,
-    totalCalls: u.totalCalls || 0
-  }));
+  const rankList = await usersDB.find()
+    .sort({ totalUsage: -1 })
+    .project({ _id: 0, username: 1 })
+    .toArray();
+
+  const yourRank = rankList.findIndex(u => u.username === user.username) + 1;
 
   return {
     totalUsers,
-    totalApiCalls,
-    yourRank: rank,
-    yourTotalCalls: user.totalCalls || 0,
-    top20
+    totalApiCalls: totalApiCalls[0]?.total || 0,
+    yourRank,
+    topUsers: sorted
   };
 }
 
@@ -203,5 +224,5 @@ module.exports = {
   useSim,
   useTeach,
   getUserInfo,
-  getStatsAndRank
+  getRanking
 };
