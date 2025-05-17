@@ -730,36 +730,32 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
     window.location.href = '/login';
   }
 
-    async function loadRanking() {
+async function loadRanking() {
   const apiKey = localStorage.getItem('apiKey');
-  if (!apiKey) return;
+  const res = await fetch('/api/ranking', {
+    headers: { 'x-api-key': apiKey }
+  });
+  const data = await res.json();
 
-  try {
-    const res = await fetch('/api/ranking', {
-      headers: { 'x-api-key': apiKey }
-    });
-    const data = await res.json();
+  document.getElementById('rank-position').textContent = `#${data.yourRank}`;
+  document.getElementById('rank-usage').textContent = data.yourTotalCalls;
+  document.getElementById('rank-total-users').textContent = data.totalUsers;
+  document.getElementById('rank-total-calls').textContent = data.totalApiCalls.toLocaleString();
 
-    document.getElementById('your-rank').textContent = `#${data.yourRank}`;
-    document.getElementById('your-calls').textContent = `${data.yourTotalCalls} calls`;
-    document.getElementById('total-users').textContent = `${data.totalUsers}`;
-    document.getElementById('total-calls').textContent = `${data.totalApiCalls}`;
-
-    const list = document.getElementById('top-users');
-    list.innerHTML = '';
-    data.topUsers.forEach((user, index) => {
-      const li = document.createElement('li');
-      li.innerHTML = `<span class="text-yellow-400 font-bold">#${index + 1}</span> <span class="text-green-400">${user.username}</span> — <span class="text-gray-400">${user.totalCalls} calls</span>`;
-      list.appendChild(li);
-    });
-  } catch (err) {
-    console.error(err);
-    document.getElementById('top-users').innerHTML = '<li class="text-red-500">Failed to load ranking.</li>';
-  }
+  const list = document.getElementById('top-users-list');
+  list.innerHTML = '';
+  data.topUsers.forEach((user, i) => {
+    const youClass = user.username === 'You' ? 'text-yellow-400 font-bold' : 'text-gray-300';
+    list.innerHTML += `
+      <li class="flex justify-between px-4 py-2 ${youClass}">
+        <span>#${i + 1}. ${user.username}</span>
+        <span>${user.totalCalls} calls</span>
+      </li>
+    `;
+  });
 }
-
 window.addEventListener('DOMContentLoaded', loadRanking);
-  
-  </script>
+    
+       </script>
 </body>
   </html>
