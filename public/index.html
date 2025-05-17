@@ -109,7 +109,6 @@
       <nav id="burgerMenu" class="absolute right-4 top-16 bg-gray-800 rounded-lg p-4 w-48 shadow-xl md:hidden transition-all duration-300 scale-95 opacity-0 pointer-events-none">
         <button onclick="showSection('home'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Home</button>
         <button onclick="showSection('dashboard'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Dashboard</button>
-        <button onclick="showSection('ranking'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Rankings</button>
         <button onclick="showSection('sim'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Sim</button>
         <button onclick="showSection('teach'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Teach</button>
         <button onclick="showSection('docs'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Docs</button>
@@ -149,36 +148,7 @@
     </svg>
   </div>
 </section>
-
-    <section id="ranking" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10 text-gray-300">
-  <!-- Header -->
-  <div class="flex items-center gap-3 mb-6">
-    <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2l4-4" />
-    </svg>
-    <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">API Usage Rankings</h2>
-  </div>
-
-  <!-- Stats -->
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-6">
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total Users</h3>
-      <p id="totalUsers" class="text-green-400">...</p>
-    </div>
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total Calls</h3>
-      <p id="totalApiCalls" class="text-green-400">...</p>
-    </div>
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your Rank</h3>
-      <p id="yourRank" class="text-green-400">...</p>
-    </div>
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
-      <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your Calls</h3>
-      <p id="yourTotalCalls" class="text-green-400">...</p>
-    </div>
-  </div>
-
+    
   <!-- Top Users -->
   <h3 class="text-yellow-300 font-bold mb-3 text-lg">Top Users</h3>
   <div id="topUsers" class="space-y-2 max-h-[400px] overflow-y-auto pr-2">
@@ -733,48 +703,6 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
   if (!token || !apiKey) {
     window.location.href = '/login';
   }
-
-async function loadRanking() {
-    const apiKey = localStorage.getItem('apiKey');
-    const res = await fetch('/api/ranking', {
-      headers: { 'x-api-key': apiKey }
-    });
-    const data = await res.json();
-
-    document.getElementById('totalUsers').textContent = data.totalUsers;
-    document.getElementById('totalApiCalls').textContent = data.totalApiCalls || 0;
-    document.getElementById('yourRank').textContent = data.yourRank || '-';
-    document.getElementById('yourTotalCalls').textContent = data.totalRequestUser || 0;
-
-    const topContainer = document.getElementById('topUsers');
-    topContainer.innerHTML = '';
-
-    const colors = ['text-yellow-300', 'text-gray-300', 'text-amber-700'];
-    const trophies = [
-      `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7-6-4.5L7 20l2-7L3.5 9H11l1-7z"/></svg>`,
-      `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7-6-4.5L7 20l2-7L3.5 9H11l1-7z"/></svg>`,
-      `<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2 7h7l-5.5 4 2 7-6-4.5L7 20l2-7L3.5 9H11l1-7z"/></svg>`
-    ];
-
-    data.topUsers.forEach((user, i) => {
-      const isTopThree = i < 3;
-      const color = colors[i] || 'text-gray-500';
-      const icon = isTopThree ? trophies[i] : `<span class="font-bold">${i + 1}.</span>`;
-
-      const div = document.createElement('div');
-      div.className = 'bg-gray-800 p-3 rounded-lg flex items-center justify-between border border-yellow-500/10';
-      div.innerHTML = \`
-        <div class="flex items-center gap-3">
-          <div class="\${color}">\${icon}</div>
-          <span class="text-sm font-medium">\${user.username || 'Anonymous'}</span>
-        </div>
-        <span class="text-green-400 text-sm font-mono">\${user.totalUsage || 0} calls</span>
-      \`;
-      topContainer.appendChild(div);
-    });
-  }
-
-  window.addEventListener('DOMContentLoaded', loadRanking);
     
        </script>
 </body>
