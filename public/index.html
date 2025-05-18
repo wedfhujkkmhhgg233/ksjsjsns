@@ -107,23 +107,47 @@
 
   <!-- Navbar -->
   <header class="fixed top-0 left-0 w-full bg-gray-800 shadow-lg z-50">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      <h1 class="text-2xl font-extrabold bg-gradient-to-r from-yellow-300 to-pink-500 bg-clip-text text-transparent">SimSimi API</h1>
-      <button id="burgerBtn" class="md:hidden flex flex-col gap-1.5 group">
-        <span class="w-6 h-0.5 bg-white transition-all group-hover:bg-yellow-300"></span>
-        <span class="w-6 h-0.5 bg-white transition-all group-hover:bg-yellow-300"></span>
-        <span class="w-6 h-0.5 bg-white transition-all group-hover:bg-yellow-300"></span>
+  <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+    <!-- Logo -->
+    <h1 class="text-2xl font-extrabold bg-gradient-to-r from-yellow-300 to-pink-500 bg-clip-text text-transparent">
+      <i class="fas fa-robot mr-2 text-yellow-400"></i> SimSimi API
+    </h1>
+
+    <!-- Burger Icon -->
+    <button id="burgerBtn" class="md:hidden flex flex-col gap-1.5 group">
+      <span class="w-6 h-0.5 bg-white transition-all group-hover:bg-yellow-300"></span>
+      <span class="w-6 h-0.5 bg-white transition-all group-hover:bg-yellow-300"></span>
+      <span class="w-6 h-0.5 bg-white transition-all group-hover:bg-yellow-300"></span>
+    </button>
+
+    <!-- Mobile Nav -->
+    <nav
+      id="burgerMenu"
+      class="absolute right-4 top-16 bg-gray-900 border border-yellow-400/20 rounded-lg p-4 w-52 shadow-2xl md:hidden transition-all duration-300 scale-95 opacity-0 pointer-events-none"
+    >
+      <button onclick="showSection('home'); toggleBurger()" class="nav-item">
+        <i class="fas fa-house mr-2"></i> Home
       </button>
-      <nav id="burgerMenu" class="absolute right-4 top-16 bg-gray-800 rounded-lg p-4 w-48 shadow-xl md:hidden transition-all duration-300 scale-95 opacity-0 pointer-events-none">
-        <button onclick="showSection('home'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Home</button>
-        <button onclick="showSection('dashboard'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Dashboard</button>
-        <button onclick="showSection('ranking'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Rankings</button>
-        <button onclick="showSection('sim'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Sim</button>
-        <button onclick="showSection('teach'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Teach</button>
-        <button onclick="showSection('docs'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">Docs</button>
-        <button onclick="showSection('about'); toggleBurger()" class="block w-full text-left px-3 py-2 hover:bg-yellow-400 hover:text-black rounded">About</button>
-      </nav>
-    </div>
+      <button onclick="showSection('dashboard'); toggleBurger()" class="nav-item">
+        <i class="fas fa-gauge-high mr-2"></i> Dashboard
+      </button>
+      <button onclick="showSection('ranking'); toggleBurger()" class="nav-item">
+        <i class="fas fa-ranking-star mr-2"></i> Rankings
+      </button>
+      <button onclick="showSection('sim'); toggleBurger()" class="nav-item">
+        <i class="fas fa-message mr-2"></i> Sim
+      </button>
+      <button onclick="showSection('teach'); toggleBurger()" class="nav-item">
+        <i class="fas fa-book-open mr-2"></i> Teach
+      </button>
+      <button onclick="showSection('docs'); toggleBurger()" class="nav-item">
+        <i class="fas fa-file-lines mr-2"></i> Docs
+      </button>
+      <button onclick="showSection('about'); toggleBurger()" class="nav-item">
+        <i class="fas fa-info-circle mr-2"></i> About
+      </button>
+    </nav>
+  </div>
   </header>
 
   <!-- Main -->
