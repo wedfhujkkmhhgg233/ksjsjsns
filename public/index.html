@@ -19,7 +19,7 @@
   <meta name="twitter:image" content="https://i.ibb.co/Fw7yp2r/image.jpg">
   <title>Simsimi API - Sim & Teach Documentation (PH VERSION)</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Font Awesome for Trophy Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     @keyframes fadeIn {
@@ -300,11 +300,13 @@
   </div>
 
   <!-- Logout Button -->
-  <div class="text-center mt-8">
-    <button onclick="logout()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-lg transition duration-300">
-      Logout
-    </button>
-  </div>
+  <!-- Logout Button -->
+<div class="text-center mt-8">
+  <button onclick="logout()" class="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-lg transition duration-300 text-lg">
+    <span>Logout</span>
+    <i class="ph ph-sign-out text-xl"></i>
+  </button>
+</div>
 </section>
 
     <!-- Other Sections -->
