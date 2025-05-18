@@ -83,6 +83,30 @@
   @apply absolute -top-3 right-0 text-xs bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-2 py-1 rounded shadow transition;
 }
 
+    .nav-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    background-color: transparent;
+    color: white;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+
+  .nav-item:hover {
+    background-color: #facc15;
+    color: black;
+  }
+
+  /* smooth */
+  #burgerMenu.show {
+    opacity: 1;
+    scale: 1;
+    pointer-events: auto;
+  }
+
     #loader { transition: opacity 0.5s ease; }
     #modalContent { transition: transform 0.3s ease, opacity 0.3s ease; }
   </style>
