@@ -8,38 +8,54 @@
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-black to-gray-800 min-h-screen flex items-center justify-center px-4 text-gray-300 font-sans">
+
 <script>
   if (localStorage.getItem('token') && localStorage.getItem('apiKey')) {
     window.location.href = '/';
   }
 </script>
+
 <div class="w-full max-w-md bg-gray-900 bg-opacity-80 backdrop-blur-lg p-8 rounded-3xl border border-yellow-400/30 shadow-[0_20px_50px_rgba(255,255,255,0.05)]">
   <div class="mb-6 text-center">
     <h1 class="text-4xl font-black text-yellow-300 tracking-wide">SimSimi API</h1>
     <p class="text-sm text-gray-400 mt-1" id="formTitle">Login to continue</p>
   </div>
+
   <form id="authForm" class="space-y-5">
     <input type="hidden" id="mode" value="login">
 
+    <!-- Username Field -->
     <div>
       <label class="block text-sm text-gray-400 mb-1">Username</label>
-      <input type="text" id="username" required placeholder="Enter username"
-        class="w-full px-4 py-2 rounded-xl bg-gray-800 border border-yellow-400/20 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white transition" />
+      <div class="flex items-center bg-gray-800 rounded-xl border border-yellow-400/20 focus-within:ring-2 focus-within:ring-yellow-400">
+        <span class="pl-3 text-yellow-400">
+          <i class="ph ph-user text-xl"></i>
+        </span>
+        <input type="text" id="username" required placeholder="Enter username"
+          class="w-full px-3 py-2 bg-transparent focus:outline-none text-white rounded-r-xl" />
+      </div>
     </div>
 
-    <div class="relative">
+    <!-- Password Field -->
+    <div>
       <label class="block text-sm text-gray-400 mb-1">Password</label>
-      <input type="password" id="password" required placeholder="••••••••"
-        class="w-full px-4 py-2 pr-12 rounded-xl bg-gray-800 border border-yellow-400/20 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white transition" />
-      <button type="button" onclick="togglePassword()"
-        class="absolute top-8 right-3 text-yellow-300 hover:text-yellow-400 transition">
-        <i id="eyeIcon" class="ph ph-eye"></i>
-      </button>
+      <div class="flex items-center bg-gray-800 rounded-xl border border-yellow-400/20 focus-within:ring-2 focus-within:ring-yellow-400 relative">
+        <span class="pl-3 text-yellow-400">
+          <i class="ph ph-lock-key text-xl"></i>
+        </span>
+        <input type="password" id="password" required placeholder="••••••••"
+          class="w-full px-3 py-2 bg-transparent focus:outline-none text-white rounded-r-xl pr-10" />
+        <button type="button" onclick="togglePassword()" class="absolute right-3 text-yellow-300 hover:text-yellow-400 transition">
+          <i id="eyeIcon" class="ph ph-eye text-xl"></i>
+        </button>
+      </div>
     </div>
 
+    <!-- Submit Button -->
     <button type="submit"
-      class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold py-2.5 rounded-xl shadow-md transition-all duration-200">
-      Login
+      class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold py-2.5 rounded-xl shadow-md transition-all duration-200 flex items-center justify-center gap-2">
+      <i id="submitIcon" class="ph ph-sign-in text-lg"></i>
+      <span id="btnLabel">Login</span>
     </button>
   </form>
 
@@ -49,36 +65,50 @@
   </div>
 </div>
 
+<!-- Popup Notification -->
+<div id="popup" class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 hidden px-4 py-3 rounded-xl font-semibold shadow-lg transition-all duration-300 text-sm flex items-center gap-2"></div>
+
 <script>
-   const form = document.getElementById('authForm');
+  const form = document.getElementById('authForm');
   const modeInput = document.getElementById('mode');
   const formTitle = document.getElementById('formTitle');
   const toggleText = document.getElementById('toggleText');
   const submitBtn = form.querySelector('button[type="submit"]');
   const passwordInput = document.getElementById('password');
   const eyeIcon = document.getElementById('eyeIcon');
+  const btnLabel = document.getElementById('btnLabel');
+  const submitIcon = document.getElementById('submitIcon');
 
   function toggleMode() {
     const mode = modeInput.value === 'login' ? 'signup' : 'login';
     modeInput.value = mode;
     formTitle.textContent = mode === 'login' ? 'Login to continue' : 'Create your account';
-    submitBtn.textContent = mode === 'login' ? 'Login' : 'Sign up';
+    btnLabel.textContent = mode === 'login' ? 'Login' : 'Sign up';
+    submitIcon.className = mode === 'login' ? 'ph ph-sign-in text-lg' : 'ph ph-user-plus text-lg';
     toggleText.textContent = mode === 'login' ? "Don't have an account?" : 'Already have an account?';
   }
 
   function togglePassword() {
     const isHidden = passwordInput.type === 'password';
     passwordInput.type = isHidden ? 'text' : 'password';
-    eyeIcon.className = isHidden ? 'ph ph-eye-slash' : 'ph ph-eye';
+    eyeIcon.className = isHidden ? 'ph ph-eye-slash text-xl' : 'ph ph-eye text-xl';
+  }
+
+  function showPopup(message, type = 'error') {
+    const popup = document.getElementById('popup');
+    popup.className = `fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-4 py-3 rounded-xl font-semibold shadow-lg transition-all duration-300 text-sm flex items-center gap-2 ${
+      type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+    }`;
+    popup.innerHTML = `<i class="ph ${type === 'success' ? 'ph-check-circle' : 'ph-warning-circle'} text-xl"></i><span>${message}</span>`;
+    popup.classList.remove('hidden');
+    setTimeout(() => popup.classList.add('hidden'), 3000);
   }
 
   function isValidUsername(username) {
-    // Only allow letters (no numbers, emojis, or symbols)
     return /^[A-Za-z]{3,20}$/.test(username);
   }
 
   function isStrongPassword(password) {
-    // Minimum 6 characters, must include both letters and numbers
     return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{6,}$/.test(password);
   }
 
@@ -90,26 +120,32 @@
 
     if (mode === 'signup') {
       if (!isValidUsername(username)) {
-        return alert('Username must only contain letters (no emojis, numbers, or symbols), and be 3–20 characters.');
+        return showPopup('Only letters allowed. Min 3 characters.', 'error');
       }
       if (!isStrongPassword(password)) {
-        return alert('Password must be at least 6 characters long and include both letters and numbers.');
+        return showPopup('Password must be 6+ chars and include letters & numbers.', 'error');
       }
     }
 
-    const res = await fetch('/api/auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password, mode })
-    });
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, mode })
+      });
 
-    const data = await res.json();
-    if (data.token) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('apiKey', data.apiKey);
-      window.location.href = '/';
-    } else {
-      alert(data.error || 'Something went wrong');
+      const data = await res.json();
+
+      if (data.token) {
+        showPopup('Login successful!', 'success');
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('apiKey', data.apiKey);
+        setTimeout(() => window.location.href = '/', 1000);
+      } else {
+        showPopup(data.error || 'Something went wrong', 'error');
+      }
+    } catch (err) {
+      showPopup('Failed to connect to server.', 'error');
     }
   });
 </script>
