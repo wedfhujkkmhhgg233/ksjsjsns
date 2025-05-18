@@ -6,6 +6,16 @@
   <title>SimSimi Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+  .shake {
+    animation: shake 0.3s ease;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+</style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-black to-gray-800 min-h-screen flex items-center justify-center px-4 text-gray-300 font-sans">
 
@@ -114,6 +124,19 @@
     popup.classList.remove('hidden');
     setTimeout(() => popup.classList.add('hidden'), 3000);
   }
+  
+  function highlightError(inputId) {
+  const input = document.getElementById(inputId);
+  input.classList.add('shake');
+setTimeout(() => input.classList.remove('shake'), 300);
+  input.classList.add('border-red-500', 'ring-2', 'ring-red-400');
+  input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  input.focus();
+
+  input.addEventListener('input', () => {
+    input.classList.remove('border-red-500', 'ring-2', 'ring-red-400');
+  }, { once: true });
+}
 
   function isValidUsername(username) {
     return /^[A-Za-z]{3,20}$/.test(username);
@@ -124,40 +147,59 @@
   }
 
   form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const username = document.getElementById('username').value.trim();
-    const password = passwordInput.value.trim();
-    const confirm = confirmInput.value.trim();
-    const mode = modeInput.value;
+  e.preventDefault();
+  const username = document.getElementById('username').value.trim();
+  const password = passwordInput.value.trim();
+  const confirm = confirmInput.value.trim();
+  const mode = modeInput.value;
 
-    if (mode === 'signup') {
-      if (!isValidUsername(username)) return showPopup('Only letters allowed. Min 3 characters.', 'error');
-      if (!isStrongPassword(password)) return showPopup('Password must be 6+ chars & include numbers.', 'error');
-      if (password !== confirm) return showPopup('Passwords do not match.', 'error');
-      if (!tosCheckbox.checked) return showPopup('You must agree to the Terms.', 'error');
+  if (mode === 'signup') {
+    if (!isValidUsername(username)) {
+      showPopup('Only letters allowed. Min 3 characters.', 'error');
+      highlightError('username');
+      return;
     }
 
-    try {
-      const res = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password, mode })
-      });
-
-      const data = await res.json();
-
-      if (data.token) {
-        showPopup('Login successful!', 'success');
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('apiKey', data.apiKey);
-        setTimeout(() => window.location.href = '/', 1000);
-      } else {
-        showPopup(data.error || 'Something went wrong', 'error');
-      }
-    } catch (err) {
-      showPopup('Failed to connect to server.', 'error');
+    if (!isStrongPassword(password)) {
+      showPopup('Password must be 6+ chars & include numbers.', 'error');
+      highlightError('password');
+      return;
     }
-  });
+
+    if (password !== confirm) {
+      showPopup('Passwords do not match.', 'error');
+      highlightError('confirmPassword');
+      return;
+    }
+
+    if (!tosCheckbox.checked) {
+      showPopup('You must agree to the Terms.', 'error');
+      tosCheckbox.focus();
+      return;
+    }
+  }
+
+  try {
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password, mode })
+    });
+
+    const data = await res.json();
+
+    if (data.token) {
+      showPopup('Login successful!', 'success');
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('apiKey', data.apiKey);
+      setTimeout(() => window.location.href = '/', 1000);
+    } else {
+      showPopup(data.error || 'Something went wrong', 'error');
+    }
+  } catch (err) {
+    showPopup('Failed to connect to server.', 'error');
+  }
+});
 </script>
 </body>
 </html>
