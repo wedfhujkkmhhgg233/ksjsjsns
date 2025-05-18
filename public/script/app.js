@@ -21,14 +21,13 @@ const sections = document.querySelectorAll('.page-section');
       }, 10);
     }
 
-    const burgerBtn = document.getElementById('burgerBtn');
-  const burgerMenu = document.getElementById('burgerMenu');
+    function toggleBurger() {
+      burgerMenu.classList.toggle('opacity-0');
+      burgerMenu.classList.toggle('pointer-events-none');
+      burgerMenu.classList.toggle('scale-95');
+    }
 
-  function toggleBurger() {
-    burgerMenu.classList.toggle('show');
-  }
-
-  burgerBtn.addEventListener('click', toggleBurger);
+    burgerBtn.addEventListener('click', toggleBurger);
 
     window.addEventListener('load', () => {
       const loader = document.getElementById('loader');
