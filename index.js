@@ -8,6 +8,7 @@ const auth = require('./simsimi-auth');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.static('public'));
 const PORT = 3000;
 
 auth.connectDB();
