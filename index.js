@@ -113,19 +113,20 @@ app.get('/sim', async (req, res) => {
   const query = req.query.query;
   const apiKey = req.query.apikey;
 
-  if (!query || !apiKey) {
+  if (!query) {
     return res.status(400).json({
       author: 'Jerome',
       status: 400,
-      message: 'Both query and apikey parameters are required',
+      message: 'Query parameter is required Apikey is optional',
     });
   }
 
   try {
-    const user = await auth.authenticate(apiKey);
-
-    // Enforce usage limit before proceeding
-    await auth.useSim(user);
+    // If apikey is provided, authenticate and enforce limit
+    if (apiKey) {
+      const user = await auth.authenticate(apiKey);
+      await auth.useSim(user);
+    }
 
     // Fetch response from primary Simsimi API
     const botResponse = await fetchWithFallback(
