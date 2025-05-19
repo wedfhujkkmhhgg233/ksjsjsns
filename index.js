@@ -202,21 +202,22 @@ app.get('/sim', async (req, res) => {
 app.get('/teach', async (req, res) => {
   const startTime = process.hrtime();
   const { ask, ans, apikey } = req.query;
+  let isUsingApikey = false;
 
-  if (!ask || !ans || !apikey) {
+  if (!ask || !ans) {
     return res.status(400).json({
       author: 'Jerome',
       status: 400,
-      message: 'Parameters "ask", "ans", and "apikey" are required',
+      message: 'Parameters "ask" and "ans" are required',
     });
   }
 
   try {
-    // Authenticate the user
-    const user = await auth.authenticate(apikey);
-
-    // Apply teach usage logic
-    await auth.useTeach(user);
+    if (apikey) {
+      const user = await auth.authenticate(apikey);
+      await auth.useTeach(user);
+      isUsingApikey = true;
+    }
 
     // Teach to fi.bot.hosting API
     const teachResponse = await axiosWithTimeout('http://fi3.bot-hosting.net:20422/teach', { ask, ans });
@@ -224,7 +225,6 @@ app.get('/teach', async (req, res) => {
     // Optionally teach to a second API
     await teachBothAPIs(ask, ans);
 
-    // Respond
     res.type('json').send(
       JSON.stringify(
         {
@@ -232,6 +232,7 @@ app.get('/teach', async (req, res) => {
           status: 200,
           message: 'Successfully taught the API',
           teachResponse: teachResponse.data,
+          IsUsingApikey: isUsingApikey,
           processingTime: measureProcessingTime(startTime),
         },
         null,
@@ -242,8 +243,8 @@ app.get('/teach', async (req, res) => {
     res.status(500).json({
       author: 'Jerome',
       status: 500,
-      message: error.message || 'Error teaching the API',
-      processingTime: measureProcessingTime(startTime),
+      message: error.message || 'Internal Server Error',
+      IsUsingApikey: isUsingApikey
     });
   }
 });
