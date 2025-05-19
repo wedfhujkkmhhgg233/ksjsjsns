@@ -4,11 +4,14 @@ FROM node:18
 # Create app directory
 WORKDIR /app
 
-# Install dependencies
+# Copy only package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy app source
+# Run build script
+RUN npm run build
+
+# Copy the rest of the app
 COPY . .
 
 # Expose port
