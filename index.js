@@ -112,12 +112,13 @@ app.get('/sim', async (req, res) => {
   const startTime = process.hrtime();
   const query = req.query.query;
   const apiKey = req.query.apikey;
+  let isUsingApikey = false;
 
   if (!query) {
     return res.status(400).json({
       author: 'Jerome',
       status: 400,
-      message: 'Query parameter is required Apikey is optional',
+      message: 'Query parameter is required',
     });
   }
 
@@ -126,6 +127,7 @@ app.get('/sim', async (req, res) => {
     if (apiKey) {
       const user = await auth.authenticate(apiKey);
       await auth.useSim(user);
+      isUsingApikey = true;
     }
 
     // Fetch response from primary Simsimi API
@@ -139,6 +141,7 @@ app.get('/sim', async (req, res) => {
       author: 'Jerome',
       status: 200,
       respond: botResponse.respond || 'Fallback response',
+      IsUsingApikey: isUsingApikey,
       processingTime: measureProcessingTime(startTime),
     }, null, 2));
 
