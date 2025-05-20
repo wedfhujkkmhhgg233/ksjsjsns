@@ -65,12 +65,20 @@
   .nav-tab {
   color: #9ca3af; /* gray-400 */
   padding-top: 0.5rem;
-  border-top: 4px solid transparent;
+  position: relative;
   transition: all 0.2s ease;
 }
-.nav-tab-active {
-  color: #facc15; /* text-yellow-300 */
-  border-bottom: 4px solid #facc15;
+
+.nav-tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 4px;
+  width: 32px; /* set the desired underline width */
+  background-color: #facc15; /* yellow-300 */
+  border-radius: 9999px;
 }
   
   .tab-button {
