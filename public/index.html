@@ -511,11 +511,12 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY")
   </main>
 
    <!-- Footer -->    
-  <footer>
+ <footer>
   <nav class="fixed bottom-0 left-0 w-full bg-gray-800 text-white border-t border-gray-700 z-50">
-    <div class="flex justify-around py-3 text-sm">
+    <div class="flex overflow-x-auto flex-nowrap no-scrollbar px-2 py-3 text-sm space-x-6">
 
-      <div id="nav-home" onclick="activateNav(this, 'home')" class="nav-tab">
+      <!-- Home -->
+      <div id="nav-home" onclick="activateNav(this, 'home')" class="nav-tab flex-shrink-0">
         <button class="flex flex-col items-center">
           <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -525,7 +526,41 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY")
         </button>
       </div>
 
-      <div id="nav-sim" onclick="activateNav(this, 'sim')" class="nav-tab">
+      <!-- Dashboard -->
+      <div id="nav-dashboard" onclick="activateNav(this, 'dashboard')" class="nav-tab flex-shrink-0">
+        <button class="flex flex-col items-center">
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h18v6H3V3zm0 12h18v6H3v-6zm0-6h18v2H3V9z" />
+          </svg>
+          Dashboard
+        </button>
+      </div>
+
+      <!-- Ranking -->
+      <div id="nav-ranking" onclick="activateNav(this, 'ranking')" class="nav-tab flex-shrink-0">
+        <button class="flex flex-col items-center">
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 17h4v4H3v-4zm7-8h4v12h-4V9zm7-4h4v16h-4V5z" />
+          </svg>
+          Ranking
+        </button>
+      </div>
+
+      <!-- Notification -->
+      <div id="nav-notification" onclick="activateNav(this, 'notification')" class="nav-tab flex-shrink-0">
+        <button class="flex flex-col items-center">
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-9.33-5.002A2.25 2.25 0 006 8.25V14.16c0 .538-.214 1.055-.595 1.435L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          </svg>
+          Notify
+        </button>
+      </div>
+
+      <!-- Sim -->
+      <div id="nav-sim" onclick="activateNav(this, 'sim')" class="nav-tab flex-shrink-0">
         <button class="flex flex-col items-center">
           <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -535,7 +570,8 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY")
         </button>
       </div>
 
-      <div id="nav-teach" onclick="activateNav(this, 'teach')" class="nav-tab">
+      <!-- Teach -->
+      <div id="nav-teach" onclick="activateNav(this, 'teach')" class="nav-tab flex-shrink-0">
         <button class="flex flex-col items-center">
           <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -545,7 +581,8 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY")
         </button>
       </div>
 
-      <div id="nav-docs" onclick="activateNav(this, 'docs')" class="nav-tab">
+      <!-- Docs -->
+      <div id="nav-docs" onclick="activateNav(this, 'docs')" class="nav-tab flex-shrink-0">
         <button class="flex flex-col items-center">
           <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -555,7 +592,8 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY")
         </button>
       </div>
 
-      <div id="nav-about" onclick="activateNav(this, 'about')" class="nav-tab">
+      <!-- About -->
+      <div id="nav-about" onclick="activateNav(this, 'about')" class="nav-tab flex-shrink-0">
         <button class="flex flex-col items-center">
           <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
