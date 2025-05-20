@@ -114,14 +114,17 @@ app.get('/sim', async (req, res) => {
   const query = req.query.query;
   const apiKey = req.query.apikey;
 
-  if (!query || !apiKey) {
-  return res.status(400).json(JSON.stringify({
-    author: 'Jerome',
-    status: 400,
-    message: 'Both query and apikey parameters are required',
-  }, null, 2));
+if (!query || !apiKey) {
+  return res
+    .type('json')
+    .status(400)
+    .send(JSON.stringify({
+      author: 'Jerome',
+      status: 400,
+      message: 'Both query and apikey parameters are required',
+    }, null, 2));
 }
-
+  
   try {
     const user = await auth.authenticate(apiKey);
 
@@ -201,11 +204,14 @@ app.get('/teach', async (req, res) => {
   const { ask, ans, apikey } = req.query;
 
   if (!ask || !ans || !apikey) {
-  return res.status(400).json(JSON.stringify({
-    author: 'Jerome',
-    status: 400,
-    message: 'Parameters "ask", "ans", and "apikey" are required',
-  }, null, 2)); // Pretty-print with 2 spaces
+  return res
+    .type('json')
+    .status(400)
+    .send(JSON.stringify({
+      author: 'Jerome',
+      status: 400,
+      message: 'Parameters "ask", "ans", and "apikey" are required',
+    }, null, 2)); // Pretty-print with 2 spaces
 }
   
   try {
