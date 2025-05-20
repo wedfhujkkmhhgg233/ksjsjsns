@@ -9,6 +9,22 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
+app.use((req, res, next) => {
+  // Override res.json to ensure pretty-printing
+  const originalJson = res.json;
+  
+  res.json = function (body) {
+    // Only pretty-print if body is an object (typically JSON response)
+    if (typeof body === 'object') {
+      res.setHeader('Content-Type', 'application/json');
+      body = JSON.stringify(body, null, 2); // 2 spaces for pretty-printing
+    }
+    return originalJson.call(this, body);
+  };
+  
+  next();
+});
+
 const PORT = 3000;
 
 auth.connectDB();
