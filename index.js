@@ -5,14 +5,10 @@ const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const auth = require('./simsimi-auth');
-const http = require('http');
-const WebSocket = require('ws');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
 
 const PORT = 3000;
 
@@ -74,49 +70,6 @@ const teachBothAPIs = async (ask, ans) => {
     console.error(`Teach failed for ${url}:`, error.message);
   }
 };
-
-// WebSocket Routing
-wss.on('connection', (ws, req) => {
-  ws.on('message', async (message) => {
-    try {
-      const data = JSON.parse(message);
-      const apiKey = data.apiKey;
-      const type = data.type;
-
-      // Authenticate once
-      const user = await auth.authenticate(apiKey);
-      ws.user = user;
-
-      // Respond based on the requested type
-      if (type === 'userinfo') {
-        const info = auth.getUserInfo(user);
-        ws.send(JSON.stringify({ type: 'userinfo', data: info }));
-
-        // Optional: live update every 10s
-        const interval = setInterval(() => {
-          const updated = auth.getUserInfo(ws.user);
-          ws.send(JSON.stringify({ type: 'userinfo', data: updated }));
-        }, 10000);
-
-        ws.on('close', () => clearInterval(interval));
-
-      } else if (type === 'ranking') {
-        const stats = await auth.getRanking(apiKey);
-        ws.send(JSON.stringify({ type: 'ranking', data: stats }));
-
-        const interval = setInterval(async () => {
-          const updatedStats = await auth.getRanking(apiKey);
-          ws.send(JSON.stringify({ type: 'ranking', data: updatedStats }));
-        }, 10000);
-
-        ws.on('close', () => clearInterval(interval));
-      }
-
-    } catch (e) {
-      ws.send(JSON.stringify({ type: 'error', message: e.message }));
-    }
-  });
-});
 
 app.post('/api/auth', async (req, res) => {
 const { username, password, mode } = req.body;
@@ -327,6 +280,6 @@ app.use((err, req, res, next) => {
 });
 
 // Start the server
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
