@@ -215,14 +215,7 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
     window.location.href = '/login';
   }
 
-    async function loadRanking() {
-  const apiKey = localStorage.getItem('apiKey');
-  if (!apiKey) return;
-
-  try {
-    const res = await fetch('/api/ranking', { headers: { 'x-api-key': apiKey } });
-    const data = await res.json();
-
+    function updateRankingUI(data) {
     document.getElementById('your-rank').textContent = `#${data.yourRank}`;
     document.getElementById('your-calls').textContent = data.totalRequestUser || 0;
     document.getElementById('total-users').textContent = data.totalUsers;
@@ -238,31 +231,61 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
         ? `<i class='fa-solid fa-trophy trophy ${trophyClass} mr-2'></i>`
         : `<span class='text-yellow-400 font-bold mr-2'>#${index + 1}</span>`;
 
-      const isYou = data.currentUsername && user.username === data.currentUsername;
-
-      li.className = `flex items-center justify-between bg-gray-800 p-3 rounded-lg border border-yellow-500/10 transition-all ${
-        isYou ? 'ring-2 ring-yellow-400 bg-yellow-500/10 text-yellow-300 font-semibold' : ''
-      }`;
-
+      li.className = `flex items-center justify-between bg-gray-800 p-3 rounded-lg border border-yellow-500/10 ${user.username.toLowerCase() === 'you' ? 'highlight-user' : ''}`;
       li.innerHTML = `
-        <div class='flex items-center'>
-          ${trophyIcon}
-          <span class='text-green-400'>${user.username}</span>
-          ${isYou ? `<span class="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-300 text-black">You</span>` : ''}
-        </div>
+        <div class='flex items-center'>${trophyIcon}<span class='text-green-400'>${user.username}</span></div>
         <span class='text-gray-400 font-mono'>${user.totalUsage || 0} calls</span>`;
-
       list.appendChild(li);
-
-      if (isYou) {
-        setTimeout(() => li.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
-      }
     });
-
-  } catch (err) {
-    console.error(err);
-    document.getElementById('top-users').innerHTML = '<li class="text-red-500">Failed to load ranking.</li>';
   }
-}
 
-window.addEventListener('DOMContentLoaded', loadRanking);
+  function connectRankingSocket(retry = 0) {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) return;
+
+    const socket = new WebSocket('wss://simsimi.ooguy.com'); // update this if hosted
+
+    socket.onopen = () => {
+      socket.send(JSON.stringify({ type: 'ranking', apiKey }));
+    };
+
+    socket.onmessage = (event) => {
+      try {
+        const msg = JSON.parse(event.data);
+        if (msg.type === 'ranking') {
+          updateRankingUI(msg.data);
+        }
+      } catch (err) {
+        console.error('Invalid JSON from WebSocket:', err);
+      }
+    };
+
+    socket.onerror = (err) => {
+      console.error('WebSocket error:', err);
+    };
+
+    socket.onclose = () => {
+      const delay = Math.min(5000, 1000 * (retry + 1));
+      console.warn(`WebSocket closed. Reconnecting in ${delay / 1000}s...`);
+      setTimeout(() => connectRankingSocket(retry + 1), delay);
+    };
+  }
+
+  async function loadRankingFallback() {
+    const apiKey = localStorage.getItem('apiKey');
+    if (!apiKey) return;
+
+    try {
+      const res = await fetch('/api/ranking', { headers: { 'x-api-key': apiKey } });
+      const data = await res.json();
+      updateRankingUI(data);
+    } catch (err) {
+      console.error('Fallback ranking fetch failed:', err);
+      document.getElementById('top-users').innerHTML = '<li class="text-red-500">Failed to load ranking.</li>';
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    connectRankingSocket();
+    loadRankingFallback(); // Load once initially in case WebSocket is delayed or fails
+  });
