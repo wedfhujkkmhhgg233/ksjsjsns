@@ -63,25 +63,29 @@
     .page-section.fade-out { animation: fadeOut 0.3s ease forwards; }
   
   .nav-tab {
-  color: #9ca3af;
+  color: #9ca3af; /* gray-400 */
   padding-top: 0.5rem;
+  padding-bottom: 0.75rem; /* add bottom padding */
   position: relative;
   transition: all 0.2s ease;
-  flex: 1;
-  text-align: center;
-  display: flex;
-  justify-content: center;
 }
 
 .nav-tab-active::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
+  bottom: 6px;  /* move underline a bit above the bottom */
+  left: 50%;
+  transform: translateX(-50%);
   height: 4px;
-  width: 100%; /* full width of tab */
-  background-color: #facc15;
+  width: 32px;
+  background-color: #facc15; /* yellow */
   border-radius: 9999px;
+}
+
+.nav-tab-active svg,
+.nav-tab-active button {
+  color: #facc15;
+  stroke: #facc15;
 }
   
   .tab-button {
