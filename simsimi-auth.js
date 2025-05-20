@@ -186,7 +186,7 @@ async function getRanking(apiKey) {
   if (!user) throw new Error('Invalid API key');
 
   const totalUsers = await usersDB.countDocuments();
-  const totalRequestUser = user.totalUsage; // <- total usage of this specific user
+  const totalRequestUser = user.totalUsage;
 
   const totalApiCalls = await usersDB.aggregate([
     {
@@ -199,22 +199,23 @@ async function getRanking(apiKey) {
 
   const sorted = await usersDB.find()
     .sort({ totalUsage: -1 })
-    .project({ username: 1, totalUsage: 1 })
-    .limit(20)
+    .project({ username: 1, totalUsage: 1, _id: 0 })
+    .limit(50)
     .toArray();
 
   const rankList = await usersDB.find()
     .sort({ totalUsage: -1 })
-    .project({ _id: 0, username: 1 })
+    .project({ username: 1, _id: 0 })
     .toArray();
 
   const yourRank = rankList.findIndex(u => u.username === user.username) + 1;
 
   return {
-    totalUsers,
-    totalRequestUser, // this now represents the user's own usage
-    totalApiCalls: totalApiCalls[0]?.total || 0,
     yourRank,
+    totalUsers,
+    totalApiCalls: totalApiCalls[0]?.total || 0,
+    totalRequestUser,
+    currentUsername: user.username,
     topUsers: sorted
   };
 }
