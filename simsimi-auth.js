@@ -200,7 +200,7 @@ async function getRanking(apiKey) {
   const sorted = await usersDB.find()
     .sort({ totalUsage: -1 })
     .project({ username: 1, totalUsage: 1, _id: 0 })
-    .limit(50)
+    .limit(20)
     .toArray();
 
   const rankList = await usersDB.find()
