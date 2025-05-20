@@ -9,21 +9,6 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
-app.use((req, res, next) => {
-  // Override res.json to ensure pretty-printing
-  const originalJson = res.json;
-  
-  res.json = function (body) {
-    // Only pretty-print if body is an object (typically JSON response)
-    if (typeof body === 'object') {
-      res.setHeader('Content-Type', 'application/json');
-      body = JSON.stringify(body, null, 2); // 2 spaces for pretty-printing
-    }
-    return originalJson.call(this, body);
-  };
-  
-  next();
-});
 
 const PORT = 3000;
 
@@ -130,12 +115,12 @@ app.get('/sim', async (req, res) => {
   const apiKey = req.query.apikey;
 
   if (!query || !apiKey) {
-    return res.status(400).json({
-      author: 'Jerome',
-      status: 400,
-      message: 'Both query and apikey parameters are required',
-    });
-  }
+  return res.status(400).json(JSON.stringify({
+    author: 'Jerome',
+    status: 400,
+    message: 'Both query and apikey parameters are required',
+  }, null, 2));
+}
 
   try {
     const user = await auth.authenticate(apiKey);
@@ -216,13 +201,13 @@ app.get('/teach', async (req, res) => {
   const { ask, ans, apikey } = req.query;
 
   if (!ask || !ans || !apikey) {
-    return res.status(400).json({
-      author: 'Jerome',
-      status: 400,
-      message: 'Parameters "ask", "ans", and "apikey" are required',
-    });
-  }
-
+  return res.status(400).json(JSON.stringify({
+    author: 'Jerome',
+    status: 400,
+    message: 'Parameters "ask", "ans", and "apikey" are required',
+  }, null, 2)); // Pretty-print with 2 spaces
+}
+  
   try {
     // Authenticate the user
     const user = await auth.authenticate(apikey);
