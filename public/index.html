@@ -63,15 +63,27 @@
     .page-section.fade-out { animation: fadeOut 0.3s ease forwards; }
   
   .nav-tab {
-  color: #9ca3af; /* gray-400 */
-  padding-top: 0.5rem;
-  border-top: 4px solid transparent;
-  transition: all 0.2s ease;
-}
-.nav-tab-active {
-  color: #facc15; /* text-yellow-300 */
-  border-bottom: 4px solid #facc15;
-}
+    flex: 1;
+    text-align: center;
+  }
+
+  .nav-tab button {
+    width: 100%;
+    padding-top: 0.25rem;
+  }
+
+  .nav-tab .underline {
+    margin-top: 4px;
+    height: 3px;
+    width: 24px;
+    border-radius: 9999px;
+    background-color: transparent;
+    transition: background-color 0.3s;
+  }
+
+  .nav-tab.active .underline {
+    background-color: #facc15; /* yellow-400 */
+  }
   
   .tab-button {
   @apply px-3 py-1 rounded text-xs font-medium bg-gray-700 text-white hover:bg-yellow-400 hover:text-black transition;
@@ -519,73 +531,102 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY")
   </main>
 
    <!-- Footer -->    
- <footer>
+  <footer>
   <nav class="fixed bottom-0 left-0 w-full bg-gray-800 text-white border-t border-gray-700 z-50">
-    <div class="flex justify-around text-xs sm:text-sm">
-      
-      <!-- Tab Template -->
-      <div onclick="activateNav(this, 'ranking')" class="flex-1 text-center py-2 hover:bg-gray-700 transition">
-        <button class="flex flex-col items-center justify-center space-y-0.5">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="flex flex-nowrap no-scrollbar px-2 py-3 text-xs">
+
+      <!-- Template for Each Tab -->
+      <div id="nav-home" onclick="activateNav(this, 'home')" class="nav-tab">
+        <button class="flex flex-col items-center">
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 12l2-2m0 0l7-7 7 7m-9 2v8" />
+          </svg>
+          Home
+          <div class="underline"></div>
+        </button>
+      </div>
+
+      <div id="nav-dashboard" onclick="activateNav(this, 'dashboard')" class="nav-tab">
+        <button class="flex flex-col items-center">
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h18v6H3V3zm0 12h18v6H3v-6zm0-6h18v2H3V9z" />
+          </svg>
+          Dashboard
+          <div class="underline"></div>
+        </button>
+      </div>
+
+      <div id="nav-ranking" onclick="activateNav(this, 'ranking')" class="nav-tab">
+        <button class="flex flex-col items-center">
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M3 17h4v4H3v-4zm7-8h4v12h-4V9zm7-4h4v16h-4V5z" />
           </svg>
-          <span>Ranking</span>
+          Ranking
+          <div class="underline"></div>
         </button>
       </div>
 
-      <div onclick="activateNav(this, 'notification')" class="flex-1 text-center py-2 hover:bg-gray-700 transition">
-        <button class="flex flex-col items-center justify-center space-y-0.5">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div id="nav-notification" onclick="activateNav(this, 'notification')" class="nav-tab">
+        <button class="flex flex-col items-center">
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-9.33-5.002A2.25 2.25 0 006 8.25V14.16c0 .538-.214 1.055-.595 1.435L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>
-          <span>Notify</span>
+          Notify
+          <div class="underline"></div>
         </button>
       </div>
 
-      <div onclick="activateNav(this, 'sim')" class="flex-1 text-center py-2 hover:bg-gray-700 transition">
-        <button class="flex flex-col items-center justify-center space-y-0.5">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div id="nav-sim" onclick="activateNav(this, 'sim')" class="nav-tab">
+        <button class="flex flex-col items-center">
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M9 12h6m-6 4h6M4 6h16v12H4z" />
           </svg>
-          <span>Sim</span>
+          Sim
+          <div class="underline"></div>
         </button>
       </div>
 
-      <div onclick="activateNav(this, 'teach')" class="flex-1 text-center py-2 hover:bg-gray-700 transition">
-        <button class="flex flex-col items-center justify-center space-y-0.5">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div id="nav-teach" onclick="activateNav(this, 'teach')" class="nav-tab">
+        <button class="flex flex-col items-center">
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 20h9M12 4v16M3 4h9m0 0v16" />
           </svg>
-          <span>Teach</span>
+          Teach
+          <div class="underline"></div>
         </button>
       </div>
 
-      <div onclick="activateNav(this, 'docs')" class="flex-1 text-center py-2 hover:bg-gray-700 transition">
-        <button class="flex flex-col items-center justify-center space-y-0.5">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div id="nav-docs" onclick="activateNav(this, 'docs')" class="nav-tab">
+        <button class="flex flex-col items-center">
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 20l9-5-9-5-9 5 9 5z" />
           </svg>
-          <span>Docs</span>
+          Docs
+          <div class="underline"></div>
         </button>
       </div>
 
-      <div onclick="activateNav(this, 'about')" class="flex-1 text-center py-2 hover:bg-gray-700 transition">
-        <button class="flex flex-col items-center justify-center space-y-0.5">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div id="nav-about" onclick="activateNav(this, 'about')" class="nav-tab">
+        <button class="flex flex-col items-center">
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
           </svg>
-          <span>About</span>
+          About
+          <div class="underline"></div>
         </button>
       </div>
+
     </div>
   </nav>
-</footer>
+</footer> 
 
   <!-- script jerdev -->
   <script src="/script/app.js"></script>
