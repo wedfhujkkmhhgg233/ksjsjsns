@@ -243,7 +243,7 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
     const apiKey = localStorage.getItem('apiKey');
     if (!apiKey) return;
 
-    const socket = new WebSocket('wss://simsimi.ooguy.com'); // update this if hosted
+    const socket = new WebSocket('ws://simsimi.ooguy.com'); // update this if hosted
 
     socket.onopen = () => {
       socket.send(JSON.stringify({ type: 'ranking', apiKey }));
