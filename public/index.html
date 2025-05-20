@@ -225,74 +225,75 @@
   </div>
 </section>
 
-    <section id="ranking" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10">
-  <!-- Title Section with Icon -->
-  <div class="flex items-center gap-3 mb-4">
-    <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4 4 4-4m0-8l-4-4-4 4" />
-    </svg>
-    <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">Leaderboard</h2>
-  </div>
-  
-  <!-- Subtitle -->
-  <p class="text-sm text-gray-400 italic mb-6">View the top API users and your current rank.</p>
-
-  <!-- Stats Grid with Hover Effects and Icons -->
-  <div class="grid md:grid-cols-2 gap-4 mb-6 text-sm">
-    
-    <!-- Your Rank -->
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 hover:bg-gray-800 transition duration-300">
-      <div class="flex items-center gap-2 mb-2">
-        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v8m0 0l-4-4m4 4l4-4" />
-        </svg>
-        <h3 class="text-yellow-400 text-xs uppercase tracking-widest">Your Rank</h3>
-      </div>
-      <p id="your-rank" class="text-green-400 font-bold">Loading...</p>
-    </div>
-
-    <!-- Your API Calls -->
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 hover:bg-gray-800 transition duration-300">
-      <div class="flex items-center gap-2 mb-2">
-        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16m4 12h-4m-8 0h4m4 0H4" />
-        </svg>
-        <h3 class="text-yellow-400 text-xs uppercase tracking-widest">Your API Calls</h3>
-      </div>
-      <p id="your-calls" class="text-green-400 font-bold">Loading...</p>
-    </div>
-
-    <!-- Total Users -->
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 hover:bg-gray-800 transition duration-300">
-      <div class="flex items-center gap-2 mb-2">
-        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v16m16-8H4" />
-        </svg>
-        <h3 class="text-yellow-400 text-xs uppercase tracking-widest">Total Users</h3>
-      </div>
-      <p id="total-users" class="text-green-400">Loading...</p>
-    </div>
-
-    <!-- Total API Calls -->
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 hover:bg-gray-800 transition duration-300">
-      <div class="flex items-center gap-2 mb-2">
-        <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16m4 12H4" />
-        </svg>
-        <h3 class="text-yellow-400 text-xs uppercase tracking-widest">Total API Calls</h3>
-      </div>
-      <p id="total-calls" class="text-green-400">Loading...</p>
-    </div>
-  </div>
-
-  <!-- Top Users List with Animations -->
-  <div class="bg-black/40 border border-yellow-500/10 rounded-lg p-4">
-    <h3 class="text-yellow-300 text-sm font-bold uppercase tracking-wide mb-3">Top Users</h3>
-    <ul id="top-users" class="space-y-2 text-sm animate-fade-in">
-      <li class="text-gray-400">Loading top users...</li>
-    </ul>
-  </div>
-</section>
+    <section id="ranking" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10">  
+  <div class="flex items-center gap-3 mb-4">  
+    <!-- Leaderboard Icon -->
+    <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">  
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4 4 4-4m0-8l-4-4-4 4" />  
+    </svg>  
+    <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">Leaderboard</h2>  
+  </div>  
+  <p class="text-sm text-gray-400 italic mb-6">View the top API users and your current rank.</p>  
+  
+  <div class="grid md:grid-cols-2 gap-4 mb-6 text-sm">  
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 flex items-center gap-3">
+      <!-- Rank icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-yellow-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L6 20.25M6 3v17.25M6 3l3.75 3.75M17.25 17L21 20.25M21 3v17.25M21 3l-3.75 3.75" />
+      </svg>
+      <div>
+        <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your Rank</h3>  
+        <p id="your-rank" class="text-green-400 font-bold animate-pulse">Loading...</p>  
+      </div>
+    </div>  
+    
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 flex items-center gap-3">
+      <!-- API calls icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-yellow-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h2a2 2 0 012 2v6a2 2 0 01-2 2H3v-8zM21 14h-2a2 2 0 01-2-2v-6a2 2 0 012-2h2v8z" />
+      </svg>
+      <div>
+        <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Your API Calls</h3>  
+        <p id="your-calls" class="text-green-400 font-bold animate-pulse">Loading...</p>  
+      </div>
+    </div>  
+    
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 flex items-center gap-3">
+      <!-- Users icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-yellow-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M15 11a4 4 0 10-6 0 4 4 0 006 0z" />
+      </svg>
+      <div>
+        <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total Users</h3>  
+        <p id="total-users" class="text-green-400">Loading...</p>  
+      </div>
+    </div>  
+    
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 flex items-center gap-3">
+      <!-- API calls total icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-yellow-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18M3 6h18M3 18h18" />
+      </svg>
+      <div>
+        <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Total API Calls</h3>  
+        <p id="total-calls" class="text-green-400">Loading...</p>  
+      </div>
+    </div>  
+  </div>  
+  
+  <div class="bg-black/40 border border-yellow-500/10 rounded-lg p-4">
+    <h3 class="text-yellow-300 text-sm font-bold uppercase tracking-wide mb-3 flex items-center gap-2">
+      <!-- Top users icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 100 7.292M12 12v6m0 0l-2-2m2 2l2-2" />
+      </svg>
+      Top Users
+    </h3>  
+    <ul id="top-users" class="space-y-2 text-sm animate-fade-in">
+      <li class="text-gray-400 hover:text-yellow-400 cursor-pointer transition-colors duration-300 rounded px-2 py-1 hover:bg-yellow-900/20">Loading top users...</li>  
+    </ul>  
+  </div>  
+    </section>
     
     <section id="dashboard" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10">
   <!-- Header -->
