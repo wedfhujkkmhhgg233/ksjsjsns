@@ -63,21 +63,24 @@
     .page-section.fade-out { animation: fadeOut 0.3s ease forwards; }
   
   .nav-tab {
-  color: #9ca3af; /* gray-400 */
+  color: #9ca3af;
   padding-top: 0.5rem;
   position: relative;
   transition: all 0.2s ease;
+  flex: 1;
+  text-align: center;
+  display: flex;
+  justify-content: center;
 }
 
 .nav-tab-active::after {
   content: '';
   position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   height: 4px;
-  width: 32px; /* set the desired underline width */
-  background-color: #facc15; /* yellow-300 */
+  width: 100%; /* full width of tab */
+  background-color: #facc15;
   border-radius: 9999px;
 }
   
@@ -519,62 +522,62 @@ fetch("https://simsimi.ooguy.com/teach?ask=hello&ans=hey!&apikey=YOUR_API_KEY")
   </main>
 
    <!-- Footer -->    
-  <footer>
-  <nav class="fixed bottom-0 left-0 w-full bg-gray-800 text-white border-t border-gray-700 z-50">
-    <div class="flex justify-around py-3 text-sm">
+  <footer>    
+  <nav class="fixed bottom-0 left-0 w-full bg-gray-800 text-white border-t border-gray-700 z-50">    
+    <div class="flex py-3 text-sm">  
+      
+      <div id="nav-home" onclick="activateNav(this, 'home')" class="nav-tab">    
+        <button class="flex flex-col items-center">    
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">    
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"    
+              d="M3 12l2-2m0 0l7-7 7 7m-9 2v8" />    
+          </svg>    
+          Home    
+        </button>    
+      </div>      
 
-      <div id="nav-home" onclick="activateNav(this, 'home')" class="nav-tab">
-        <button class="flex flex-col items-center">
-          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 12l2-2m0 0l7-7 7 7m-9 2v8" />
-          </svg>
-          Home
-        </button>
-      </div>
+      <div id="nav-sim" onclick="activateNav(this, 'sim')" class="nav-tab">    
+        <button class="flex flex-col items-center">    
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">    
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"    
+              d="M9 12h6m-6 4h6M4 6h16v12H4z" />    
+          </svg>    
+          Sim    
+        </button>    
+      </div>      
 
-      <div id="nav-sim" onclick="activateNav(this, 'sim')" class="nav-tab">
-        <button class="flex flex-col items-center">
-          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 12h6m-6 4h6M4 6h16v12H4z" />
-          </svg>
-          Sim
-        </button>
-      </div>
+      <div id="nav-teach" onclick="activateNav(this, 'teach')" class="nav-tab">    
+        <button class="flex flex-col items-center">    
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">    
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"    
+              d="M12 20h9M12 4v16M3 4h9m0 0v16" />    
+          </svg>    
+          Teach    
+        </button>    
+      </div>      
 
-      <div id="nav-teach" onclick="activateNav(this, 'teach')" class="nav-tab">
-        <button class="flex flex-col items-center">
-          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 20h9M12 4v16M3 4h9m0 0v16" />
-          </svg>
-          Teach
-        </button>
-      </div>
+      <div id="nav-docs" onclick="activateNav(this, 'docs')" class="nav-tab">    
+        <button class="flex flex-col items-center">    
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">    
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"    
+              d="M12 20l9-5-9-5-9 5 9 5z" />    
+          </svg>    
+          Docs    
+        </button>    
+      </div>      
 
-      <div id="nav-docs" onclick="activateNav(this, 'docs')" class="nav-tab">
-        <button class="flex flex-col items-center">
-          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 20l9-5-9-5-9 5 9 5z" />
-          </svg>
-          Docs
-        </button>
-      </div>
+      <div id="nav-about" onclick="activateNav(this, 'about')" class="nav-tab">    
+        <button class="flex flex-col items-center">    
+          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">    
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"    
+              d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />    
+          </svg>    
+          About    
+        </button>    
+      </div>    
 
-      <div id="nav-about" onclick="activateNav(this, 'about')" class="nav-tab">
-        <button class="flex flex-col items-center">
-          <svg class="h-6 w-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
-          </svg>
-          About
-        </button>
-      </div>
-
-    </div>
-  </nav>
+    </div>    
+  </nav>    
 </footer>
 
   <!-- script jerdev -->
