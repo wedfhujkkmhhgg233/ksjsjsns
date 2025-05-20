@@ -7,6 +7,6 @@
   },
   "scripts": {
     "start": "node index.js",
-    "build": "npm install axios express express-rate-limit path bcrypt jsonwebtoken mongodb uuidv4 cors"
+    "build": "npm install axios express express-rate-limit path bcrypt jsonwebtoken mongodb uuidv4 cors ws"
   }
 }
