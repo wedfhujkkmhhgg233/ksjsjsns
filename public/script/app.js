@@ -220,9 +220,12 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
   if (!apiKey) return;
 
   try {
-    const res = await fetch('/api/ranking', { headers: { 'x-api-key': apiKey } });
+    const res = await fetch('/api/ranking', {
+      headers: { 'x-api-key': apiKey }
+    });
     const data = await res.json();
 
+    // Update user stats
     document.getElementById('your-rank').textContent = `#${data.yourRank}`;
     document.getElementById('your-calls').textContent = data.totalRequestUser || 0;
     document.getElementById('total-users').textContent = data.totalUsers;
@@ -233,24 +236,25 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
 
     data.topUsers.forEach((user, index) => {
       const li = document.createElement('li');
-      const trophyClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
-      const trophyIcon = index < 3
-        ? `<i class='fa-solid fa-trophy trophy ${trophyClass} mr-2'></i>`
-        : `<span class='text-yellow-400 font-bold mr-2'>#${index + 1}</span>`;
-
       const isYou = data.currentUsername && user.username === data.currentUsername;
 
-      li.className = `flex items-center justify-between bg-gray-800 p-3 rounded-lg border border-yellow-500/10 transition-all ${
-        isYou ? 'ring-2 ring-yellow-400 bg-yellow-500/10 text-yellow-300 font-semibold' : ''
+      const trophyColors = ['text-yellow-400', 'text-gray-300', 'text-amber-600'];
+      const trophyIcon = index < 3
+        ? `<i class="fas fa-trophy ${trophyColors[index]} w-4 mr-2"></i>`
+        : `<span class="text-yellow-400 font-semibold mr-2">#${index + 1}</span>`;
+
+      li.className = `flex items-center justify-between p-3 rounded-lg border border-yellow-500/10 bg-gray-950 transition-all ${
+        isYou ? 'ring-2 ring-yellow-300 bg-yellow-900/20 text-yellow-200 font-semibold' : 'hover:bg-yellow-900/10'
       }`;
 
       li.innerHTML = `
-        <div class='flex items-center'>
+        <div class="flex items-center">
           ${trophyIcon}
-          <span class='text-green-400'>${user.username}</span>
+          <span class="text-green-400">${user.username}</span>
           ${isYou ? `<span class="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-300 text-black">You</span>` : ''}
         </div>
-        <span class='text-gray-400 font-mono'>${user.totalUsage || 0} calls</span>`;
+        <span class="text-gray-400 font-mono">${user.totalUsage || 0} calls</span>
+      `;
 
       list.appendChild(li);
 
@@ -261,7 +265,10 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
 
   } catch (err) {
     console.error(err);
-    document.getElementById('top-users').innerHTML = '<li class="text-red-500">Failed to load ranking.</li>';
+    document.getElementById('top-users').innerHTML = `
+      <li class="text-red-500 bg-gray-950 border border-red-500/20 p-3 rounded-lg">
+        Failed to load ranking.
+      </li>`;
   }
 }
 
