@@ -224,6 +224,7 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
       headers: { 'x-api-key': apiKey }
     });
     const data = await res.json();
+
     document.getElementById('your-rank').textContent = `#${data.yourRank}`;
     document.getElementById('your-calls').textContent = data.totalRequestUser || 0;
     document.getElementById('total-users').textContent = data.totalUsers;
@@ -257,7 +258,11 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
         </div>
       `;
 
-      list.appendChild(li);
+      const wrapper = document.createElement('div');
+      wrapper.className = 'p-1'; // padding to ensure ring doesn't get clipped
+      wrapper.appendChild(li);
+
+      list.appendChild(wrapper);
 
       if (isYou) {
         setTimeout(() => li.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
