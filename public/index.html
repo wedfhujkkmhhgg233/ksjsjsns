@@ -277,28 +277,28 @@
     </ul>  
   </div>  
 </section>
-    
+
     <section id="dashboard" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-10">
   <!-- Header -->
-  <div class="flex items-center gap-3 mb-4">
-    <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <div class="flex items-center gap-3 mb-6">
+    <svg class="w-6 h-6 text-yellow-400 transform transition-transform duration-200 hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.797.76 6.879 2.054M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
     <h2 class="text-2xl font-extrabold text-yellow-300 tracking-tight">User Dashboard</h2>
 
     <!-- Refresh Icon -->
     <button onclick="loadDashboard()" class="ml-auto flex items-center gap-1 px-3 py-1.5 rounded-full border border-yellow-400 hover:bg-yellow-400 hover:text-black text-yellow-300 text-xs transition duration-200 group">
-  <svg class="w-4 h-4 group-hover:animate-spin transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M4 20l16-16" />
-  </svg>
-  <span class="hidden sm:inline">Refresh</span>
-  <span id="refreshSpinner" class="ml-1 hidden animate-spin">
-    <svg class="w-4 h-4 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M12 4v1m0 14v1m8-8h1M3 12H2m15.364-6.364l.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l.707.707" />
-    </svg>
-  </span>
-</button>
+      <svg class="w-4 h-4 group-hover:animate-spin transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M4 20l16-16" />
+      </svg>
+      <span class="hidden sm:inline">Refresh</span>
+      <span id="refreshSpinner" class="ml-1 hidden animate-spin">
+        <svg class="w-4 h-4 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4v1m0 14v1m8-8h1M3 12H2m15.364-6.364l.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l.707.707" />
+        </svg>
+      </span>
+    </button>
   </div>
 
   <!-- Description -->
@@ -306,18 +306,18 @@
 
   <!-- Cards -->
   <div class="space-y-4 text-sm">
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 transform transition-transform duration-200 hover:scale-105">
       <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Username</h3>
       <p id="dash-username" class="text-green-400 break-all">Loading...</p>
     </div>
 
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 relative">
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 relative transform transition-transform duration-200 hover:scale-105">
       <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">API Key</h3>
       <p id="dash-apikey" class="text-green-400 break-all pr-14">Loading...</p>
       <button onclick="copyApiKey()" class="absolute top-3 right-3 text-xs bg-yellow-400 text-black font-bold px-2 py-1 rounded hover:bg-yellow-300 transition">Copy</button>
     </div>
 
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 transform transition-transform duration-200 hover:scale-105">
       <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-2">Sim Usage</h3>
       <div class="w-full h-2 bg-gray-700 rounded-full mb-2">
         <div id="sim-progress" class="h-full bg-yellow-400 rounded-full transition-all" style="width:0%"></div>
@@ -325,7 +325,7 @@
       <p id="dash-sim" class="text-green-400 text-xs">0 / 50</p>
     </div>
 
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 transform transition-transform duration-200 hover:scale-105">
       <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-2">Teach Usage</h3>
       <div class="w-full h-2 bg-gray-700 rounded-full mb-2">
         <div id="teach-progress" class="h-full bg-yellow-400 rounded-full transition-all" style="width:0%"></div>
@@ -333,22 +333,21 @@
       <p id="dash-teach" class="text-green-400 text-xs">0 / 50</p>
     </div>
 
-    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20">
+    <div class="bg-gray-950 p-4 rounded-lg border border-yellow-500/20 transform transition-transform duration-200 hover:scale-105">
       <h3 class="text-yellow-400 text-xs uppercase tracking-widest mb-1">Reset In</h3>
       <p id="dash-reset" class="text-gray-300">Checking...</p>
     </div>
   </div>
 
   <!-- Logout Button -->
-  <!-- Logout Button -->
-<div class="text-center mt-8">
-  <button onclick="logout()" class="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-lg transition duration-300 text-lg">
-    <span>Logout</span>
-    <i class="ph ph-sign-out text-xl"></i>
-  </button>
-</div>
+  <div class="text-center mt-8">
+    <button onclick="logout()" class="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-lg shadow-lg transition duration-300 text-lg transform hover:scale-105">
+      <span>Logout</span>
+      <i class="ph ph-sign-out text-xl"></i>
+    </button>
+  </div>
 </section>
-
+    
     <!-- Other Sections -->
     <section id="sim" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-6 shadow-xl border border-yellow-500/30 backdrop-blur-md">
   <!-- Header -->
