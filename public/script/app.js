@@ -224,8 +224,6 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
       headers: { 'x-api-key': apiKey }
     });
     const data = await res.json();
-
-    // Update user stats
     document.getElementById('your-rank').textContent = `#${data.yourRank}`;
     document.getElementById('your-calls').textContent = data.totalRequestUser || 0;
     document.getElementById('total-users').textContent = data.totalUsers;
@@ -235,7 +233,6 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
     list.innerHTML = '';
 
     data.topUsers.forEach((user, index) => {
-      const li = document.createElement('li');
       const isYou = data.currentUsername && user.username === data.currentUsername;
 
       const trophyColors = ['text-yellow-400', 'text-gray-300', 'text-amber-600'];
@@ -243,17 +240,21 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
         ? `<i class="fas fa-trophy ${trophyColors[index]} w-4 mr-2"></i>`
         : `<span class="text-yellow-400 font-semibold mr-2">#${index + 1}</span>`;
 
+      const li = document.createElement('li');
       li.className = `flex items-center justify-between p-3 rounded-lg border border-yellow-500/10 bg-gray-950 transition-all ${
         isYou ? 'ring-2 ring-yellow-300 bg-yellow-900/20 text-yellow-200 font-semibold' : 'hover:bg-yellow-900/10'
       }`;
 
       li.innerHTML = `
-        <div class="flex items-center">
+        <div class="flex items-center gap-2">
           ${trophyIcon}
           <span class="text-green-400">${user.username}</span>
           ${isYou ? `<span class="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-300 text-black">You</span>` : ''}
         </div>
-        <span class="text-gray-400 font-mono">${user.totalUsage || 0} calls</span>
+        <div class="flex items-center gap-1 text-yellow-400">
+          <i class="fas fa-bolt text-yellow-400"></i>
+          <span class="font-mono">${user.totalUsage || 0}</span>
+        </div>
       `;
 
       list.appendChild(li);
