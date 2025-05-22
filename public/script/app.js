@@ -106,16 +106,26 @@ window.addEventListener("DOMContentLoaded", () => {
   el.classList.add('nav-tab-active');
   showSection(sectionId);
 }
-  
-  function runTeach() {
-  const ask = document.getElementById('teachAsk').value.trim();
-  const ans = document.getElementById('teachAns').value.trim();
-  const key = document.getElementById('teachKey').value.trim();
+
+window.addEventListener("DOMContentLoaded", () => {
+  const teachKeyInput = document.getElementById("teachKey");
+  const storedKey = localStorage.getItem("apiKey");
+  if (storedKey) teachKeyInput.value = storedKey;
+});
+
+function runTeach() {
+  const askInput = document.getElementById('teachAsk');
+  const ansInput = document.getElementById('teachAns');
+  const keyInput = document.getElementById('teachKey');
   const output = document.getElementById('teachOutput');
   const resultBox = document.getElementById('teachResult');
 
-  if (!ask || !ans || !key) {
-    output.textContent = "Please fill in ask, ans, and your API key.";
+  const ask = askInput.value.trim();
+  const ans = ansInput.value.trim();
+  const apiKey = localStorage.getItem('apiKey'); // Only use from localStorage
+
+  if (!ask || !ans || !apiKey) {
+    output.textContent = "Please fill in ask & answer. API key is auto-loaded from your account.";
     resultBox.classList.remove('hidden');
     return;
   }
@@ -123,18 +133,20 @@ window.addEventListener("DOMContentLoaded", () => {
   output.textContent = "Submitting...";
   resultBox.classList.remove('hidden');
 
-  fetch(`/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}&apikey=${encodeURIComponent(key)}`)
+  fetch(`/teach?ask=${encodeURIComponent(ask)}&ans=${encodeURIComponent(ans)}&apikey=${encodeURIComponent(apiKey)}`)
     .then(res => {
       if (!res.ok) throw new Error(`Error ${res.status}`);
       return res.json();
     })
     .then(data => {
+      askInput.value = "";
+      ansInput.value = "";
       output.textContent = JSON.stringify(data, null, 2);
     })
     .catch(err => {
       output.textContent = `Request failed: ${err.message}`;
     });
-    }
+}
   
   const footer = document.querySelector('footer');
 
