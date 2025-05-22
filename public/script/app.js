@@ -58,69 +58,54 @@ const sections = document.querySelectorAll('.page-section');
     if (i >= text.length) clearInterval(interval);
   }, delay);
 }
-  
-  window.addEventListener('DOMContentLoaded', () => {
-    const storedKey = localStorage.getItem('apiKey');
-    if (storedKey) {
-      document.getElementById('simApiKey').value = storedKey;
-    }
+
+window.addEventListener("DOMContentLoaded", () => {
+    const simApiKey = document.getElementById("simApiKey");
+    const storedKey = localStorage.getItem("apiKey");
+    if (storedKey) simApiKey.value = storedKey;
   });
 
   function runSimQuery() {
-    const queryInput = document.getElementById('simQuery');
-    const keyInput = document.getElementById('simApiKey');
+    const queryInput = document.getElementById("simQuery");
+    const apiKeyInput = document.getElementById("simApiKey");
+    const output = document.getElementById("simOutput");
+    const resultBox = document.getElementById("simResult");
+
     const query = queryInput.value.trim();
-    const apiKey = localStorage.getItem('apiKey');
-    const output = document.getElementById('simOutput');
-    const resultBox = document.getElementById('simResult');
+    const apiKey = localStorage.getItem("apiKey");
 
-    const keyToUse = apiKey || keyInput.value.trim(); // use saved key or fallback to user input
-
-    if (!query || !keyToUse) {
-      output.textContent = "Please enter a message. API key is required.";
-      resultBox.classList.remove('hidden');
+    if (!query || !apiKey) {
+      output.textContent = "Please enter a message. API key is auto-loaded from your account.";
+      resultBox.classList.remove("hidden");
       return;
     }
 
-    resultBox.classList.remove('hidden');
+    resultBox.classList.remove("hidden");
     output.innerHTML = `
       <div class="flex items-center gap-2 text-yellow-300">
         <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M12 4v1m0 14v1m8-8h1M4 12H3m15.364-6.364l.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l.707.707" />
-        </svg>
-        Thinking...
+        </svg> Thinking...
       </div>`;
 
-    fetch(`/sim?query=${encodeURIComponent(query)}&apikey=${encodeURIComponent(keyToUse)}`)
-      .then(res => {
+    fetch(`/sim?query=${encodeURIComponent(query)}&apikey=${encodeURIComponent(apiKey)}`)
+      .then((res) => {
         if (!res.ok) throw new Error(`Error ${res.status}`);
         return res.json();
       })
-      .then(data => {
+      .then((data) => {
+        // Clear message input to prevent spamming
+        queryInput.value = "";
         setTimeout(() => {
           typeWriter(JSON.stringify(data, null, 2), output);
-          queryInput.value = ''; // Clear message after success
         }, 300);
       })
-      .catch(err => {
+      .catch((err) => {
         output.textContent = `Request failed: ${err.message}`;
       });
   }
-
-  function typeWriter(text, element) {
-    element.textContent = '';
-    let i = 0;
-    const speed = 10;
-    (function typing() {
-      if (i < text.length) {
-        element.textContent += text.charAt(i);
-        i++;
-        setTimeout(typing, speed);
-      }
-    })();
-  }
-  
+      
   function activateNav(el, sectionId) {
   document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.classList.remove('nav-tab-active');
