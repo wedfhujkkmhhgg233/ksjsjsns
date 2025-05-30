@@ -185,21 +185,40 @@ function getUserInfo(user) {
   };
 }
 
+function formatCount(num) {
+  if (num < 1000) return num.toString();
+
+  const suffixes = ['', 'k', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y'];
+  const tier = Math.floor(Math.log10(num) / 3);
+
+  if (tier >= suffixes.length) {
+    return num.toExponential(2); // fallback if number is *too* big
+  }
+
+  const suffix = suffixes[tier];
+  const scale = Math.pow(10, tier * 3);
+  const scaled = num / scale;
+
+  return scaled.toFixed(1).replace(/\.0$/, '') + suffix;
+}
+
 async function getRanking(apiKey) {
   const user = await usersDB.findOne({ apiKey });
   if (!user) throw new Error('Invalid API key');
 
   const [totalUsers, totalApiCalls, rankList] = await Promise.all([
     usersDB.countDocuments(),
-    usersDB.aggregate([
-      { $group: { _id: null, total: { $sum: "$totalUsage" } } }
-    ]).toArray(),
-    usersDB.find({}, { projection: { username: 1 } })
-      .sort({ totalUsage: -1 }).toArray()
+    usersDB.aggregate([{ $group: { _id: null, total: { $sum: "$totalUsage" } } }]).toArray(),
+    usersDB.find({}, { projection: { username: 1 } }).sort({ totalUsage: -1 }).toArray()
   ]);
 
-  const topUsers = await usersDB.find({}, { projection: { username: 1, totalUsage: 1, _id: 0 } })
+  const topUsersRaw = await usersDB.find({}, { projection: { username: 1, totalUsage: 1, _id: 0 } })
     .sort({ totalUsage: -1 }).limit(20).toArray();
+
+  const topUsers = topUsersRaw.map(u => ({
+    username: u.username,
+    totalUsage: formatCount(u.totalUsage)
+  }));
 
   const yourRank = rankList.findIndex(u => u.username === user.username) + 1;
 
