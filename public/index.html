@@ -127,6 +127,13 @@
 
     #loader { transition: opacity 0.5s ease; }
     #modalContent { transition: transform 0.3s ease, opacity 0.3s ease; }
+
+    body {
+      user-select: none; /* Standard */
+      -webkit-user-select: none; /* Safari */
+      -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+    }
   </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen px-4 pt-16 pb-28 font-sans relative">
