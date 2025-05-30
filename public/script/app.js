@@ -237,7 +237,7 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
     window.location.href = '/login';
   }
 
-    async function loadRanking() {
+async function loadRanking() {
   const apiKey = localStorage.getItem('apiKey');
   if (!apiKey) return;
 
@@ -263,6 +263,12 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
         ? `<i class="fas fa-trophy ${trophyColors[index]} w-4 mr-2"></i>`
         : `<span class="text-yellow-400 font-semibold mr-2">#${index + 1}</span>`;
 
+      // Truncate long usernames
+      let displayName = user.username;
+      if (displayName.length > 12) {
+        displayName = displayName.slice(0, 9) + '...';
+      }
+
       const li = document.createElement('li');
       li.className = `flex items-center justify-between p-3 rounded-lg border border-yellow-500/10 bg-gray-950 transition-all ${
         isYou ? 'ring-2 ring-yellow-300 bg-yellow-900/20 text-yellow-200 font-semibold' : 'hover:bg-yellow-900/10'
@@ -271,17 +277,17 @@ window.addEventListener('DOMContentLoaded', loadDashboard);
       li.innerHTML = `
         <div class="flex items-center gap-2">
           ${trophyIcon}
-          <span class="text-green-400">${user.username}</span>
+          <span class="text-green-400">${displayName}</span>
           ${isYou ? `<span class="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-300 text-black">You</span>` : ''}
         </div>
-        <div class="flex items-center gap-1 text-yellow-400">
+        <div class="flex items-center gap-1 text-yellow-400 ring-2 ring-yellow-300 rounded px-2 py-0.5">
           <i class="fas fa-bolt text-yellow-400"></i>
           <span class="font-mono">${user.totalUsage || 0}</span>
         </div>
       `;
 
       const wrapper = document.createElement('div');
-      wrapper.className = 'p-1'; // padding to ensure ring doesn't get clipped
+      wrapper.className = 'p-1'; // spacing to prevent ring clipping
       wrapper.appendChild(li);
 
       list.appendChild(wrapper);
