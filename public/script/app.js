@@ -270,26 +270,27 @@ async function loadRanking() {
       }
 
       const li = document.createElement('li');
-      li.className = `flex items-center justify-between p-3 rounded-lg border border-yellow-500/10 bg-gray-950 transition-all ${
+      li.className = `p-3 rounded-lg border border-yellow-500/10 bg-gray-950 transition-all ${
         isYou ? 'ring-2 ring-yellow-300 bg-yellow-900/20 text-yellow-200 font-semibold' : 'hover:bg-yellow-900/10'
       }`;
 
       li.innerHTML = `
-        <div class="flex items-center gap-2">
-          ${trophyIcon}
-          <span class="text-green-400">${displayName}</span>
-          ${isYou ? `<span class="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-300 text-black">You</span>` : ''}
-        </div>
-        <div class="flex items-center gap-1 text-yellow-400 ring-2 ring-yellow-300 rounded px-2 py-0.5">
-          <i class="fas fa-bolt text-yellow-400"></i>
-          <span class="font-mono">${user.totalUsage || 0}</span>
+        <div class="flex items-center justify-between w-full">
+          <div class="flex items-center gap-2 min-w-0">
+            ${trophyIcon}
+            <span class="text-green-400 truncate max-w-[120px]">${displayName}</span>
+            ${isYou ? `<span class="ml-2 px-2 py-0.5 text-xs rounded bg-yellow-300 text-black whitespace-nowrap">You</span>` : ''}
+          </div>
+          <div class="flex items-center gap-1 text-yellow-400 ring-2 ring-yellow-300 rounded px-2 py-0.5 ml-4 shrink-0">
+            <i class="fas fa-bolt text-yellow-400"></i>
+            <span class="font-mono">${user.totalUsage || 0}</span>
+          </div>
         </div>
       `;
 
       const wrapper = document.createElement('div');
-      wrapper.className = 'p-1'; // spacing to prevent ring clipping
+      wrapper.className = 'p-1'; // prevent ring clipping
       wrapper.appendChild(li);
-
       list.appendChild(wrapper);
 
       if (isYou) {
