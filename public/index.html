@@ -202,39 +202,35 @@
   
   <main class="max-w-4xl mx-auto space-y-12 mt-6">
 
-   <section id="home" class="page-section fade-in text-center flex flex-col items-center justify-center min-h-[80vh] bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
-  <h1 class="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-yellow-300 to-pink-500 bg-clip-text text-transparent mb-4 animate-fade-in-up">
+   <section id="home" class="page-section text-center flex flex-col items-center justify-center min-h-[80vh] bg-gradient-to-b from-yellow-100 via-pink-100 to-white">
+
+  <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-yellow-400 to-pink-400 bg-clip-text text-transparent mb-4 transition-all duration-500">
     SimSimi API
   </h1>
-  
-  <p class="text-xl text-gray-300 max-w-xl mb-6 animate-fade-in-up delay-100">
+
+  <p class="text-lg text-gray-600 max-w-xl mb-6">
     Build your own SimSimi-style chatbot in seconds — lightweight, fun, and flexible.
   </p>
 
-  
-  <div class="w-full flex justify-center">
-    <a onclick="showSection('dashboard')" class="block mb-4 bg-pink-500 hover:bg-pink-400 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-pink-300/40 transition duration-300 animate-pulse ring-2 ring-pink-400 ring-offset-2 hover:scale-105 animate-fade-in-up delay-200">
+  <div class="w-full flex flex-col md:flex-row gap-4 justify-center">
+    <a onclick="showSection('dashboard')" class="bg-pink-300 hover:bg-pink-200 text-white font-semibold px-6 py-3 rounded-full shadow-md transition duration-200">
       Get API Key
     </a>
-  </div>
-
-  <div class="w-full flex justify-center">
-    <a onclick="showSection('ranking')" class="block bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-6 py-3 rounded-full shadow-lg hover:shadow-yellow-300/40 transition duration-300 animate-pulse ring-2 ring-yellow-400 ring-offset-2 hover:scale-105 animate-fade-in-up delay-300">
+    <a onclick="showSection('ranking')" class="bg-yellow-300 hover:bg-yellow-200 text-gray-800 font-semibold px-6 py-3 rounded-full shadow-md transition duration-200">
       Ranking
     </a>
   </div>
 
-  <ul class="mt-10 text-gray-400 space-y-2 text-sm md:text-base animate-fade-in-up delay-300">
+  <ul class="mt-10 text-gray-500 space-y-2 text-base">
     <li>• Zero setup required</li>
     <li>• Customize responses instantly</li>
     <li>• Free & open access</li>
   </ul>
 
-  <div class="mt-8 animate-bounce">
-    <svg class="w-16 h-16 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c1.38 0 2.5-1.12 2.5-2.5S13.38 6 12 6s-2.5 1.12-2.5 2.5S10.62 11 12 11zm0 0v1.5m0 4h.01M19.4 15.6a8 8 0 10-14.8 0M12 21v.01" />
-    </svg>
+  <div class="mt-8">
+    <img src="https://storage.googleapis.com/chipp-images/chat-images/2c5a5606-ea39-44f1-8c6b-034797504528" alt="Friendly mascot" class="w-20 h-20 mx-auto rounded-full shadow-lg border-4 border-yellow-200" />
   </div>
+
 </section>
     
     <section id="ranking" class="page-section bg-gradient-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-8 shadow-2xl border border-yellow-500/30 backdrop-blur-md max-w-4xl mx-auto mt-12">  
