@@ -133,8 +133,8 @@ if (!query || !apiKey) {
 
     // Fetch response from primary Simsimi API
     const botResponse = await fetchWithFallback(
-      'http://fi3.bot-hosting.net:20422/sim',
-      'http://fi3.bot-hosting.net:20422/sim',
+      'http://fi3.bot-hosting.net:22377/sim',
+      'http://fi3.bot-hosting.net:22377/sim',
       { query }
     );
 
@@ -222,7 +222,7 @@ app.get('/teach', async (req, res) => {
     await auth.useTeach(user);
 
     // Teach to fi.bot.hosting API
-    const teachResponse = await axiosWithTimeout('http://fi3.bot-hosting.net:20422/teach', { ask, ans });
+    const teachResponse = await axiosWithTimeout('http://fi3.bot-hosting.net:22377/teach', { ask, ans });
 
     // Optionally teach to a second API
     await teachBothAPIs(ask, ans);
