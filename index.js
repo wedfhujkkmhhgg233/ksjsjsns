@@ -63,7 +63,7 @@ const fetchWithFallback = async (primaryUrl, backupUrl, params) => {
 
 // Helper function to teach both APIs
 const teachBothAPIs = async (ask, ans) => {
-  const url = 'http://fi3.bot-hosting.net:20422/teach'; // Only using fi.bot.hosting API
+  const url = 'http://fi3.bot-hosting.net:22377/teach'; // Only using fi.bot.hosting API
   try {
     await axios.get(url, { params: { ask, ans } });
   } catch (error) {
