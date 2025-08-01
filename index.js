@@ -79,7 +79,7 @@ if (mode === 'signup') {
 const result = await auth.signup(username, password);
 return res.json(result);
 }
-if (mode === 'login') {
+if (mode === 'signin') {
 const result = await auth.login(username, password);
 return res.json(result);
 }
