@@ -196,11 +196,11 @@ function copyCode(btn) {
 
     document.getElementById('dash-username').textContent = data.username;
     document.getElementById('dash-apikey').textContent = data.apiKey;
-    document.getElementById('dash-sim').textContent = `${data.usage.sim} / 50`;
-    document.getElementById('dash-teach').textContent = `${data.usage.teach} / 50`;
+    document.getElementById('dash-sim').textContent = `${data.usage.sim} / 300`;
+    document.getElementById('dash-teach').textContent = `${data.usage.teach} / 300`;
 
-    document.getElementById('sim-progress').style.width = `${(data.usage.sim / 50) * 100}%`;
-    document.getElementById('teach-progress').style.width = `${(data.usage.teach / 50) * 100}%`;
+    document.getElementById('sim-progress').style.width = `${(data.usage.sim / 300) * 100}%`;
+    document.getElementById('teach-progress').style.width = `${(data.usage.teach / 300) * 100}%`;
 
     const minutes = Math.floor(data.resetIn / 60000);
     const seconds = Math.floor((data.resetIn % 60000) / 1000);
