@@ -85,7 +85,7 @@ async function authenticate(apiKey) {
   if (!user) throw new Error('Invalid API key');
 
   const now = Date.now();
-  const interval = 600_000;
+  const interval = 600_000; // 10 minutes
 
   if (now - user.lastReset > interval) {
     await usersDB.updateOne(
@@ -108,7 +108,7 @@ async function authenticate(apiKey) {
 
 async function useSim(user) {
   const now = Date.now();
-  const interval = 600_000;
+  const interval = 600_000; // 10 minutes
 
   if (now - user.lastSimReset > interval) {
     await usersDB.updateOne(
@@ -124,8 +124,14 @@ async function useSim(user) {
     user.lastSimReset = now;
   }
 
-  if (user.usage.sim >= 50) {
-    throw new Error('Sim usage limit exceeded (50/10min)');
+  if (user.usage.sim >= 300) {  // <-- updated limit here
+    throw new Error('Sim usage limit exceeded (300/10min)');
+  }
+
+  // Check combined total usage limit (sim + teach <= 600)
+  const totalUsageLast10Min = user.usage.sim + user.usage.teach;
+  if (totalUsageLast10Min >= 600) {
+    throw new Error('Total usage limit exceeded (600 combined sim + teach per 10 minutes)');
   }
 
   await usersDB.updateOne(
@@ -143,7 +149,7 @@ async function useSim(user) {
 
 async function useTeach(user) {
   const now = Date.now();
-  const interval = 600_000;
+  const interval = 600_000; // 10 minutes
 
   if (now - user.lastTeachReset > interval) {
     await usersDB.updateOne(
@@ -159,8 +165,14 @@ async function useTeach(user) {
     user.lastTeachReset = now;
   }
 
-  if (user.usage.teach >= 50) {
-    throw new Error('Teach usage limit exceeded (50/10min)');
+  if (user.usage.teach >= 300) {  // <-- updated limit here
+    throw new Error('Teach usage limit exceeded (300/10min)');
+  }
+
+  // Check combined total usage limit (sim + teach <= 600)
+  const totalUsageLast10Min = user.usage.sim + user.usage.teach;
+  if (totalUsageLast10Min >= 600) {
+    throw new Error('Total usage limit exceeded (600 combined sim + teach per 10 minutes)');
   }
 
   await usersDB.updateOne(
@@ -192,7 +204,7 @@ function formatCount(num) {
   const tier = Math.floor(Math.log10(num) / 3);
 
   if (tier >= suffixes.length) {
-    return num.toExponential(2); // fallback if number is *too* big
+    return num.toExponential(2);
   }
 
   const suffix = suffixes[tier];
